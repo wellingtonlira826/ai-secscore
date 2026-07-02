@@ -136,5 +136,275 @@
       "D": "D",
       "F": "F"
     }
+  },
+  "questions": {
+    "1": {
+      "text": "¿Valida y sanitiza todas las entradas del usuario antes de pasarlas al LLM para prevenir inyección de prompts?",
+      "remediation": "Implemente validación de entrada, codificación de salida y considere usar guardas de prompt a nivel de sistema o un modelo clasificador secundario para detectar intentos de inyección."
+    },
+    "2": {
+      "text": "¿Los prompts del sistema se almacenan y gestionan por separado del contenido proporcionado por el usuario, con límites de privilegio claros?",
+      "remediation": "Mantenga una separación estricta entre instrucciones del sistema y mensajes del usuario. Use formatos de chat estructurados que delimiten explícitamente los roles."
+    },
+    "3": {
+      "text": "¿Existe monitoreo y alertas para prompts anómalos o adversariales en producción?",
+      "remediation": "Implemente monitoreo de prompts con detección de anomalías. Registre y alerte sobre prompts que intenten sobrescribir instrucciones del sistema."
+    },
+    "4": {
+      "text": "¿El sistema impide que el LLM devuelva PII, credenciales o datos de entrenamiento propietarios en sus respuestas?",
+      "remediation": "Implemente filtrado de salida para PII y secretos. Aplique controles DLP en respuestas del LLM. Audite datos de entrenamiento antes de la ingestión."
+    },
+    "5": {
+      "text": "¿Existen controles para evitar que el modelo revele detalles sobre su prompt del sistema o configuración interna?",
+      "remediation": "Use instrucciones de confidencialidad de prompt y escáneres de salida. Realice pruebas regulares con técnicas conocidas de extracción de prompts."
+    },
+    "6": {
+      "text": "¿Tiene un inventario de todos los modelos, conjuntos de datos y plugins de terceros utilizados en su pipeline de IA?",
+      "remediation": "Mantenga un AI Bill of Materials (AI-BOM) completo. Verifique la procedencia e integridad de todos los modelos y conjuntos de datos externos."
+    },
+    "7": {
+      "text": "¿Los plugins y herramientas de integración de LLM de terceros son revisados por seguridad antes de su despliegue?",
+      "remediation": "Realice revisiones de seguridad de todos los plugins de LLM. Aplique el principio de mínimo privilegio y sandbox la ejecución de plugins cuando sea posible."
+    },
+    "8": {
+      "text": "¿Los datos de entrenamiento y ajuste fino provienen de fuentes verificadas y confiables con verificaciones de integridad?",
+      "remediation": "Verifique la procedencia de los datos. Aplique hash criptográfico para integridad. Use detección de anomalías durante el entrenamiento para identificar muestras contaminadas."
+    },
+    "9": {
+      "text": "¿Las actualizaciones del modelo y las ejecuciones de ajuste fino están sujetas a revisión de seguridad y capacidades de reversión?",
+      "remediation": "Controle los despliegues de modelos con puntos de control de seguridad. Mantenga artefactos de modelo versionados con capacidad de revertir a versiones conocidas como buenas."
+    },
+    "10": {
+      "text": "¿El resultado del LLM se trata como no confiable y se sanitiza antes de renderizarse en la UI, almacenarse o pasarse a otros sistemas?",
+      "remediation": "Trate todas las salidas del LLM como no confiables. Aplique codificación de salida según el contexto (HTML, SQL, shell). Valide antes del uso en cascada."
+    },
+    "11": {
+      "text": "¿La capacidad del LLM para tomar acciones autónomas (E/S de archivos, llamadas API, ejecución de código) está limitada al mínimo necesario?",
+      "remediation": "Aplique mínimo privilegio a todo acceso de herramientas del LLM. Requiera confirmación humana para acciones de alto impacto. Restrinja el LLM a operaciones de solo lectura cuando sea posible."
+    },
+    "12": {
+      "text": "¿Existen límites de velocidad y topes máximos en el número y alcance de acciones que un agente LLM puede realizar por sesión?",
+      "remediation": "Implemente presupuestos de acción por sesión y límites estrictos. Alerte sobre volúmenes de acción inusuales."
+    },
+    "13": {
+      "text": "¿El prompt del sistema está protegido contra extracción mediante consultas adversariales o inyección indirecta de prompts?",
+      "remediation": "Pruebe regularmente la filtración de prompts del sistema usando técnicas de extracción conocidas. Monitoree las salidas para detectar fragmentos que coincidan con instrucciones internas."
+    },
+    "14": {
+      "text": "¿Las bases de datos vectoriales y almacenes de embeddings están protegidos contra acceso no autorizado y recuperación adversarial?",
+      "remediation": "Aplique controles de acceso a almacenes vectoriales. Monitoree patrones de recuperación inusuales. Valide y sanitice documentos antes de generar embeddings."
+    },
+    "15": {
+      "text": "¿Existe un proceso para detectar y mitigar alucinaciones o salidas factualmente incorrectas del LLM antes de que lleguen a los usuarios finales?",
+      "remediation": "Implemente Generación Aumentada por Recuperación (RAG) con fuentes verificadas. Agregue capas de verificación de hechos. Establezca expectativas claras sobre las limitaciones de la IA."
+    },
+    "16": {
+      "text": "¿Existen controles para prevenir el consumo excesivo de recursos (tokens, cómputo, llamadas API) por prompts abusivos o descontrolados?",
+      "remediation": "Aplique límites de tokens por usuario y por solicitud. Implemente controles de tiempo de espera y disyuntores. Monitoree y alerte sobre anomalías de costo."
+    },
+    "17": {
+      "text": "¿Su organización ha establecido políticas formales de gobernanza de IA que definen roles, responsabilidades y rendición de cuentas para la gestión del riesgo de IA?",
+      "remediation": "Establezca un marco formal de gobernanza de IA con propietarios de riesgo de IA designados, rutas de escalada claras y procesos de toma de decisiones documentados."
+    },
+    "18": {
+      "text": "¿Existe un inventario de IA que cataloga todos los sistemas de IA en producción, incluyendo su propósito, fuentes de datos y clasificación de riesgo?",
+      "remediation": "Cree y mantenga un registro centralizado de sistemas de IA con clasificaciones de riesgo, propietarios y registros de procedencia de datos."
+    },
+    "19": {
+      "text": "¿Los riesgos específicos de IA están incorporados en el marco de gestión de riesgos empresarial (ERM)?",
+      "remediation": "Integre categorías de riesgo de IA en el programa ERM. Asegúrese de que los riesgos de IA se reporten a nivel de directorio."
+    },
+    "20": {
+      "text": "¿Se han documentado los casos de uso previstos, el contexto de despliegue y los posibles escenarios de uso indebido para cada sistema de IA?",
+      "remediation": "Documente los casos de uso previstos y previsibles. Realice análisis de escenarios de uso indebido e implemente salvaguardas contra los usos adversos más probables."
+    },
+    "21": {
+      "text": "¿Se han identificado las partes interesadas afectadas y las poblaciones impactadas, y se han considerado sus intereses en el diseño de IA?",
+      "remediation": "Realice mapeo de partes interesadas. Incluya grupos diversos en la revisión del diseño de IA. Documente los impactos conocidos en las poblaciones afectadas."
+    },
+    "22": {
+      "text": "¿Los sistemas de IA están categorizados por nivel de riesgo, con sistemas de mayor riesgo sujetos a controles más estrictos?",
+      "remediation": "Implemente un sistema de niveles de riesgo. Aplique controles proporcionales basados en el daño potencial de cada sistema de IA."
+    },
+    "23": {
+      "text": "¿Se definen métricas cuantitativas y cualitativas para medir el rendimiento, sesgo y seguridad del sistema de IA?",
+      "remediation": "Defina KPIs medibles para precisión, equidad, robustez y seguridad. Rastree métricas continuamente e informe sobre incumplimientos de SLA."
+    },
+    "24": {
+      "text": "¿Existe un proceso de auditoría de IA regular que evalúe el rendimiento y el riesgo del modelo frente a umbrales definidos?",
+      "remediation": "Establezca una cadencia periódica de auditoría de IA. Incluya auditorías de terceros para sistemas de alto riesgo. Documente hallazgos y acciones de remediación."
+    },
+    "25": {
+      "text": "¿Se realizan evaluaciones de sesgo y equidad en grupos demográficos relevantes antes y después del despliegue del modelo?",
+      "remediation": "Realice pruebas de sesgo previas al despliegue en características protegidas. Monitoree continuamente la desviación de rendimiento demográfico en producción."
+    },
+    "26": {
+      "text": "¿Existe un plan de respuesta a incidentes específico para fallos de sistemas de IA, incluyendo degradación del modelo, ataques adversariales y salidas dañinas?",
+      "remediation": "Desarrolle un manual de respuesta a incidentes específico para IA. Realice ejercicios de simulación. Defina rutas de escalada y procedimientos de reversión."
+    },
+    "27": {
+      "text": "¿Pueden los sistemas de IA desactivarse o revertirse rápidamente cuando los riesgos superan umbrales aceptables?",
+      "remediation": "Implemente interruptores de emergencia y controles de enrutamiento de tráfico. Mantenga capacidad de reversión a versiones anteriores del modelo. Defina disparadores de apagado automático."
+    },
+    "28": {
+      "text": "¿Las decisiones de tratamiento de riesgos para IA están documentadas y comunicadas a las partes interesadas relevantes?",
+      "remediation": "Mantenga un registro de riesgos para todos los riesgos de IA. Comunique las decisiones de tratamiento a las unidades de negocio afectadas y a la dirección."
+    },
+    "29": {
+      "text": "¿Ha evaluado la superficie de ataque de su sistema de IA para detectar información que los adversarios podrían recopilar (descubrimiento de API de modelos, filtración de documentación)?",
+      "remediation": "Limite la exposición de detalles de arquitectura del modelo. Aplique limitación de velocidad en API. Evite publicar documentación interna del modelo."
+    },
+    "30": {
+      "text": "¿Existe monitoreo para actividades de reconocimiento, como sondeo inusual de API, consultas sistemáticas de modelos o ataques de enumeración?",
+      "remediation": "Implemente detección de anomalías en patrones de uso de API. Alerte sobre patrones de consulta sistemáticos consistentes con reconocimiento de modelos."
+    },
+    "31": {
+      "text": "¿Existen controles para evitar que adversarios usen su infraestructura de IA como recurso para atacar otros sistemas (abuso de API de modelos)?",
+      "remediation": "Aplique controles estrictos de acceso a API y cuotas de usuario. Detecte y bloquee patrones de uso consistentes con abuso de infraestructura."
+    },
+    "32": {
+      "text": "¿El sistema está protegido contra ataques de evasión de modelos donde los adversarios crean entradas diseñadas para causar clasificaciones incorrectas?",
+      "remediation": "Implemente pruebas de robustez adversarial. Use métodos de conjunto y preprocesamiento de entrada para reducir la efectividad de ataques de evasión."
+    },
+    "33": {
+      "text": "¿Se ha probado el sistema para ataques de inferencia de pertenencia que podrían revelar si registros específicos estaban en los datos de entrenamiento?",
+      "remediation": "Aplique privacidad diferencial durante el entrenamiento. Limite las puntuaciones de confianza de predicción devueltas por la API. Pruebe la vulnerabilidad de inferencia de pertenencia."
+    },
+    "34": {
+      "text": "¿Los ataques de inversión de modelos (reconstrucción de datos de entrenamiento desde las salidas del modelo) están en el alcance de su modelo de amenazas?",
+      "remediation": "Implemente limitación de velocidad de consultas. Agregue ruido a las salidas del modelo. Entrene con técnicas de preservación de privacidad para reducir el riesgo de inversión."
+    },
+    "35": {
+      "text": "¿El modelo está protegido contra ataques de puerta trasera incrustados durante el entrenamiento que se activan con entradas disparadoras?",
+      "remediation": "Realice pruebas de detección de puertas traseras (Neural Cleanse o similares). Verifique que los pipelines de entrenamiento estén bajo control de acceso completo."
+    },
+    "36": {
+      "text": "¿Existe detección para ataques de extracción de modelos donde adversarios consultan sistemáticamente el modelo para reproducir su funcionalidad?",
+      "remediation": "Monitoree patrones consistentes con extracción de modelos (consultas sistemáticas que cubren el espacio de entrada). Implemente limitación de velocidad adaptativa."
+    },
+    "37": {
+      "text": "¿Puede detectar y responder a ataques en la fase de impacto que degradan la disponibilidad del modelo o causan denegación de servicio?",
+      "remediation": "Implemente protección DoS en la capa de API. Implemente infraestructura redundante de servicio de modelos. Configure políticas de escalado automático y disyuntores."
+    },
+    "38": {
+      "text": "¿Existen controles para prevenir la corrupción o modificación no autorizada del modelo de IA después del despliegue?",
+      "remediation": "Firme criptográficamente los artefactos del modelo. Verifique la integridad del modelo en cada despliegue y periódicamente en producción. Alerte sobre cambios no autorizados."
+    },
+    "39": {
+      "text": "¿La alta dirección ha demostrado liderazgo y compromiso con el sistema de gestión de IA (AIMS) asignando responsabilidad y asegurando recursos?",
+      "remediation": "Obtenga patrocinio ejecutivo formal para el AIMS. Defina un comité de ética y gobernanza de IA con representación de la alta dirección."
+    },
+    "40": {
+      "text": "¿Existe una política de IA documentada que defina los objetivos, principios y compromisos de la organización respecto al uso responsable de IA?",
+      "remediation": "Desarrolle y publique una política formal de IA que cubra transparencia, equidad, responsabilidad y seguridad. Revise anualmente."
+    },
+    "41": {
+      "text": "¿Se ha realizado una evaluación de riesgos integral que cubra los daños potenciales del sistema de IA a individuos, la sociedad y la organización?",
+      "remediation": "Realice una evaluación de impacto de IA estructurada. Documente los riesgos para los derechos fundamentales, la seguridad y la continuidad del negocio."
+    },
+    "42": {
+      "text": "¿Se han documentado e implementado planes de tratamiento de riesgos para todos los riesgos específicos de IA identificados?",
+      "remediation": "Mapee cada riesgo identificado a un tratamiento (aceptar, mitigar, transferir, evitar). Rastree la implementación del tratamiento y el riesgo residual."
+    },
+    "43": {
+      "text": "¿El ciclo de vida de desarrollo del sistema de IA incluye requisitos de seguridad y privacidad por diseño desde la fase de requisitos?",
+      "remediation": "Integre requisitos de seguridad y privacidad específicos de IA en el SDLC desde el inicio del proyecto. Incluya puntos de control de seguridad de IA en revisiones de diseño y código."
+    },
+    "44": {
+      "text": "¿Los sistemas de IA se descomisionan de forma segura con procedimientos adecuados de eliminación de datos y borrado de modelos?",
+      "remediation": "Defina un procedimiento de retiro de sistemas de IA que cubra el borrado del modelo, la eliminación de datos y la revocación de acceso. Documente y audite los pasos de descomisionamiento."
+    },
+    "45": {
+      "text": "¿La calidad, representatividad y procedencia de los datos de entrenamiento están documentadas y controladas?",
+      "remediation": "Implemente gobernanza de datos para conjuntos de entrenamiento de IA, incluyendo verificaciones de calidad, análisis de representatividad y seguimiento de procedencia."
+    },
+    "46": {
+      "text": "¿Se aplican principios de minimización de datos, usando solo los datos necesarios para el propósito del sistema de IA?",
+      "remediation": "Realice revisiones de necesidad de datos antes de ingerir nuevos datos. Elimine características innecesarias. Aplique agregación o anonimización donde no se requieran datos individuales."
+    },
+    "47": {
+      "text": "¿Existe un proceso para gestionar los derechos de los interesados (acceso, eliminación, corrección) aplicable a los datos de entrenamiento de IA?",
+      "remediation": "Implemente procedimientos de desaprendizaje automático o reentrenamiento del modelo para cumplir solicitudes de eliminación que afecten datos de entrenamiento."
+    },
+    "48": {
+      "text": "¿El AIMS está sujeto a auditorías internas regulares y revisiones de gestión con hallazgos y acciones documentadas?",
+      "remediation": "Programe auditorías internas regulares del AIMS. Realice revisiones anuales de gestión. Rastree las no conformidades y acciones correctivas hasta su cierre."
+    },
+    "49": {
+      "text": "¿Los modelos de IA se despliegan en entornos reforzados con valores predeterminados seguros (autenticación, cifrado, aislamiento de red)?",
+      "remediation": "Aplique el fortalecimiento de seguridad de infraestructura a todos los entornos de servicio de IA. Aplique TLS, MFA y segmentación de red de forma predeterminada."
+    },
+    "50": {
+      "text": "¿Las API de IA están protegidas por controles sólidos de autenticación y autorización con el principio de mínimo privilegio?",
+      "remediation": "Requiera autenticación OAuth/OIDC o clave API con permisos delimitados. Aplique acceso de mínimo privilegio a los endpoints del modelo."
+    },
+    "51": {
+      "text": "¿Existe monitoreo en tiempo real del comportamiento del sistema de IA para detectar anomalías de seguridad, incluyendo patrones de salida inusuales y picos de acceso?",
+      "remediation": "Implemente integración SIEM para cargas de trabajo de IA. Defina líneas base de comportamiento y alerte sobre desviaciones significativas."
+    },
+    "52": {
+      "text": "¿Existe un procedimiento de respuesta a incidentes específico para IA probado mediante ejercicios regulares?",
+      "remediation": "Documente y pruebe manuales de respuesta a incidentes de IA. Realice ejercicios de simulación que cubran compromiso del modelo, salidas dañinas y exposición de datos."
+    },
+    "53": {
+      "text": "¿Se aplican defensas de robustez adversarial (preprocesamiento de entrada, validación de salida, métodos de conjunto) para proteger contra ataques de evasión?",
+      "remediation": "Implemente pipelines de preprocesamiento de entrada para filtrar entradas adversariales. Valide las salidas del modelo frente a distribuciones esperadas."
+    },
+    "54": {
+      "text": "¿La infraestructura de servicio del modelo está protegida contra inyección de prompts e intentos de jailbreak?",
+      "remediation": "Implemente detección de inyección de prompts en la pasarela API. Aplique clasificadores de seguridad de salida. Realice red-teaming regularmente con las últimas técnicas de jailbreak."
+    },
+    "55": {
+      "text": "¿Los controles de seguridad de IA están integrados con el programa de seguridad organizacional más amplio (identidad, red, endpoint, seguridad de aplicaciones)?",
+      "remediation": "Mapee los controles de seguridad de IA a marcos de seguridad existentes (SOC 2, ISO 27001). Asegúrese de que los riesgos de IA estén cubiertos en las revisiones de seguridad existentes."
+    },
+    "56": {
+      "text": "¿Los controles de seguridad de IA se actualizan continuamente en función de amenazas emergentes, nuevas técnicas de ataque y cambios en el panorama de amenazas?",
+      "remediation": "Suscríbase a fuentes de inteligencia de amenazas de seguridad de IA. Revise y actualice los controles trimestralmente. Participe en el intercambio de información de la comunidad de seguridad de IA."
+    },
+    "57": {
+      "text": "¿Los controles de seguridad de IA están calibrados según el contexto de riesgo específico (caso de uso, sensibilidad de datos, requisitos regulatorios, actores de amenaza)?",
+      "remediation": "Realice evaluaciones de riesgo específicas por caso de uso. Aplique controles de mayor garantía para aplicaciones de IA de alto riesgo (salud, finanzas, seguridad pública)."
+    },
+    "58": {
+      "text": "¿Los datos personales procesados por sistemas de IA tienen una base legal bajo la LGPD (p. ej., consentimiento, interés legítimo)?",
+      "remediation": "Documente la base legal para cada actividad de procesamiento de datos personales en sistemas de IA. Mantenga registros de actividades de procesamiento (ROPA) según lo exige el Art. 37 de la LGPD."
+    },
+    "59": {
+      "text": "¿Se realiza una Evaluación de Impacto en la Protección de Datos (EIPD) para actividades de procesamiento de IA de alto riesgo que involucren datos personales?",
+      "remediation": "Realice EIPDs para todos los sistemas de IA que procesen datos personales a escala o que tomen decisiones automatizadas que afecten a individuos."
+    },
+    "60": {
+      "text": "¿Los titulares de datos pueden ejercer sus derechos (acceso, corrección, eliminación, portabilidad) sobre sus datos usados en sistemas de IA?",
+      "remediation": "Implemente gestión automatizada de solicitudes de acceso de interesados. Asegúrese de que los pipelines de entrenamiento de IA puedan atender solicitudes de eliminación de datos."
+    },
+    "61": {
+      "text": "¿Los datos personales y sensibles están cifrados en reposo y en tránsito a lo largo del pipeline de IA?",
+      "remediation": "Aplique cifrado AES-256 en reposo y TLS 1.2+ en tránsito para todos los datos que fluyen por los pipelines de IA. Gestione las claves de cifrado en un KMS dedicado."
+    },
+    "62": {
+      "text": "¿Se aplica enmascaramiento, tokenización o seudonimización de datos para reducir la exposición de atributos sensibles en el entrenamiento e inferencia de IA?",
+      "remediation": "Aplique enmascaramiento de datos en entornos de IA que no sean de producción. Use tokenización para identificadores sensibles. Seudonimice conjuntos de datos de entrenamiento cuando sea posible."
+    },
+    "63": {
+      "text": "¿Todos los datos usados en sistemas de IA están clasificados por sensibilidad y sujetos a controles de manejo apropiados?",
+      "remediation": "Implemente clasificación de datos para todos los conjuntos de datos de IA. Aplique controles de acceso y requisitos de manejo según la clasificación (público, interno, confidencial, restringido)."
+    },
+    "64": {
+      "text": "¿Se aplican principios de minimización de datos, recopilando y reteniendo solo los datos mínimos necesarios para el propósito del sistema de IA?",
+      "remediation": "Realice revisiones de minimización de datos para todos los pipelines de entrenamiento e inferencia de IA. Elimine campos innecesarios, implemente políticas de retención y elimine datos cuando ya no sean necesarios."
+    },
+    "65": {
+      "text": "¿El sistema de IA cumple con los requisitos de ciberseguridad de la Resolución BACEN 4.893 aplicables a aplicaciones de IA de instituciones financieras?",
+      "remediation": "Mapee los controles del sistema de IA a los requisitos de BACEN 4.893. Incluya sistemas de IA en la política de ciberseguridad institucional. Reporte el estado de cumplimiento al directorio."
+    },
+    "66": {
+      "text": "¿Existe un procedimiento de respuesta a incidentes para eventos de seguridad relacionados con IA que incluya notificación al BACEN dentro de los plazos requeridos?",
+      "remediation": "Defina criterios de clasificación de incidentes de IA. Asegúrese de que el procedimiento de respuesta incluya los requisitos de notificación al BACEN para eventos relevantes."
+    },
+    "67": {
+      "text": "¿Los sistemas de IA utilizados en toma de decisiones financieras (scoring de crédito, detección de fraude) están sujetos a requisitos de explicabilidad y supervisión humana?",
+      "remediation": "Implemente métodos de IA explicable (XAI) para decisiones financieras de IA. Asegúrese de que la revisión humana esté disponible para decisiones automatizadas impugnadas."
+    }
   }
 }

@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, ChevronRight, Check, Loader2, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 // Custom Segmented Control for Maturity Level
 function MaturitySelector({ value, onChange }: { value: number | null, onChange: (v: number | null) => void }) {
@@ -64,6 +65,7 @@ function QuestionItem({
   answer: any, 
   onSave: (qId: number, val: number | null, notes: string) => void 
 }) {
+  const { t } = useTranslation();
   const [localLevel, setLocalLevel] = useState<number | null>(answer?.maturityLevel ?? null);
   const [localNotes, setLocalNotes] = useState(answer?.notes || "");
   const [isSaving, setIsSaving] = useState(false);
@@ -110,10 +112,10 @@ function QuestionItem({
                 ))}
               </div>
             </div>
-            <h4 className="text-base font-medium leading-tight">{question.text}</h4>
+            <h4 className="text-base font-medium leading-tight">{t(`questions.${question.id}.text`, question.text)}</h4>
             {question.remediation && (
               <p className="text-sm text-muted-foreground mt-2 border-l-2 pl-3 py-1 border-muted italic">
-                {question.remediation}
+                {t(`questions.${question.id}.remediation`, question.remediation)}
               </p>
             )}
           </div>
