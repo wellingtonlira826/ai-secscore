@@ -46,7 +46,7 @@ export default function Assessments() {
   };
 
   const handleDelete = (id: number) => {
-    deleteAssessment.mutate(id, {
+    deleteAssessment.mutate({ assessmentId: id }, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getListAssessmentsQueryKey() });
         toast({ title: "Deleted", description: "Assessment removed." });

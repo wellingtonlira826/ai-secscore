@@ -69,7 +69,7 @@ function QuestionItem({
   const [isSaving, setIsSaving] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
   
-  const saveTimeoutRef = useRef<NodeJS.Timeout>();
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const triggerSave = (level: number | null, notes: string) => {
     setIsSaving(true);

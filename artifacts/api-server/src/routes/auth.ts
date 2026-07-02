@@ -2,9 +2,9 @@ import * as oidc from "openid-client";
 import { Router, type IRouter, type Request, type Response } from "express";
 import {
   GetCurrentAuthUserResponse,
-  ExchangeMobileAuthorizationCodeBody,
-  ExchangeMobileAuthorizationCodeResponse,
-  LogoutMobileSessionResponse,
+  ExchangeMobileTokenBody,
+  ExchangeMobileTokenResponse,
+  LogoutResponse,
 } from "@workspace/api-zod";
 import { db, usersTable } from "@workspace/db";
 import {
@@ -205,7 +205,7 @@ router.get("/logout", async (req: Request, res: Response) => {
 router.post(
   "/mobile-auth/token-exchange",
   async (req: Request, res: Response) => {
-    const parsed = ExchangeMobileAuthorizationCodeBody.safeParse(req.body);
+    const parsed = ExchangeMobileTokenBody.safeParse(req.body);
     if (!parsed.success) {
       res.status(400).json({ error: "Missing or invalid required parameters" });
       return;
@@ -253,7 +253,7 @@ router.post(
       };
 
       const sid = await createSession(sessionData);
-      res.json(ExchangeMobileAuthorizationCodeResponse.parse({ token: sid }));
+      res.json(ExchangeMobileTokenResponse.parse({ token: sid }));
     } catch (err) {
       req.log.error({ err }, "Mobile token exchange error");
       res.status(500).json({ error: "Token exchange failed" });
@@ -266,7 +266,7 @@ router.post("/mobile-auth/logout", async (req: Request, res: Response) => {
   if (sid) {
     await deleteSession(sid);
   }
-  res.json(LogoutMobileSessionResponse.parse({ success: true }));
+  res.json(LogoutResponse.parse({ success: true }));
 });
 
 export default router;
