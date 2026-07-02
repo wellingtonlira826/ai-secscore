@@ -22,6 +22,10 @@ tags:
     description: Scoring and results operations
   - name: Dashboard
     description: Dashboard summary operations
+  - name: Evidence
+    description: Evidence file management
+  - name: Storage
+    description: Object storage presigned URL operations
 
 paths:
   /healthz:
@@ -85,33 +89,28 @@ paths:
           required: false
           schema:
             type: string
-        - name: iss
-          in: query
-          required: false
-          schema:
-            type: string
-            format: uri
       responses:
         '302':
-          description: Redirect to the returnTo path on success.
+          description: Redirect to the app after successful login.
 
   /logout:
     get:
       tags: [Auth]
-      operationId: logoutBrowserSession
-      summary: Clear the session and begin OIDC logout
-      parameters:
-        - $ref: '#/components/parameters/AuthorizationSessionHeader'
-        - $ref: '#/components/parameters/SessionCookie'
+      operationId: logout
+      summary: Log out the current user
       responses:
-        '302':
-          description: Redirect to the OIDC provider logout URL.
+        '200':
+          description: Logged out successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutSuccess'
 
-  /mobile-auth/token-exchange:
+  /mobile/token:
     post:
       tags: [Auth]
-      operationId: exchangeMobileAuthorizationCode
-      summary: Exchange a mobile OIDC code for a session token
+      operationId: exchangeMobileToken
+      summary: Exchange a mobile PKCE code for a session token
       requestBody:
         required: true
         content:
@@ -120,52 +119,25 @@ paths:
               $ref: '#/components/schemas/MobileTokenExchangeRequest'
       responses:
         '200':
-          description: Session created successfully.
+          description: Successful token exchange.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/MobileTokenExchangeSuccess'
         '400':
-          description: Missing or invalid required fields.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorEnvelope'
-        '401':
-          description: Token did not contain usable claims.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorEnvelope'
-        '500':
-          description: Token exchange failed.
+          description: Bad request.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
 
-  /mobile-auth/logout:
-    post:
-      tags: [Auth]
-      operationId: logoutMobileSession
-      summary: Delete a mobile session token
-      parameters:
-        - $ref: '#/components/parameters/AuthorizationSessionHeader'
-      responses:
-        '200':
-          description: Logout processed.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LogoutSuccess'
-
-  # ── Frameworks & Questions ──────────────────────────────────────────────────
+  # ── Frameworks ─────────────────────────────────────────────────────────────────
 
   /frameworks:
     get:
       tags: [Frameworks]
       operationId: listFrameworks
-      summary: List all security assessment frameworks
+      summary: List all assessment frameworks
       responses:
         "200":
           description: List of frameworks
@@ -448,6 +420,205 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorEnvelope"
 
+  # ── Evidence ──────────────────────────────────────────────────────────────────
+
+  /assessments/{assessmentId}/answers/{questionId}/evidence:
+    get:
+      tags: [Evidence]
+      operationId: listEvidence
+      summary: List evidence files for a specific answer
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of evidence items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Evidence"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+    post:
+      tags: [Evidence]
+      operationId: addEvidence
+      summary: Register uploaded evidence for an answer
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EvidenceInput"
+      responses:
+        "201":
+          description: Evidence registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Evidence"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  /assessments/{assessmentId}/evidence/{evidenceId}:
+    delete:
+      tags: [Evidence]
+      operationId: deleteEvidence
+      summary: Delete an evidence file
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: evidenceId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  /assessments/{assessmentId}/evidence:
+    get:
+      tags: [Evidence]
+      operationId: listAllEvidence
+      summary: List all evidence for an assessment
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of all evidence for the assessment
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Evidence"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  # ── Storage ───────────────────────────────────────────────────────────────────
+
+  /storage/uploads/request-url:
+    post:
+      tags: [Storage]
+      operationId: requestUploadUrl
+      summary: Request a presigned URL for direct-to-GCS upload
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestUploadUrlBody"
+      responses:
+        "200":
+          description: Presigned upload URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestUploadUrlResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  /storage/objects/{objectPath}:
+    get:
+      tags: [Storage]
+      operationId: getObject
+      summary: Serve an uploaded object
+      parameters:
+        - name: objectPath
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Object file stream
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
   # ── Scoring & Results ─────────────────────────────────────────────────────────
 
   /assessments/{assessmentId}/score:
@@ -635,7 +806,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorEnvelope"
 
-  # ── Dashboard (wow) ───────────────────────────────────────────────────────────
+  # ── Dashboard ───────────────────────────────────────────────────────────────
 
   /dashboard:
     get:
@@ -891,6 +1062,73 @@ components:
         notes:
           type: string
 
+    # ── Evidence schemas ──────────────────────────────────────────────────────
+    Evidence:
+      type: object
+      required: [id, assessmentId, questionId, userId, fileName, fileSize, contentType, objectPath, createdAt]
+      properties:
+        id:
+          type: integer
+        assessmentId:
+          type: integer
+        questionId:
+          type: integer
+        userId:
+          type: string
+        fileName:
+          type: string
+        fileSize:
+          type: integer
+        contentType:
+          type: string
+        objectPath:
+          type: string
+          description: Path returned from storage upload, e.g. /objects/uploads/uuid
+        description:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    EvidenceInput:
+      type: object
+      required: [fileName, fileSize, contentType, objectPath]
+      properties:
+        fileName:
+          type: string
+        fileSize:
+          type: integer
+        contentType:
+          type: string
+        objectPath:
+          type: string
+        description:
+          type: string
+
+    # ── Storage schemas ───────────────────────────────────────────────────────
+    RequestUploadUrlBody:
+      type: object
+      required: [name, size, contentType]
+      properties:
+        name:
+          type: string
+        size:
+          type: integer
+        contentType:
+          type: string
+
+    RequestUploadUrlResponse:
+      type: object
+      required: [uploadURL, objectPath]
+      properties:
+        uploadURL:
+          type: string
+          description: Presigned GCS PUT URL
+        objectPath:
+          type: string
+          description: Path to use when serving, e.g. /objects/uploads/uuid
+
+    # ── Scoring schemas ───────────────────────────────────────────────────────
     AssessmentScore:
       type: object
       required: [assessmentId, overallScore, grade, riskLevel, frameworkScores, answeredCount, totalCount]

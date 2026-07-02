@@ -73,6 +73,14 @@
     "vite": "catalog:",
     "wouter": "^3.3.5",
     "zod": "catalog:",
-    "@workspace/replit-auth-web": "workspace:*"
+    "@workspace/replit-auth-web": "workspace:*",
+    "i18next": "^24.2.2",
+    "react-i18next": "^15.5.1",
+    "i18next-browser-languagedetector": "^8.0.5",
+    "@uppy/aws-s3": "^5.0.0",
+    "@uppy/core": "^5.0.0",
+    "@uppy/dashboard": "^5.0.0",
+    "@uppy/react": "^5.0.0",
+    "@workspace/object-storage-web": "workspace:*"
   }
 }

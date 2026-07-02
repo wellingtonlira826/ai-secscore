@@ -1,0 +1,140 @@
+{
+  "nav": {
+    "dashboard": "Panel",
+    "assessments": "Evaluaciones",
+    "compare": "Comparar",
+    "settings": "Ajustes"
+  },
+  "dashboard": {
+    "title": "Centro de Comando de Seguridad",
+    "subtitle": "Resumen de la plataforma y métricas de evaluaciones activas.",
+    "totalAssessments": "Evaluaciones Totales",
+    "totalAssessmentsDesc": "En todos los sistemas",
+    "inProgress": "En Curso",
+    "inProgressDesc": "Actualmente siendo evaluado",
+    "completed": "Completado",
+    "completedDesc": "Totalmente auditado",
+    "avgScore": "Puntuación Promedio",
+    "avgScoreDesc": "Postura general de seguridad",
+    "recentAssessments": "Evaluaciones Recientes",
+    "recentAssessmentsDesc": "Última actividad en la plataforma",
+    "frameworkScores": "Mejores Puntuaciones de Marcos",
+    "frameworkScoresDesc": "Rendimiento promedio en los marcos activos",
+    "noFrameworkData": "No hay datos de puntuación de marcos disponibles",
+    "noRecent": "No hay evaluaciones recientes"
+  },
+  "assessments": {
+    "title": "Evaluaciones",
+    "subtitle": "Gestionar y evaluar sistemas de IA.",
+    "new": "Nueva Evaluación",
+    "createTitle": "Crear Evaluación",
+    "name": "Nombre de la Evaluación",
+    "systemName": "Nombre del Sistema",
+    "description": "Descripción (Opcional)",
+    "status": {
+      "in_progress": "En Curso",
+      "completed": "Completado"
+    },
+    "delete": "¿Eliminar Evaluación?",
+    "deleteDesc": "Esta acción no se puede deshacer. Todas las respuestas y puntuaciones se eliminarán permanentemente.",
+    "noAssessments": "No Se Encontraron Evaluaciones",
+    "startFirst": "Crea tu primera evaluación para comenzar a evaluar tus sistemas de IA.",
+    "open": "Abrir Evaluación"
+  },
+  "assessment": {
+    "back": "Volver a la Evaluación",
+    "viewResults": "Ver Resultados",
+    "markComplete": "Marcar como Completado",
+    "progress": "Completar",
+    "saving": "Guardando",
+    "saved": "Guardado",
+    "maturity": {
+      "0": "0",
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "na": "N/A"
+    },
+    "notes": "Evidencia / Notas (opcional)",
+    "evidence": "Evidencia"
+  },
+  "results": {
+    "title": "Resultados de la Evaluación",
+    "overallScore": "Calificación General",
+    "grade": "Calificación",
+    "riskLevel": "Postura de Riesgo",
+    "frameworkScores": "Rendimiento de Marcos",
+    "frameworkScoresDesc": "Análisis de radar de la postura de seguridad a través de los marcos",
+    "topGaps": "Principales Prioridades de Remediación",
+    "topGapsDesc": "Brechas de severidad crítica y alta identificadas",
+    "remediation": "Acción Recomendada:",
+    "exportPdf": "Reporte PDF",
+    "exportJson": "Exportación JSON",
+    "weight": "Peso",
+    "executiveSummary": "Resumen Ejecutivo",
+    "strengths": "Fortalezas",
+    "weaknesses": "Debilidades Clave",
+    "frameworkBreakdown": "Desglose de Marcos"
+  },
+  "compare": {
+    "title": "Comparar Evaluaciones",
+    "subtitle": "Analiza la progresión entre dos evaluaciones diferentes.",
+    "selectFirst": "Seleccionar Evaluación Base",
+    "selectSecond": "Seleccionar Evaluación Objetivo",
+    "comparison": "Comparación de Marcos",
+    "noSelection": "Seleccionar Evaluaciones",
+    "baseline": "Base",
+    "target": "Objetivo",
+    "overallProgression": "Progresión General",
+    "detailedDeltas": "Deltas Detalladas",
+    "detailedDeltasDesc": "Diferencias de puntuación por marco"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "subtitle": "Configura las preferencias globales de la plataforma.",
+    "description": "Ajusta la importancia de cada marco al calcular las puntuaciones generales de las evaluaciones.",
+    "save": "Guardar Cambios",
+    "saving": "Guardando...",
+    "saved": "Ajustes Guardados",
+    "frameworkWeights": "Pesos de Puntuación de Marcos"
+  },
+  "evidence": {
+    "upload": "Subir Evidencia",
+    "noEvidence": "No hay evidencia subida",
+    "fileName": "Nombre del Archivo",
+    "fileSize": "Tamaño",
+    "description": "Descripción",
+    "uploadSuccess": "Subida exitosa",
+    "delete": "Eliminar",
+    "uploading": "Subiendo..."
+  },
+  "login": {
+    "title": "AI SecScore",
+    "subtitle": "Plataforma de evaluación de seguridad de LLM empresarial. Autentíquese para acceder al centro de comando.",
+    "loginButton": "Autenticarse vía SSO",
+    "connecting": "Conectando..."
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "notFound": "No Encontrado",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "noData": "No hay datos disponibles",
+    "riskLevel": {
+      "Critical": "Crítico",
+      "High": "Alto",
+      "Medium": "Medio",
+      "Low": "Bajo"
+    },
+    "grade": {
+      "A": "A",
+      "B": "B",
+      "C": "C",
+      "D": "D",
+      "F": "F"
+    }
+  }
+}

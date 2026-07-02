@@ -18,6 +18,7 @@
   },
   "references": [
     { "path": "../../lib/api-client-react" },
-    { "path": "../../lib/replit-auth-web" }
+    { "path": "../../lib/replit-auth-web" },
+    { "path": "../../lib/object-storage-web" }
   ]
 }

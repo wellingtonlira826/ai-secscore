@@ -6,7 +6,8 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type HandleBrowserLoginCallbackParams = {
-code?: string;
-state?: string;
-};
+export interface RequestUploadUrlBody {
+  name: string;
+  size: number;
+  contentType: string;
+}

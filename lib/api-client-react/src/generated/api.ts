@@ -32,6 +32,8 @@ import type {
   CompareAssessmentsParams,
   DashboardSummary,
   ErrorEnvelope,
+  Evidence,
+  EvidenceInput,
   ExecutiveSummary,
   Framework,
   FrameworkWeight,
@@ -44,7 +46,9 @@ import type {
   LogoutSuccess,
   MobileTokenExchangeRequest,
   MobileTokenExchangeSuccess,
-  Question
+  Question,
+  RequestUploadUrlBody,
+  RequestUploadUrlResponse
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -397,7 +401,7 @@ export function useHandleBrowserLoginCallback<TData = Awaited<ReturnType<typeof 
 
 
 
-export const getLogoutBrowserSessionUrl = () => {
+export const getLogoutUrl = () => {
 
 
 
@@ -406,11 +410,11 @@ export const getLogoutBrowserSessionUrl = () => {
 }
 
 /**
- * @summary Clear the session and begin OIDC logout
+ * @summary Log out the current user
  */
-export const logoutBrowserSession = async ( options?: RequestInit): Promise<unknown> => {
+export const logout = async ( options?: RequestInit): Promise<LogoutSuccess> => {
 
-  return customFetch<unknown>(getLogoutBrowserSessionUrl(),
+  return customFetch<LogoutSuccess>(getLogoutUrl(),
   {
     ...options,
     method: 'GET'
@@ -423,45 +427,45 @@ export const logoutBrowserSession = async ( options?: RequestInit): Promise<unkn
 
 
 
-export const getLogoutBrowserSessionQueryKey = () => {
+export const getLogoutQueryKey = () => {
     return [
     `/api/logout`
     ] as const;
     }
 
 
-export const getLogoutBrowserSessionQueryOptions = <TData = Awaited<ReturnType<typeof logoutBrowserSession>>, TError = ErrorType<void>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof logoutBrowserSession>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getLogoutQueryOptions = <TData = Awaited<ReturnType<typeof logout>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof logout>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getLogoutBrowserSessionQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getLogoutQueryKey();
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof logoutBrowserSession>>> = ({ signal }) => logoutBrowserSession({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof logout>>> = ({ signal }) => logout({ signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof logoutBrowserSession>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof logout>>, TError, TData> & { queryKey: QueryKey }
 }
 
-export type LogoutBrowserSessionQueryResult = NonNullable<Awaited<ReturnType<typeof logoutBrowserSession>>>
-export type LogoutBrowserSessionQueryError = ErrorType<void>
+export type LogoutQueryResult = NonNullable<Awaited<ReturnType<typeof logout>>>
+export type LogoutQueryError = ErrorType<unknown>
 
 
 /**
- * @summary Clear the session and begin OIDC logout
+ * @summary Log out the current user
  */
 
-export function useLogoutBrowserSession<TData = Awaited<ReturnType<typeof logoutBrowserSession>>, TError = ErrorType<void>>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof logoutBrowserSession>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export function useLogout<TData = Awaited<ReturnType<typeof logout>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof logout>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
-  const queryOptions = getLogoutBrowserSessionQueryOptions(options)
+  const queryOptions = getLogoutQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
@@ -474,20 +478,20 @@ export function useLogoutBrowserSession<TData = Awaited<ReturnType<typeof logout
 
 
 
-export const getExchangeMobileAuthorizationCodeUrl = () => {
+export const getExchangeMobileTokenUrl = () => {
 
 
 
 
-  return `/api/mobile-auth/token-exchange`
+  return `/api/mobile/token`
 }
 
 /**
- * @summary Exchange a mobile OIDC code for a session token
+ * @summary Exchange a mobile PKCE code for a session token
  */
-export const exchangeMobileAuthorizationCode = async (mobileTokenExchangeRequest: MobileTokenExchangeRequest, options?: RequestInit): Promise<MobileTokenExchangeSuccess> => {
+export const exchangeMobileToken = async (mobileTokenExchangeRequest: MobileTokenExchangeRequest, options?: RequestInit): Promise<MobileTokenExchangeSuccess> => {
 
-  return customFetch<MobileTokenExchangeSuccess>(getExchangeMobileAuthorizationCodeUrl(),
+  return customFetch<MobileTokenExchangeSuccess>(getExchangeMobileTokenUrl(),
   {
     ...options,
     method: 'POST',
@@ -499,11 +503,11 @@ export const exchangeMobileAuthorizationCode = async (mobileTokenExchangeRequest
 
 
 
-export const getExchangeMobileAuthorizationCodeMutationOptions = <TError = ErrorType<ErrorEnvelope>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof exchangeMobileAuthorizationCode>>, TError,{data: BodyType<MobileTokenExchangeRequest>}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof exchangeMobileAuthorizationCode>>, TError,{data: BodyType<MobileTokenExchangeRequest>}, TContext> => {
+export const getExchangeMobileTokenMutationOptions = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof exchangeMobileToken>>, TError,{data: BodyType<MobileTokenExchangeRequest>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof exchangeMobileToken>>, TError,{data: BodyType<MobileTokenExchangeRequest>}, TContext> => {
 
-const mutationKey = ['exchangeMobileAuthorizationCode'];
+const mutationKey = ['exchangeMobileToken'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -513,10 +517,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof exchangeMobileAuthorizationCode>>, {data: BodyType<MobileTokenExchangeRequest>}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof exchangeMobileToken>>, {data: BodyType<MobileTokenExchangeRequest>}> = (props) => {
           const {data} = props ?? {};
 
-          return  exchangeMobileAuthorizationCode(data,requestOptions)
+          return  exchangeMobileToken(data,requestOptions)
         }
 
 
@@ -526,92 +530,22 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type ExchangeMobileAuthorizationCodeMutationResult = NonNullable<Awaited<ReturnType<typeof exchangeMobileAuthorizationCode>>>
-    export type ExchangeMobileAuthorizationCodeMutationBody = BodyType<MobileTokenExchangeRequest>
-    export type ExchangeMobileAuthorizationCodeMutationError = ErrorType<ErrorEnvelope>
+    export type ExchangeMobileTokenMutationResult = NonNullable<Awaited<ReturnType<typeof exchangeMobileToken>>>
+    export type ExchangeMobileTokenMutationBody = BodyType<MobileTokenExchangeRequest>
+    export type ExchangeMobileTokenMutationError = ErrorType<ErrorEnvelope>
 
     /**
- * @summary Exchange a mobile OIDC code for a session token
+ * @summary Exchange a mobile PKCE code for a session token
  */
-export const useExchangeMobileAuthorizationCode = <TError = ErrorType<ErrorEnvelope>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof exchangeMobileAuthorizationCode>>, TError,{data: BodyType<MobileTokenExchangeRequest>}, TContext>, request?: SecondParameter<typeof customFetch>}
+export const useExchangeMobileToken = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof exchangeMobileToken>>, TError,{data: BodyType<MobileTokenExchangeRequest>}, TContext>, request?: SecondParameter<typeof customFetch>}
  ): UseMutationResult<
-        Awaited<ReturnType<typeof exchangeMobileAuthorizationCode>>,
+        Awaited<ReturnType<typeof exchangeMobileToken>>,
         TError,
         {data: BodyType<MobileTokenExchangeRequest>},
         TContext
       > => {
-      return useMutation(getExchangeMobileAuthorizationCodeMutationOptions(options));
-    }
-
-export const getLogoutMobileSessionUrl = () => {
-
-
-
-
-  return `/api/mobile-auth/logout`
-}
-
-/**
- * @summary Delete a mobile session token
- */
-export const logoutMobileSession = async ( options?: RequestInit): Promise<LogoutSuccess> => {
-
-  return customFetch<LogoutSuccess>(getLogoutMobileSessionUrl(),
-  {
-    ...options,
-    method: 'POST'
-
-
-  }
-);}
-
-
-
-
-export const getLogoutMobileSessionMutationOptions = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logoutMobileSession>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof logoutMobileSession>>, TError,void, TContext> => {
-
-const mutationKey = ['logoutMobileSession'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof logoutMobileSession>>, void> = () => {
-
-
-          return  logoutMobileSession(requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type LogoutMobileSessionMutationResult = NonNullable<Awaited<ReturnType<typeof logoutMobileSession>>>
-
-    export type LogoutMobileSessionMutationError = ErrorType<unknown>
-
-    /**
- * @summary Delete a mobile session token
- */
-export const useLogoutMobileSession = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logoutMobileSession>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
- ): UseMutationResult<
-        Awaited<ReturnType<typeof logoutMobileSession>>,
-        TError,
-        void,
-        TContext
-      > => {
-      return useMutation(getLogoutMobileSessionMutationOptions(options));
+      return useMutation(getExchangeMobileTokenMutationOptions(options));
     }
 
 export const getListFrameworksUrl = () => {
@@ -623,7 +557,7 @@ export const getListFrameworksUrl = () => {
 }
 
 /**
- * @summary List all security assessment frameworks
+ * @summary List all assessment frameworks
  */
 export const listFrameworks = async ( options?: RequestInit): Promise<Framework[]> => {
 
@@ -670,7 +604,7 @@ export type ListFrameworksQueryError = ErrorType<unknown>
 
 
 /**
- * @summary List all security assessment frameworks
+ * @summary List all assessment frameworks
  */
 
 export function useListFrameworks<TData = Awaited<ReturnType<typeof listFrameworks>>, TError = ErrorType<unknown>>(
@@ -1366,6 +1300,457 @@ export const useUpsertAnswer = <TError = ErrorType<ErrorEnvelope>,
       > => {
       return useMutation(getUpsertAnswerMutationOptions(options));
     }
+
+export const getListEvidenceUrl = (assessmentId: number,
+    questionId: number,) => {
+
+
+
+
+  return `/api/assessments/${assessmentId}/answers/${questionId}/evidence`
+}
+
+/**
+ * @summary List evidence files for a specific answer
+ */
+export const listEvidence = async (assessmentId: number,
+    questionId: number, options?: RequestInit): Promise<Evidence[]> => {
+
+  return customFetch<Evidence[]>(getListEvidenceUrl(assessmentId,questionId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListEvidenceQueryKey = (assessmentId: number,
+    questionId: number,) => {
+    return [
+    `/api/assessments/${assessmentId}/answers/${questionId}/evidence`
+    ] as const;
+    }
+
+
+export const getListEvidenceQueryOptions = <TData = Awaited<ReturnType<typeof listEvidence>>, TError = ErrorType<ErrorEnvelope>>(assessmentId: number,
+    questionId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listEvidence>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListEvidenceQueryKey(assessmentId,questionId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listEvidence>>> = ({ signal }) => listEvidence(assessmentId,questionId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: assessmentId !== null && assessmentId !== undefined && questionId !== null && questionId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listEvidence>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListEvidenceQueryResult = NonNullable<Awaited<ReturnType<typeof listEvidence>>>
+export type ListEvidenceQueryError = ErrorType<ErrorEnvelope>
+
+
+/**
+ * @summary List evidence files for a specific answer
+ */
+
+export function useListEvidence<TData = Awaited<ReturnType<typeof listEvidence>>, TError = ErrorType<ErrorEnvelope>>(
+ assessmentId: number,
+    questionId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listEvidence>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListEvidenceQueryOptions(assessmentId,questionId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getAddEvidenceUrl = (assessmentId: number,
+    questionId: number,) => {
+
+
+
+
+  return `/api/assessments/${assessmentId}/answers/${questionId}/evidence`
+}
+
+/**
+ * @summary Register uploaded evidence for an answer
+ */
+export const addEvidence = async (assessmentId: number,
+    questionId: number,
+    evidenceInput: EvidenceInput, options?: RequestInit): Promise<Evidence> => {
+
+  return customFetch<Evidence>(getAddEvidenceUrl(assessmentId,questionId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(evidenceInput)
+  }
+);}
+
+
+
+
+export const getAddEvidenceMutationOptions = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addEvidence>>, TError,{assessmentId: number;questionId: number;data: BodyType<EvidenceInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof addEvidence>>, TError,{assessmentId: number;questionId: number;data: BodyType<EvidenceInput>}, TContext> => {
+
+const mutationKey = ['addEvidence'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof addEvidence>>, {assessmentId: number;questionId: number;data: BodyType<EvidenceInput>}> = (props) => {
+          const {assessmentId,questionId,data} = props ?? {};
+
+          return  addEvidence(assessmentId,questionId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AddEvidenceMutationResult = NonNullable<Awaited<ReturnType<typeof addEvidence>>>
+    export type AddEvidenceMutationBody = BodyType<EvidenceInput>
+    export type AddEvidenceMutationError = ErrorType<ErrorEnvelope>
+
+    /**
+ * @summary Register uploaded evidence for an answer
+ */
+export const useAddEvidence = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addEvidence>>, TError,{assessmentId: number;questionId: number;data: BodyType<EvidenceInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof addEvidence>>,
+        TError,
+        {assessmentId: number;questionId: number;data: BodyType<EvidenceInput>},
+        TContext
+      > => {
+      return useMutation(getAddEvidenceMutationOptions(options));
+    }
+
+export const getDeleteEvidenceUrl = (assessmentId: number,
+    evidenceId: number,) => {
+
+
+
+
+  return `/api/assessments/${assessmentId}/evidence/${evidenceId}`
+}
+
+/**
+ * @summary Delete an evidence file
+ */
+export const deleteEvidence = async (assessmentId: number,
+    evidenceId: number, options?: RequestInit): Promise<void> => {
+
+  return customFetch<void>(getDeleteEvidenceUrl(assessmentId,evidenceId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeleteEvidenceMutationOptions = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteEvidence>>, TError,{assessmentId: number;evidenceId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteEvidence>>, TError,{assessmentId: number;evidenceId: number}, TContext> => {
+
+const mutationKey = ['deleteEvidence'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteEvidence>>, {assessmentId: number;evidenceId: number}> = (props) => {
+          const {assessmentId,evidenceId} = props ?? {};
+
+          return  deleteEvidence(assessmentId,evidenceId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteEvidenceMutationResult = NonNullable<Awaited<ReturnType<typeof deleteEvidence>>>
+
+    export type DeleteEvidenceMutationError = ErrorType<ErrorEnvelope>
+
+    /**
+ * @summary Delete an evidence file
+ */
+export const useDeleteEvidence = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteEvidence>>, TError,{assessmentId: number;evidenceId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof deleteEvidence>>,
+        TError,
+        {assessmentId: number;evidenceId: number},
+        TContext
+      > => {
+      return useMutation(getDeleteEvidenceMutationOptions(options));
+    }
+
+export const getListAllEvidenceUrl = (assessmentId: number,) => {
+
+
+
+
+  return `/api/assessments/${assessmentId}/evidence`
+}
+
+/**
+ * @summary List all evidence for an assessment
+ */
+export const listAllEvidence = async (assessmentId: number, options?: RequestInit): Promise<Evidence[]> => {
+
+  return customFetch<Evidence[]>(getListAllEvidenceUrl(assessmentId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListAllEvidenceQueryKey = (assessmentId: number,) => {
+    return [
+    `/api/assessments/${assessmentId}/evidence`
+    ] as const;
+    }
+
+
+export const getListAllEvidenceQueryOptions = <TData = Awaited<ReturnType<typeof listAllEvidence>>, TError = ErrorType<ErrorEnvelope>>(assessmentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listAllEvidence>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListAllEvidenceQueryKey(assessmentId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listAllEvidence>>> = ({ signal }) => listAllEvidence(assessmentId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: assessmentId !== null && assessmentId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listAllEvidence>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListAllEvidenceQueryResult = NonNullable<Awaited<ReturnType<typeof listAllEvidence>>>
+export type ListAllEvidenceQueryError = ErrorType<ErrorEnvelope>
+
+
+/**
+ * @summary List all evidence for an assessment
+ */
+
+export function useListAllEvidence<TData = Awaited<ReturnType<typeof listAllEvidence>>, TError = ErrorType<ErrorEnvelope>>(
+ assessmentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listAllEvidence>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListAllEvidenceQueryOptions(assessmentId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getRequestUploadUrlUrl = () => {
+
+
+
+
+  return `/api/storage/uploads/request-url`
+}
+
+/**
+ * @summary Request a presigned URL for direct-to-GCS upload
+ */
+export const requestUploadUrl = async (requestUploadUrlBody: RequestUploadUrlBody, options?: RequestInit): Promise<RequestUploadUrlResponse> => {
+
+  return customFetch<RequestUploadUrlResponse>(getRequestUploadUrlUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(requestUploadUrlBody)
+  }
+);}
+
+
+
+
+export const getRequestUploadUrlMutationOptions = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof requestUploadUrl>>, TError,{data: BodyType<RequestUploadUrlBody>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof requestUploadUrl>>, TError,{data: BodyType<RequestUploadUrlBody>}, TContext> => {
+
+const mutationKey = ['requestUploadUrl'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof requestUploadUrl>>, {data: BodyType<RequestUploadUrlBody>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  requestUploadUrl(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RequestUploadUrlMutationResult = NonNullable<Awaited<ReturnType<typeof requestUploadUrl>>>
+    export type RequestUploadUrlMutationBody = BodyType<RequestUploadUrlBody>
+    export type RequestUploadUrlMutationError = ErrorType<ErrorEnvelope>
+
+    /**
+ * @summary Request a presigned URL for direct-to-GCS upload
+ */
+export const useRequestUploadUrl = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof requestUploadUrl>>, TError,{data: BodyType<RequestUploadUrlBody>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof requestUploadUrl>>,
+        TError,
+        {data: BodyType<RequestUploadUrlBody>},
+        TContext
+      > => {
+      return useMutation(getRequestUploadUrlMutationOptions(options));
+    }
+
+export const getGetObjectUrl = (objectPath: string,) => {
+
+
+
+
+  return `/api/storage/objects/${objectPath}`
+}
+
+/**
+ * @summary Serve an uploaded object
+ */
+export const getObject = async (objectPath: string, options?: RequestInit): Promise<void> => {
+
+  return customFetch<void>(getGetObjectUrl(objectPath),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetObjectQueryKey = (objectPath: string,) => {
+    return [
+    `/api/storage/objects/${objectPath}`
+    ] as const;
+    }
+
+
+export const getGetObjectQueryOptions = <TData = Awaited<ReturnType<typeof getObject>>, TError = ErrorType<ErrorEnvelope>>(objectPath: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getObject>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetObjectQueryKey(objectPath);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getObject>>> = ({ signal }) => getObject(objectPath, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: objectPath !== null && objectPath !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getObject>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetObjectQueryResult = NonNullable<Awaited<ReturnType<typeof getObject>>>
+export type GetObjectQueryError = ErrorType<ErrorEnvelope>
+
+
+/**
+ * @summary Serve an uploaded object
+ */
+
+export function useGetObject<TData = Awaited<ReturnType<typeof getObject>>, TError = ErrorType<ErrorEnvelope>>(
+ objectPath: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getObject>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetObjectQueryOptions(objectPath,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getGetAssessmentScoreUrl = (assessmentId: number,) => {
 

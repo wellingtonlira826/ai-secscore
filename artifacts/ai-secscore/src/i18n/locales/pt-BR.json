@@ -1,0 +1,140 @@
+{
+  "nav": {
+    "dashboard": "Painel",
+    "assessments": "Avaliações",
+    "compare": "Comparar",
+    "settings": "Configurações"
+  },
+  "dashboard": {
+    "title": "Centro de Comando de Segurança",
+    "subtitle": "Visão geral da plataforma e métricas de avaliações ativas.",
+    "totalAssessments": "Avaliações Totais",
+    "totalAssessmentsDesc": "Em todos os sistemas",
+    "inProgress": "Em Andamento",
+    "inProgressDesc": "Atualmente sendo avaliado",
+    "completed": "Concluído",
+    "completedDesc": "Totalmente auditado",
+    "avgScore": "Pontuação Média",
+    "avgScoreDesc": "Postura geral de segurança",
+    "recentAssessments": "Avaliações Recentes",
+    "recentAssessmentsDesc": "Últimas atividades na plataforma",
+    "frameworkScores": "Melhores Pontuações de Frameworks",
+    "frameworkScoresDesc": "Desempenho médio nos frameworks ativos",
+    "noFrameworkData": "Nenhum dado de pontuação de framework disponível",
+    "noRecent": "Nenhuma avaliação recente"
+  },
+  "assessments": {
+    "title": "Avaliações",
+    "subtitle": "Gerenciar e avaliar sistemas de IA.",
+    "new": "Nova Avaliação",
+    "createTitle": "Criar Avaliação",
+    "name": "Nome da Avaliação",
+    "systemName": "Nome do Sistema",
+    "description": "Descrição (Opcional)",
+    "status": {
+      "in_progress": "Em Andamento",
+      "completed": "Concluído"
+    },
+    "delete": "Excluir Avaliação?",
+    "deleteDesc": "Esta ação não pode ser desfeita. Todas as respostas e pontuações serão excluídas permanentemente.",
+    "noAssessments": "Nenhuma Avaliação Encontrada",
+    "startFirst": "Crie sua primeira avaliação para começar a avaliar seus sistemas de IA.",
+    "open": "Abrir Avaliação"
+  },
+  "assessment": {
+    "back": "Voltar para Avaliação",
+    "viewResults": "Ver Resultados",
+    "markComplete": "Marcar como Concluído",
+    "progress": "Completar",
+    "saving": "Salvando",
+    "saved": "Salvo",
+    "maturity": {
+      "0": "0",
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "na": "N/A"
+    },
+    "notes": "Evidência / Notas (opcional)",
+    "evidence": "Evidência"
+  },
+  "results": {
+    "title": "Resultados da Avaliação",
+    "overallScore": "Nota Geral",
+    "grade": "Nota",
+    "riskLevel": "Postura de Risco",
+    "frameworkScores": "Desempenho de Frameworks",
+    "frameworkScoresDesc": "Análise de radar da postura de segurança",
+    "topGaps": "Principais Prioridades de Remediação",
+    "topGapsDesc": "Lacunas de severidade crítica e alta identificadas",
+    "remediation": "Ação Recomendada:",
+    "exportPdf": "Relatório PDF",
+    "exportJson": "Exportação JSON",
+    "weight": "Peso",
+    "executiveSummary": "Resumo Executivo",
+    "strengths": "Forças",
+    "weaknesses": "Principais Fraquezas",
+    "frameworkBreakdown": "Detalhamento dos Frameworks"
+  },
+  "compare": {
+    "title": "Comparar Avaliações",
+    "subtitle": "Analise a progressão entre duas avaliações diferentes.",
+    "selectFirst": "Selecione a Avaliação de Base",
+    "selectSecond": "Selecione a Avaliação Alvo",
+    "comparison": "Comparação de Frameworks",
+    "noSelection": "Selecione as Avaliações",
+    "baseline": "Base",
+    "target": "Alvo",
+    "overallProgression": "Progressão Geral",
+    "detailedDeltas": "Deltas Detalhadas",
+    "detailedDeltasDesc": "Diferenças de pontuação por framework"
+  },
+  "settings": {
+    "title": "Configurações",
+    "subtitle": "Configure as preferências globais da plataforma.",
+    "description": "Ajuste a importância de cada framework ao calcular as pontuações gerais das avaliações.",
+    "save": "Salvar Alterações",
+    "saving": "Salvando...",
+    "saved": "Configurações Salvas",
+    "frameworkWeights": "Pesos de Pontuação dos Frameworks"
+  },
+  "evidence": {
+    "upload": "Fazer Upload de Evidência",
+    "noEvidence": "Nenhuma evidência enviada",
+    "fileName": "Nome do Arquivo",
+    "fileSize": "Tamanho",
+    "description": "Descrição",
+    "uploadSuccess": "Upload realizado com sucesso",
+    "delete": "Excluir",
+    "uploading": "Enviando..."
+  },
+  "login": {
+    "title": "AI SecScore",
+    "subtitle": "Plataforma de Avaliação de Segurança de LLM de nível empresarial. Autentique-se para acessar o centro de comando.",
+    "loginButton": "Autenticar via SSO",
+    "connecting": "Conectando..."
+  },
+  "common": {
+    "loading": "Carregando...",
+    "error": "Erro",
+    "notFound": "Não Encontrado",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Salvar",
+    "delete": "Excluir",
+    "noData": "Nenhum dado disponível",
+    "riskLevel": {
+      "Critical": "Crítico",
+      "High": "Alto",
+      "Medium": "Médio",
+      "Low": "Baixo"
+    },
+    "grade": {
+      "A": "A",
+      "B": "B",
+      "C": "C",
+      "D": "D",
+      "F": "F"
+    }
+  }
+}

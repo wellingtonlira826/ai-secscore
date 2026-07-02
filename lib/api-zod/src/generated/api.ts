@@ -50,25 +50,22 @@ export const BeginBrowserLoginResponse = zod.void()
  */
 export const HandleBrowserLoginCallbackQueryParams = zod.object({
   "code": zod.coerce.string().optional(),
-  "state": zod.coerce.string().optional(),
-  "iss": zod.coerce.string().url().optional()
+  "state": zod.coerce.string().optional()
 })
 
 export const HandleBrowserLoginCallbackResponse = zod.void()
 
 
 /**
- * @summary Clear the session and begin OIDC logout
+ * @summary Log out the current user
  */
-export const LogoutBrowserSessionHeader = zod.object({
-  "Authorization": zod.string().optional().describe('Opaque session token — `Bearer <sid>`.')
+export const LogoutResponse = zod.object({
+  "success": zod.boolean()
 })
-
-export const LogoutBrowserSessionResponse = zod.void()
 
 
 /**
- * @summary Exchange a mobile OIDC code for a session token
+ * @summary Exchange a mobile PKCE code for a session token
  */
 
 
@@ -77,7 +74,7 @@ export const LogoutBrowserSessionResponse = zod.void()
 
 
 
-export const ExchangeMobileAuthorizationCodeBody = zod.object({
+export const ExchangeMobileTokenBody = zod.object({
   "code": zod.string().min(1),
   "code_verifier": zod.string().min(1),
   "redirect_uri": zod.string().url().min(1),
@@ -85,25 +82,13 @@ export const ExchangeMobileAuthorizationCodeBody = zod.object({
   "nonce": zod.string().min(1).optional()
 })
 
-export const ExchangeMobileAuthorizationCodeResponse = zod.object({
+export const ExchangeMobileTokenResponse = zod.object({
   "token": zod.string()
 })
 
 
 /**
- * @summary Delete a mobile session token
- */
-export const LogoutMobileSessionHeader = zod.object({
-  "Authorization": zod.string().optional().describe('Opaque session token — `Bearer <sid>`.')
-})
-
-export const LogoutMobileSessionResponse = zod.object({
-  "success": zod.boolean()
-})
-
-
-/**
- * @summary List all security assessment frameworks
+ * @summary List all assessment frameworks
  */
 export const ListFrameworksResponseItem = zod.object({
   "id": zod.number(),
@@ -305,6 +290,117 @@ export const UpsertAnswerResponse = zod.object({
   "notes": zod.string().nullish(),
   "updatedAt": zod.coerce.date()
 })
+
+
+/**
+ * @summary List evidence files for a specific answer
+ */
+export const ListEvidenceParams = zod.object({
+  "assessmentId": zod.coerce.number(),
+  "questionId": zod.coerce.number()
+})
+
+export const ListEvidenceResponseItem = zod.object({
+  "id": zod.number(),
+  "assessmentId": zod.number(),
+  "questionId": zod.number(),
+  "userId": zod.string(),
+  "fileName": zod.string(),
+  "fileSize": zod.number(),
+  "contentType": zod.string(),
+  "objectPath": zod.string().describe('Path returned from storage upload, e.g. \/objects\/uploads\/uuid'),
+  "description": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
+})
+export const ListEvidenceResponse = zod.array(ListEvidenceResponseItem)
+
+
+/**
+ * @summary Register uploaded evidence for an answer
+ */
+export const AddEvidenceParams = zod.object({
+  "assessmentId": zod.coerce.number(),
+  "questionId": zod.coerce.number()
+})
+
+export const AddEvidenceBody = zod.object({
+  "fileName": zod.string(),
+  "fileSize": zod.number(),
+  "contentType": zod.string(),
+  "objectPath": zod.string(),
+  "description": zod.string().optional()
+})
+
+export const AddEvidenceResponse = zod.object({
+  "id": zod.number(),
+  "assessmentId": zod.number(),
+  "questionId": zod.number(),
+  "userId": zod.string(),
+  "fileName": zod.string(),
+  "fileSize": zod.number(),
+  "contentType": zod.string(),
+  "objectPath": zod.string().describe('Path returned from storage upload, e.g. \/objects\/uploads\/uuid'),
+  "description": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Delete an evidence file
+ */
+export const DeleteEvidenceParams = zod.object({
+  "assessmentId": zod.coerce.number(),
+  "evidenceId": zod.coerce.number()
+})
+
+export const DeleteEvidenceResponse = zod.void()
+
+
+/**
+ * @summary List all evidence for an assessment
+ */
+export const ListAllEvidenceParams = zod.object({
+  "assessmentId": zod.coerce.number()
+})
+
+export const ListAllEvidenceResponseItem = zod.object({
+  "id": zod.number(),
+  "assessmentId": zod.number(),
+  "questionId": zod.number(),
+  "userId": zod.string(),
+  "fileName": zod.string(),
+  "fileSize": zod.number(),
+  "contentType": zod.string(),
+  "objectPath": zod.string().describe('Path returned from storage upload, e.g. \/objects\/uploads\/uuid'),
+  "description": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
+})
+export const ListAllEvidenceResponse = zod.array(ListAllEvidenceResponseItem)
+
+
+/**
+ * @summary Request a presigned URL for direct-to-GCS upload
+ */
+export const RequestUploadUrlBody = zod.object({
+  "name": zod.string(),
+  "size": zod.number(),
+  "contentType": zod.string()
+})
+
+export const RequestUploadUrlResponse = zod.object({
+  "uploadURL": zod.string().describe('Presigned GCS PUT URL'),
+  "objectPath": zod.string().describe('Path to use when serving, e.g. \/objects\/uploads\/uuid')
+})
+
+
+/**
+ * @summary Serve an uploaded object
+ */
+export const GetObjectParams = zod.object({
+  "objectPath": zod.coerce.string()
+})
+
+export const GetObjectResponse = zod.unknown()
 
 
 /**

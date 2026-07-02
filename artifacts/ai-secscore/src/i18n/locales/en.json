@@ -1,0 +1,140 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "assessments": "Assessments",
+    "compare": "Compare",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Security Command Center",
+    "subtitle": "Platform overview and active assessment metrics.",
+    "totalAssessments": "Total Assessments",
+    "totalAssessmentsDesc": "Across all systems",
+    "inProgress": "In Progress",
+    "inProgressDesc": "Currently being evaluated",
+    "completed": "Completed",
+    "completedDesc": "Fully audited",
+    "avgScore": "Average Score",
+    "avgScoreDesc": "Overall security posture",
+    "recentAssessments": "Recent Assessments",
+    "recentAssessmentsDesc": "Latest activity on the platform",
+    "frameworkScores": "Top Framework Scores",
+    "frameworkScoresDesc": "Average performance across active frameworks",
+    "noFrameworkData": "No framework score data available",
+    "noRecent": "No recent assessments"
+  },
+  "assessments": {
+    "title": "Assessments",
+    "subtitle": "Manage and evaluate AI systems.",
+    "new": "New Assessment",
+    "createTitle": "Create Assessment",
+    "name": "Assessment Name",
+    "systemName": "System Name",
+    "description": "Description (Optional)",
+    "status": {
+      "in_progress": "In Progress",
+      "completed": "Completed"
+    },
+    "delete": "Delete Assessment?",
+    "deleteDesc": "This action cannot be undone. All answers and scores will be permanently deleted.",
+    "noAssessments": "No Assessments Found",
+    "startFirst": "Create your first assessment to begin evaluating your AI systems against security frameworks.",
+    "open": "Open Assessment"
+  },
+  "assessment": {
+    "back": "Back to Assessment",
+    "viewResults": "View Results",
+    "markComplete": "Mark as Completed",
+    "progress": "Complete",
+    "saving": "Saving",
+    "saved": "Saved",
+    "maturity": {
+      "0": "0",
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "na": "N/A"
+    },
+    "notes": "Evidence / Notes (optional)",
+    "evidence": "Evidence"
+  },
+  "results": {
+    "title": "Assessment Results",
+    "overallScore": "Overall Grade",
+    "grade": "Grade",
+    "riskLevel": "Risk Posture",
+    "frameworkScores": "Framework Performance",
+    "frameworkScoresDesc": "Radar analysis of security posture across frameworks",
+    "topGaps": "Top Remediation Priorities",
+    "topGapsDesc": "Critical and high severity gaps identified during assessment",
+    "remediation": "Recommended Action:",
+    "exportPdf": "PDF Report",
+    "exportJson": "JSON Export",
+    "weight": "Weight",
+    "executiveSummary": "Executive Summary",
+    "strengths": "Strengths",
+    "weaknesses": "Key Weaknesses",
+    "frameworkBreakdown": "Framework Breakdown"
+  },
+  "compare": {
+    "title": "Compare Assessments",
+    "subtitle": "Analyze progression between two different assessments.",
+    "selectFirst": "Select Baseline Assessment",
+    "selectSecond": "Select Target Assessment",
+    "comparison": "Framework Comparison",
+    "noSelection": "Select Assessments",
+    "baseline": "Baseline",
+    "target": "Target",
+    "overallProgression": "Overall Progression",
+    "detailedDeltas": "Detailed Deltas",
+    "detailedDeltasDesc": "Score differences by framework"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Configure global platform preferences.",
+    "description": "Adjust the importance of each framework when calculating overall assessment scores. A weight of 0 means the framework will not affect the overall score.",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "saved": "Settings Saved",
+    "frameworkWeights": "Framework Scoring Weights"
+  },
+  "evidence": {
+    "upload": "Upload Evidence",
+    "noEvidence": "No evidence uploaded",
+    "fileName": "File Name",
+    "fileSize": "Size",
+    "description": "Description",
+    "uploadSuccess": "Upload successful",
+    "delete": "Delete",
+    "uploading": "Uploading..."
+  },
+  "login": {
+    "title": "AI SecScore",
+    "subtitle": "Enterprise-grade LLM Security Assessment Platform. Authenticate to access the command center.",
+    "loginButton": "Authenticate via SSO",
+    "connecting": "Connecting..."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "notFound": "Not Found",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "noData": "No data available",
+    "riskLevel": {
+      "Critical": "Critical",
+      "High": "High",
+      "Medium": "Medium",
+      "Low": "Low"
+    },
+    "grade": {
+      "A": "A",
+      "B": "B",
+      "C": "C",
+      "D": "D",
+      "F": "F"
+    }
+  }
+}

@@ -156,6 +156,42 @@ export interface AnswerInput {
   notes?: string;
 }
 
+export interface Evidence {
+  id: number;
+  assessmentId: number;
+  questionId: number;
+  userId: string;
+  fileName: string;
+  fileSize: number;
+  contentType: string;
+  /** Path returned from storage upload, e.g. /objects/uploads/uuid */
+  objectPath: string;
+  /** @nullable */
+  description?: string | null;
+  createdAt: string;
+}
+
+export interface EvidenceInput {
+  fileName: string;
+  fileSize: number;
+  contentType: string;
+  objectPath: string;
+  description?: string;
+}
+
+export interface RequestUploadUrlBody {
+  name: string;
+  size: number;
+  contentType: string;
+}
+
+export interface RequestUploadUrlResponse {
+  /** Presigned GCS PUT URL */
+  uploadURL: string;
+  /** Path to use when serving, e.g. /objects/uploads/uuid */
+  objectPath: string;
+}
+
 export type AssessmentScoreGrade = typeof AssessmentScoreGrade[keyof typeof AssessmentScoreGrade];
 
 
@@ -291,7 +327,6 @@ returnTo?: string;
 export type HandleBrowserLoginCallbackParams = {
 code?: string;
 state?: string;
-iss?: string;
 };
 
 export type ListQuestionsParams = {

@@ -6,7 +6,10 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type HandleBrowserLoginCallbackParams = {
-code?: string;
-state?: string;
-};
+export interface EvidenceInput {
+  fileName: string;
+  fileSize: number;
+  contentType: string;
+  objectPath: string;
+  description?: string;
+}
