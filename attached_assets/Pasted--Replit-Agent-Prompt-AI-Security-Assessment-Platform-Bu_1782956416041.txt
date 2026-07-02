@@ -1,0 +1,46 @@
+# Replit Agent Prompt — AI Security Assessment Platform
+
+Build a fast, production-ready web application called **"AI SecScore"** — an AI Security Assessment platform that evaluates an organization's AI/LLM systems against multiple industry frameworks and outputs a maturity score.
+
+## Core functionality
+
+1. **Multi-framework assessment engine.** Include built-in question banks (checklist-style, 8–15 questions each) for the following frameworks:
+   - **OWASP Top 10 for LLM Applications (2025)** — one section per risk (LLM01 Prompt Injection, LLM02 Sensitive Information Disclosure, LLM03 Supply Chain, LLM04 Data and Model Poisoning, LLM05 Improper Output Handling, LLM06 Excessive Agency, LLM07 System Prompt Leakage, LLM08 Vector and Embedding Weaknesses, LLM09 Misinformation, LLM10 Unbounded Consumption)
+   - **NIST AI RMF 1.0** — organized by the four functions: Govern, Map, Measure, Manage
+   - **MITRE ATLAS** — coverage of key adversarial ML tactics (reconnaissance, resource development, ML attack staging, exfiltration, impact)
+   - **ISO/IEC 42001** — AI management system controls (governance, risk, lifecycle, data management)
+   - **Google SAIF** — the six core elements (secure-by-default foundations, detection & response, defenses, harmonized controls, adaptive controls, contextual risk)
+   - **Data Protection & Financial Compliance** — a section combining LGPD (Brazil) and BACEN cybersecurity requirements (Resolução 4.893 / 85) applied to AI pipelines: encryption, masking, tokenization, data minimization, data classification, incident response with regulator notification
+
+2. **Answer model.** Each question is answered on a maturity scale: 0 = Not implemented, 1 = Partially implemented, 2 = Largely implemented, 3 = Fully implemented, plus "N/A" (excluded from scoring). Each question has a weight (1–3) reflecting criticality.
+
+3. **Scoring engine.**
+   - Per-framework score = weighted average normalized to 0–100
+   - Overall AI Security Score = weighted average across frameworks (user can adjust framework weights in a settings panel; default equal weights)
+   - Map the score to a maturity grade: A (90–100), B (75–89), C (60–74), D (40–59), F (<40)
+   - Show a risk level label per framework: Critical / High / Medium / Low
+
+4. **Results dashboard.**
+   - Big headline card with the overall score and grade
+   - Radar/spider chart comparing all framework scores (use Recharts or Chart.js)
+   - Per-framework breakdown with progress bars
+   - "Top gaps" list: the 10 lowest-scoring high-weight questions, each with a short remediation recommendation
+   - Export the full report as PDF and JSON
+
+5. **Assessments management.** Users can create multiple assessments (e.g., per system or per project), save progress mid-assessment (auto-save), revisit and edit, and compare two assessments side by side to show improvement over time.
+
+## Technical requirements
+
+- **Stack:** React + TypeScript frontend, Express backend, PostgreSQL (Replit DB or built-in Postgres) for persistence
+- **Auth:** use Replit's built-in authentication (Replit Auth) so each user only sees their own assessments
+- **UI:** clean, modern, dark-mode-first security dashboard aesthetic; responsive for mobile; sidebar navigation per framework; progress indicator showing completion percentage of the current assessment
+- **Seed data:** ship all question banks pre-populated as JSON seed files so the app works immediately with no manual setup
+- **Deployment:** ready for one-click deployment on Replit
+
+## Nice-to-haves (if time allows)
+
+- Executive summary text auto-generated from the results (template-based, no external API needed)
+- CSV export of raw answers
+- A "quick assessment" mode using only the 5 highest-weight questions per framework
+
+Keep the code organized, typed, and commented. Prioritize getting a working end-to-end flow (create assessment → answer questions → see score → export report) before polish.

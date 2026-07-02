@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "AI SecScore"
+version = "1.0.0"
+id = "artifacts/ai-secscore"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21870
+
+[services.development]
+run = "pnpm --filter @workspace/ai-secscore run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/ai-secscore", "run", "build" ]
+publicDir = "artifacts/ai-secscore/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21870"
+BASE_PATH = "/"

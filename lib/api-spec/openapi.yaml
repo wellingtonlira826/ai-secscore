@@ -3,13 +3,26 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: AI SecScore — AI Security Assessment Platform API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: Auth
+    description: Browser and mobile authentication endpoints.
+  - name: Frameworks
+    description: Assessment framework and question operations
+  - name: Assessments
+    description: Assessment lifecycle operations
+  - name: Answers
+    description: Answer submission operations
+  - name: Scoring
+    description: Scoring and results operations
+  - name: Dashboard
+    description: Dashboard summary operations
+
 paths:
   /healthz:
     get:
@@ -24,7 +37,642 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/user:
+    get:
+      tags: [Auth]
+      operationId: getCurrentAuthUser
+      summary: Get the currently authenticated user
+      parameters:
+        - $ref: '#/components/parameters/AuthorizationSessionHeader'
+        - $ref: '#/components/parameters/SessionCookie'
+      responses:
+        '200':
+          description: Auth status resolved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthUserEnvelope'
+
+  /login:
+    get:
+      tags: [Auth]
+      operationId: beginBrowserLogin
+      summary: Start the browser OIDC login flow
+      parameters:
+        - name: returnTo
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '302':
+          description: Redirect to the OIDC authorization endpoint.
+
+  /callback:
+    get:
+      tags: [Auth]
+      operationId: handleBrowserLoginCallback
+      summary: Complete the browser OIDC login flow
+      parameters:
+        - name: code
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: state
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: iss
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uri
+      responses:
+        '302':
+          description: Redirect to the returnTo path on success.
+
+  /logout:
+    get:
+      tags: [Auth]
+      operationId: logoutBrowserSession
+      summary: Clear the session and begin OIDC logout
+      parameters:
+        - $ref: '#/components/parameters/AuthorizationSessionHeader'
+        - $ref: '#/components/parameters/SessionCookie'
+      responses:
+        '302':
+          description: Redirect to the OIDC provider logout URL.
+
+  /mobile-auth/token-exchange:
+    post:
+      tags: [Auth]
+      operationId: exchangeMobileAuthorizationCode
+      summary: Exchange a mobile OIDC code for a session token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MobileTokenExchangeRequest'
+      responses:
+        '200':
+          description: Session created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MobileTokenExchangeSuccess'
+        '400':
+          description: Missing or invalid required fields.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Token did not contain usable claims.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: Token exchange failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /mobile-auth/logout:
+    post:
+      tags: [Auth]
+      operationId: logoutMobileSession
+      summary: Delete a mobile session token
+      parameters:
+        - $ref: '#/components/parameters/AuthorizationSessionHeader'
+      responses:
+        '200':
+          description: Logout processed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutSuccess'
+
+  # ── Frameworks & Questions ──────────────────────────────────────────────────
+
+  /frameworks:
+    get:
+      tags: [Frameworks]
+      operationId: listFrameworks
+      summary: List all security assessment frameworks
+      responses:
+        "200":
+          description: List of frameworks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Framework"
+
+  /frameworks/{frameworkId}:
+    get:
+      tags: [Frameworks]
+      operationId: getFramework
+      summary: Get a framework with its questions
+      parameters:
+        - name: frameworkId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Framework with questions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FrameworkWithQuestions"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  /questions:
+    get:
+      tags: [Frameworks]
+      operationId: listQuestions
+      summary: List questions, optionally filtered by framework
+      parameters:
+        - name: frameworkId
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of questions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Question"
+
+  # ── Assessments ──────────────────────────────────────────────────────────────
+
+  /assessments:
+    get:
+      tags: [Assessments]
+      operationId: listAssessments
+      summary: List all assessments for the authenticated user
+      responses:
+        "200":
+          description: List of assessments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Assessment"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+    post:
+      tags: [Assessments]
+      operationId: createAssessment
+      summary: Create a new assessment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssessmentInput"
+      responses:
+        "201":
+          description: Created assessment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Assessment"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  /assessments/{assessmentId}:
+    get:
+      tags: [Assessments]
+      operationId: getAssessment
+      summary: Get an assessment by ID
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Assessment detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Assessment"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+    patch:
+      tags: [Assessments]
+      operationId: updateAssessment
+      summary: Update an assessment
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssessmentUpdate"
+      responses:
+        "200":
+          description: Updated assessment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Assessment"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+    delete:
+      tags: [Assessments]
+      operationId: deleteAssessment
+      summary: Delete an assessment
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  # ── Answers ───────────────────────────────────────────────────────────────────
+
+  /assessments/{assessmentId}/answers:
+    get:
+      tags: [Answers]
+      operationId: listAnswers
+      summary: Get all answers for an assessment
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of answers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Answer"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Assessment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  /assessments/{assessmentId}/answers/{questionId}:
+    put:
+      tags: [Answers]
+      operationId: upsertAnswer
+      summary: Save or update an answer for a question
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnswerInput"
+      responses:
+        "200":
+          description: Saved answer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Answer"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  # ── Scoring & Results ─────────────────────────────────────────────────────────
+
+  /assessments/{assessmentId}/score:
+    get:
+      tags: [Scoring]
+      operationId: getAssessmentScore
+      summary: Get the computed score for an assessment
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Assessment score
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentScore"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  /assessments/{assessmentId}/gaps:
+    get:
+      tags: [Scoring]
+      operationId: getAssessmentGaps
+      summary: Get the top 10 highest-weight lowest-scoring questions
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Top gap items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GapItem"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  /assessments/{assessmentId}/summary:
+    get:
+      tags: [Scoring]
+      operationId: getAssessmentSummary
+      summary: Get a template-based executive summary for an assessment
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Executive summary text
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutiveSummary"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  /assessments/compare:
+    get:
+      tags: [Assessments]
+      operationId: compareAssessments
+      summary: Compare two assessments side by side
+      parameters:
+        - name: id1
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: id2
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Comparison result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentComparison"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: One or both assessments not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  # ── Framework weights ─────────────────────────────────────────────────────────
+
+  /framework-weights:
+    get:
+      tags: [Frameworks]
+      operationId: listFrameworkWeights
+      summary: Get user-specific framework weights
+      responses:
+        "200":
+          description: Framework weights
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FrameworkWeight"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+    put:
+      tags: [Frameworks]
+      operationId: updateFrameworkWeights
+      summary: Update user-specific framework weights
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FrameworkWeightsInput"
+      responses:
+        "200":
+          description: Updated framework weights
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FrameworkWeight"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  # ── Dashboard (wow) ───────────────────────────────────────────────────────────
+
+  /dashboard:
+    get:
+      tags: [Dashboard]
+      operationId: getDashboard
+      summary: Get dashboard summary stats
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
 components:
+  parameters:
+    AuthorizationSessionHeader:
+      name: Authorization
+      in: header
+      required: false
+      description: Opaque session token — `Bearer <sid>`.
+      schema:
+        type: string
+    SessionCookie:
+      name: sid
+      in: cookie
+      required: false
+      description: Browser session cookie.
+      schema:
+        type: string
+
   schemas:
     HealthStatus:
       type: object
@@ -34,3 +682,389 @@ components:
       required:
         - status
 
+    # ── Auth schemas ──────────────────────────────────────────────────────────
+    AuthUser:
+      type: object
+      required: [id, email, firstName, lastName, profileImageUrl]
+      properties:
+        id:
+          type: string
+        email:
+          type: ["string", "null"]
+          format: email
+        firstName:
+          type: ["string", "null"]
+        lastName:
+          type: ["string", "null"]
+        profileImageUrl:
+          type: ["string", "null"]
+    AuthUserEnvelope:
+      type: object
+      required: [user]
+      properties:
+        user:
+          oneOf:
+            - $ref: '#/components/schemas/AuthUser'
+            - type: 'null'
+    MobileTokenExchangeRequest:
+      type: object
+      required: [code, code_verifier, redirect_uri, state]
+      properties:
+        code:
+          type: string
+          minLength: 1
+        code_verifier:
+          type: string
+          minLength: 1
+        redirect_uri:
+          type: string
+          minLength: 1
+          format: uri
+        state:
+          type: string
+          minLength: 1
+        nonce:
+          type: string
+          minLength: 1
+    MobileTokenExchangeSuccess:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
+    LogoutSuccess:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+          const: true
+    ErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    # ── Domain schemas ────────────────────────────────────────────────────────
+    Framework:
+      type: object
+      required: [id, name, slug, description, defaultWeight, questionCount]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+        defaultWeight:
+          type: number
+          description: Default weight (0.0–1.0, equal by default)
+        questionCount:
+          type: integer
+
+    FrameworkWithQuestions:
+      type: object
+      required: [id, name, slug, description, defaultWeight, questions]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+        defaultWeight:
+          type: number
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Question"
+
+    Question:
+      type: object
+      required: [id, frameworkId, frameworkName, section, text, weight, order]
+      properties:
+        id:
+          type: integer
+        frameworkId:
+          type: integer
+        frameworkName:
+          type: string
+        section:
+          type: string
+        text:
+          type: string
+        weight:
+          type: integer
+          description: Criticality weight 1–3
+        order:
+          type: integer
+        remediation:
+          type: ["string", "null"]
+          description: Short remediation guidance shown in gaps
+
+    Assessment:
+      type: object
+      required: [id, userId, name, systemName, status, completionPct, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: string
+        name:
+          type: string
+        systemName:
+          type: string
+        description:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [in_progress, completed]
+        completionPct:
+          type: number
+          description: Percentage of questions answered (0–100)
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    AssessmentInput:
+      type: object
+      required: [name, systemName]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        systemName:
+          type: string
+          minLength: 1
+        description:
+          type: string
+
+    AssessmentUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        systemName:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        status:
+          type: string
+          enum: [in_progress, completed]
+
+    Answer:
+      type: object
+      required: [id, assessmentId, questionId, maturityLevel, updatedAt]
+      properties:
+        id:
+          type: integer
+        assessmentId:
+          type: integer
+        questionId:
+          type: integer
+        maturityLevel:
+          type: ["integer", "null"]
+          description: "0=Not implemented, 1=Partial, 2=Largely, 3=Fully, null=N/A"
+        notes:
+          type: ["string", "null"]
+        updatedAt:
+          type: string
+          format: date-time
+
+    AnswerInput:
+      type: object
+      required: [maturityLevel]
+      properties:
+        maturityLevel:
+          type: ["integer", "null"]
+          description: "0=Not implemented, 1=Partial, 2=Largely, 3=Fully, null=N/A"
+        notes:
+          type: string
+
+    AssessmentScore:
+      type: object
+      required: [assessmentId, overallScore, grade, riskLevel, frameworkScores, answeredCount, totalCount]
+      properties:
+        assessmentId:
+          type: integer
+        overallScore:
+          type: number
+          description: Weighted average 0–100
+        grade:
+          type: string
+          enum: [A, B, C, D, F]
+        riskLevel:
+          type: string
+          enum: [Critical, High, Medium, Low]
+        frameworkScores:
+          type: array
+          items:
+            $ref: "#/components/schemas/FrameworkScore"
+        answeredCount:
+          type: integer
+        totalCount:
+          type: integer
+
+    FrameworkScore:
+      type: object
+      required: [frameworkId, frameworkName, score, riskLevel, answeredCount, totalCount]
+      properties:
+        frameworkId:
+          type: integer
+        frameworkName:
+          type: string
+        score:
+          type: number
+        riskLevel:
+          type: string
+          enum: [Critical, High, Medium, Low]
+        answeredCount:
+          type: integer
+        totalCount:
+          type: integer
+
+    GapItem:
+      type: object
+      required: [questionId, questionText, section, frameworkId, frameworkName, weight, score, maturityLevel, remediation]
+      properties:
+        questionId:
+          type: integer
+        questionText:
+          type: string
+        section:
+          type: string
+        frameworkId:
+          type: integer
+        frameworkName:
+          type: string
+        weight:
+          type: integer
+        score:
+          type: number
+        maturityLevel:
+          type: ["integer", "null"]
+        remediation:
+          type: ["string", "null"]
+
+    ExecutiveSummary:
+      type: object
+      required: [assessmentId, assessmentName, systemName, overallScore, grade, summaryText, strengths, weaknesses, recommendations]
+      properties:
+        assessmentId:
+          type: integer
+        assessmentName:
+          type: string
+        systemName:
+          type: string
+        overallScore:
+          type: number
+        grade:
+          type: string
+        summaryText:
+          type: string
+        strengths:
+          type: array
+          items:
+            type: string
+        weaknesses:
+          type: array
+          items:
+            type: string
+        recommendations:
+          type: array
+          items:
+            type: string
+
+    AssessmentComparison:
+      type: object
+      required: [assessment1, assessment2, frameworkDiffs, overallDiff]
+      properties:
+        assessment1:
+          $ref: "#/components/schemas/AssessmentScore"
+        assessment2:
+          $ref: "#/components/schemas/AssessmentScore"
+        overallDiff:
+          type: number
+          description: Difference in overall score (assessment2 - assessment1)
+        frameworkDiffs:
+          type: array
+          items:
+            $ref: "#/components/schemas/FrameworkDiff"
+
+    FrameworkDiff:
+      type: object
+      required: [frameworkId, frameworkName, score1, score2, diff]
+      properties:
+        frameworkId:
+          type: integer
+        frameworkName:
+          type: string
+        score1:
+          type: number
+        score2:
+          type: number
+        diff:
+          type: number
+
+    FrameworkWeight:
+      type: object
+      required: [frameworkId, frameworkName, weight]
+      properties:
+        frameworkId:
+          type: integer
+        frameworkName:
+          type: string
+        weight:
+          type: number
+
+    FrameworkWeightsInput:
+      type: object
+      required: [weights]
+      properties:
+        weights:
+          type: array
+          items:
+            type: object
+            required: [frameworkId, weight]
+            properties:
+              frameworkId:
+                type: integer
+              weight:
+                type: number
+
+    DashboardSummary:
+      type: object
+      required: [totalAssessments, inProgressCount, completedCount, avgScore, recentAssessments, topFrameworkScores]
+      properties:
+        totalAssessments:
+          type: integer
+        inProgressCount:
+          type: integer
+        completedCount:
+          type: integer
+        avgScore:
+          type: ["number", "null"]
+        recentAssessments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Assessment"
+        topFrameworkScores:
+          type: array
+          items:
+            type: object
+            required: [frameworkName, avgScore]
+            properties:
+              frameworkName:
+                type: string
+              avgScore:
+                type: number
