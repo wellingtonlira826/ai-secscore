@@ -1,25 +1,37 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@workspace/replit-auth-web";
-import { 
-  Shield, 
-  LayoutDashboard, 
-  ClipboardList, 
-  GitCompare, 
+import { useTranslation } from "react-i18next";
+import {
+  Shield,
+  LayoutDashboard,
+  ClipboardList,
+  GitCompare,
   Settings,
-  LogOut
+  LogOut,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/contexts/ThemeContext";
 
-const NAV_ITEMS = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/assessments", label: "Assessments", icon: ClipboardList },
-  { href: "/assessments/compare", label: "Compare", icon: GitCompare },
-  { href: "/settings", label: "Settings", icon: Settings },
+const LANGUAGES = [
+  { code: "en", label: "EN" },
+  { code: "es", label: "ES" },
+  { code: "pt-BR", label: "PT" },
 ];
 
 export function Sidebar() {
   const [location] = useLocation();
   const { user, logout } = useAuth();
+  const { t, i18n } = useTranslation();
+  const { theme, toggleTheme } = useTheme();
+
+  const NAV_ITEMS = [
+    { href: "/", label: t("nav.dashboard"), icon: LayoutDashboard },
+    { href: "/assessments", label: t("nav.assessments"), icon: ClipboardList },
+    { href: "/assessments/compare", label: t("nav.compare"), icon: GitCompare },
+    { href: "/settings", label: t("nav.settings"), icon: Settings },
+  ];
 
   return (
     <div className="w-64 border-r border-border bg-sidebar flex flex-col h-screen overflow-hidden">
@@ -30,16 +42,17 @@ export function Sidebar() {
 
       <div className="flex-1 overflow-y-auto py-6 px-3 flex flex-col gap-1">
         {NAV_ITEMS.map((item) => {
-          const isActive = location === item.href || 
-                           (item.href !== "/" && location.startsWith(item.href));
-          
+          const isActive =
+            location === item.href ||
+            (item.href !== "/" && location.startsWith(item.href));
+
           return (
             <Link key={item.href} href={item.href}>
               <div
                 className={cn(
                   "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer",
-                  isActive 
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground" 
+                  isActive
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
                     : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
                 )}
               >
@@ -51,11 +64,41 @@ export function Sidebar() {
         })}
       </div>
 
-      <div className="p-4 border-t border-sidebar-border shrink-0">
+      <div className="p-4 border-t border-sidebar-border shrink-0 space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1">
+            {LANGUAGES.map((lang) => (
+              <button
+                key={lang.code}
+                onClick={() => i18n.changeLanguage(lang.code)}
+                className={cn(
+                  "px-2 py-1 rounded text-xs font-medium transition-colors",
+                  i18n.language === lang.code || i18n.language.startsWith(lang.code.split("-")[0] + "-") && lang.code.includes("-")
+                    ? "bg-primary text-primary-foreground"
+                    : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+                )}
+              >
+                {lang.label}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={toggleTheme}
+            className="p-1.5 rounded-md text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
+            title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+        </div>
+
         <div className="flex items-center justify-between">
           <div className="flex items-center truncate">
             {user?.profileImageUrl ? (
-              <img src={user.profileImageUrl} alt="Avatar" className="w-8 h-8 rounded-full border border-border shrink-0" />
+              <img
+                src={user.profileImageUrl}
+                alt="Avatar"
+                className="w-8 h-8 rounded-full border border-border shrink-0"
+              />
             ) : (
               <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0 border border-border">
                 <span className="text-xs font-bold text-muted-foreground">
@@ -64,11 +107,13 @@ export function Sidebar() {
               </div>
             )}
             <div className="ml-3 truncate">
-              <p className="text-sm font-medium truncate">{user?.firstName || user?.email || "User"}</p>
+              <p className="text-sm font-medium truncate">
+                {user?.firstName || user?.email || "User"}
+              </p>
               <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
             </div>
           </div>
-          <button 
+          <button
             onClick={logout}
             className="p-2 text-muted-foreground hover:text-foreground rounded-md hover:bg-sidebar-accent transition-colors"
             title="Log out"
