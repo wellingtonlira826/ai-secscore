@@ -6,16 +6,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Plus, Trash2, FileText, ChevronRight } from "lucide-react";
+import { Plus, Trash2, FileText, ChevronRight, ClipboardList } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 export default function Assessments() {
+  const { t } = useTranslation();
   const [_, setLocation] = useLocation();
   const { data: assessments, isLoading } = useListAssessments();
   const createAssessment = useCreateAssessment();
@@ -28,7 +30,7 @@ export default function Assessments() {
 
   const handleCreate = () => {
     if (!newAssessment.name || !newAssessment.systemName) {
-      toast({ title: "Error", description: "Name and System Name are required", variant: "destructive" });
+      toast({ title: t('common.error'), description: "Name and System Name are required", variant: "destructive" });
       return;
     }
     
@@ -40,7 +42,7 @@ export default function Assessments() {
         setLocation(`/assessments/${data.id}`);
       },
       onError: (err: any) => {
-        toast({ title: "Failed to create", description: err.message || "Unknown error", variant: "destructive" });
+        toast({ title: t('common.error'), description: err.message || "Unknown error", variant: "destructive" });
       }
     });
   };
@@ -49,7 +51,7 @@ export default function Assessments() {
     deleteAssessment.mutate({ assessmentId: id }, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getListAssessmentsQueryKey() });
-        toast({ title: "Deleted", description: "Assessment removed." });
+        toast({ title: t('common.delete'), description: "Assessment removed." });
       }
     });
   };
@@ -58,24 +60,24 @@ export default function Assessments() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Assessments</h1>
-          <p className="text-muted-foreground mt-1">Manage and evaluate AI systems.</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t('assessments.title')}</h1>
+          <p className="text-muted-foreground mt-1">{t('assessments.subtitle')}</p>
         </div>
         
         <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button className="shrink-0 gap-2">
               <Plus className="w-4 h-4" />
-              New Assessment
+              {t('assessments.new')}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Create Assessment</DialogTitle>
+              <DialogTitle>{t('assessments.createTitle')}</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Assessment Name</Label>
+                <Label htmlFor="name">{t('assessments.name')}</Label>
                 <Input 
                   id="name" 
                   value={newAssessment.name} 
@@ -84,7 +86,7 @@ export default function Assessments() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="systemName">System Name</Label>
+                <Label htmlFor="systemName">{t('assessments.systemName')}</Label>
                 <Input 
                   id="systemName" 
                   value={newAssessment.systemName} 
@@ -93,7 +95,7 @@ export default function Assessments() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="description">Description (Optional)</Label>
+                <Label htmlFor="description">{t('assessments.description')}</Label>
                 <Textarea 
                   id="description" 
                   value={newAssessment.description} 
@@ -104,7 +106,7 @@ export default function Assessments() {
             </div>
             <DialogFooter>
               <Button disabled={createAssessment.isPending} onClick={handleCreate}>
-                {createAssessment.isPending ? "Creating..." : "Create Assessment"}
+                {createAssessment.isPending ? t('common.loading') : t('assessments.createTitle')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -128,15 +130,15 @@ export default function Assessments() {
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Assessment?</AlertDialogTitle>
+                      <AlertDialogTitle>{t('assessments.delete')}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This action cannot be undone. All answers and scores will be permanently deleted.
+                        {t('assessments.deleteDesc')}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                       <AlertDialogAction onClick={() => handleDelete(assessment.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                        Delete
+                        {t('common.delete')}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -153,14 +155,14 @@ export default function Assessments() {
                 
                 <div className="mt-auto space-y-4">
                   <div className="flex items-center justify-between">
-                    <Badge variant={assessment.status === 'completed' ? 'default' : 'outline'} className="capitalize">
-                      {assessment.status.replace('_', ' ')}
+                    <Badge variant={assessment.status === 'completed' ? 'default' : 'outline'}>
+                      {assessment.status === 'completed' ? t('assessments.status.completed') : t('assessments.status.in_progress')}
                     </Badge>
-                    <span className="text-sm font-medium">{Math.round(assessment.completionPct)}% Complete</span>
+                    <span className="text-sm font-medium">{Math.round(assessment.completionPct)}% {t('assessment.progress')}</span>
                   </div>
                   <Progress value={assessment.completionPct} className="h-2" />
                   <div className="pt-2 flex items-center justify-between text-sm text-muted-foreground group-hover:text-primary transition-colors">
-                    <span className="flex items-center gap-1.5"><FileText className="w-4 h-4" /> Open Assessment</span>
+                    <span className="flex items-center gap-1.5"><FileText className="w-4 h-4" /> {t('assessments.open')}</span>
                     <ChevronRight className="w-4 h-4" />
                   </div>
                 </div>
@@ -171,16 +173,13 @@ export default function Assessments() {
       ) : (
         <div className="text-center py-24 border border-dashed rounded-xl bg-card/50">
           <ClipboardList className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-          <h3 className="text-lg font-medium">No Assessments Found</h3>
+          <h3 className="text-lg font-medium">{t('assessments.noAssessments')}</h3>
           <p className="text-muted-foreground mt-1 mb-6 max-w-sm mx-auto">
-            Create your first assessment to begin evaluating your AI systems against security frameworks.
+            {t('assessments.startFirst')}
           </p>
-          <Button onClick={() => setCreateDialogOpen(true)}>Create Assessment</Button>
+          <Button onClick={() => setCreateDialogOpen(true)}>{t('assessments.createTitle')}</Button>
         </div>
       )}
     </div>
   );
 }
-
-// Temporary icon for empty state
-import { ClipboardList } from "lucide-react";

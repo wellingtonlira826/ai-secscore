@@ -11,8 +11,10 @@ import { Badge } from "@/components/ui/badge";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, Tooltip as RechartsTooltip, ResponsiveContainer } from "recharts";
 import { GitCompare, ArrowRight, ArrowDown, ArrowUp, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 export default function CompareAssessments() {
+  const { t } = useTranslation();
   const { data: assessments, isLoading: loadingAssessments } = useListAssessments();
   
   const [id1, setId1] = useState<string>("");
@@ -42,15 +44,15 @@ export default function CompareAssessments() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Compare Assessments</h1>
-        <p className="text-muted-foreground mt-1">Analyze progression between two different assessments.</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('compare.title')}</h1>
+        <p className="text-muted-foreground mt-1">{t('compare.subtitle')}</p>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <GitCompare className="w-5 h-5 text-primary" />
-            Select Assessments
+            {t('compare.noSelection')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -58,7 +60,7 @@ export default function CompareAssessments() {
             <div className="flex-1 w-full">
               <Select value={id1} onValueChange={setId1}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Baseline Assessment" />
+                  <SelectValue placeholder={t('compare.selectFirst')} />
                 </SelectTrigger>
                 <SelectContent>
                   {assessments?.map(a => (
@@ -78,7 +80,7 @@ export default function CompareAssessments() {
             <div className="flex-1 w-full">
               <Select value={id2} onValueChange={setId2}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Target Assessment" />
+                  <SelectValue placeholder={t('compare.selectSecond')} />
                 </SelectTrigger>
                 <SelectContent>
                   {assessments?.map(a => (
@@ -104,29 +106,29 @@ export default function CompareAssessments() {
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="text-center p-6 flex flex-col justify-center border-l-4 border-l-muted">
-              <div className="text-sm font-medium text-muted-foreground mb-2">Baseline</div>
+              <div className="text-sm font-medium text-muted-foreground mb-2">{t('compare.baseline')}</div>
               <div className="text-4xl font-bold mb-2">{Math.round(comparison.assessment1.overallScore)}</div>
-              <Badge variant="outline" className="mx-auto">{comparison.assessment1.grade} Grade</Badge>
+              <Badge variant="outline" className="mx-auto">{comparison.assessment1.grade} {t('results.grade')}</Badge>
             </Card>
             
             <Card className="text-center p-6 flex flex-col justify-center items-center bg-primary/5 border-primary/20">
-              <div className="text-sm font-medium text-muted-foreground mb-2">Overall Progression</div>
+              <div className="text-sm font-medium text-muted-foreground mb-2">{t('compare.overallProgression')}</div>
               <div className="text-5xl font-bold">
                 {formatDiff(comparison.overallDiff)}
               </div>
             </Card>
 
             <Card className="text-center p-6 flex flex-col justify-center border-l-4 border-l-primary">
-              <div className="text-sm font-medium text-muted-foreground mb-2">Target</div>
+              <div className="text-sm font-medium text-muted-foreground mb-2">{t('compare.target')}</div>
               <div className="text-4xl font-bold mb-2">{Math.round(comparison.assessment2.overallScore)}</div>
-              <Badge className="mx-auto bg-primary">{comparison.assessment2.grade} Grade</Badge>
+              <Badge className="mx-auto bg-primary">{comparison.assessment2.grade} {t('results.grade')}</Badge>
             </Card>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Framework Comparison</CardTitle>
+                <CardTitle>{t('compare.comparison')}</CardTitle>
               </CardHeader>
               <CardContent className="h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -139,8 +141,8 @@ export default function CompareAssessments() {
                       itemStyle={{ color: 'hsl(var(--foreground))' }}
                     />
                     <Legend wrapperStyle={{ paddingTop: '20px' }}/>
-                    <Bar dataKey={comparison.assessment1.assessmentId.toString()} name="Baseline" fill="hsl(var(--muted-foreground))" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey={comparison.assessment2.assessmentId.toString()} name="Target" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey={comparison.assessment1.assessmentId.toString()} name={t('compare.baseline')} fill="hsl(var(--muted-foreground))" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey={comparison.assessment2.assessmentId.toString()} name={t('compare.target')} fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -148,8 +150,8 @@ export default function CompareAssessments() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Detailed Deltas</CardTitle>
-                <CardDescription>Score differences by framework</CardDescription>
+                <CardTitle>{t('compare.detailedDeltas')}</CardTitle>
+                <CardDescription>{t('compare.detailedDeltasDesc')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">

@@ -13,6 +13,7 @@ import {
 } from "recharts";
 import { ShieldAlert, Activity, CheckCircle2, ListTodo } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "react-i18next";
 
 function StatCard({ title, value, icon: Icon, description }: any) {
   return (
@@ -30,6 +31,7 @@ function StatCard({ title, value, icon: Icon, description }: any) {
 }
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   const { data: dashboard, isLoading, error } = useGetDashboard();
 
   if (isLoading) {
@@ -56,7 +58,7 @@ export default function Dashboard() {
   if (error || !dashboard) {
     return (
       <div className="p-8 text-center text-destructive">
-        Failed to load dashboard data.
+        {t('common.error')}
       </div>
     );
   }
@@ -64,42 +66,42 @@ export default function Dashboard() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Security Command Center</h1>
-        <p className="text-muted-foreground mt-1">Platform overview and active assessment metrics.</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.title')}</h1>
+        <p className="text-muted-foreground mt-1">{t('dashboard.subtitle')}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard 
-          title="Total Assessments" 
+          title={t('dashboard.totalAssessments')}
           value={dashboard.totalAssessments} 
           icon={ListTodo} 
-          description="Across all systems"
+          description={t('dashboard.totalAssessmentsDesc')}
         />
         <StatCard 
-          title="In Progress" 
+          title={t('dashboard.inProgress')}
           value={dashboard.inProgressCount} 
           icon={Activity}
-          description="Currently being evaluated"
+          description={t('dashboard.inProgressDesc')}
         />
         <StatCard 
-          title="Completed" 
+          title={t('dashboard.completed')}
           value={dashboard.completedCount} 
           icon={CheckCircle2}
-          description="Fully audited"
+          description={t('dashboard.completedDesc')}
         />
         <StatCard 
-          title="Average Score" 
+          title={t('dashboard.avgScore')}
           value={dashboard.avgScore !== null ? Math.round(dashboard.avgScore) : "N/A"} 
           icon={ShieldAlert}
-          description="Overall security posture"
+          description={t('dashboard.avgScoreDesc')}
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="flex flex-col h-[450px]">
           <CardHeader>
-            <CardTitle>Top Framework Scores</CardTitle>
-            <CardDescription>Average performance across active frameworks</CardDescription>
+            <CardTitle>{t('dashboard.frameworkScores')}</CardTitle>
+            <CardDescription>{t('dashboard.frameworkScoresDesc')}</CardDescription>
           </CardHeader>
           <CardContent className="flex-1 min-h-0">
             {dashboard.topFrameworkScores && dashboard.topFrameworkScores.length > 0 ? (
@@ -117,7 +119,7 @@ export default function Dashboard() {
               </ResponsiveContainer>
             ) : (
               <div className="flex h-full items-center justify-center text-muted-foreground">
-                No framework score data available
+                {t('dashboard.noFrameworkData')}
               </div>
             )}
           </CardContent>
@@ -125,8 +127,8 @@ export default function Dashboard() {
 
         <Card className="flex flex-col h-[450px]">
           <CardHeader>
-            <CardTitle>Recent Assessments</CardTitle>
-            <CardDescription>Latest activity on the platform</CardDescription>
+            <CardTitle>{t('dashboard.recentAssessments')}</CardTitle>
+            <CardDescription>{t('dashboard.recentAssessmentsDesc')}</CardDescription>
           </CardHeader>
           <CardContent className="flex-1 overflow-auto">
             {dashboard.recentAssessments && dashboard.recentAssessments.length > 0 ? (
@@ -140,7 +142,7 @@ export default function Dashboard() {
                       </div>
                       <div className="flex items-center gap-3">
                         <Badge variant={assessment.status === 'completed' ? 'default' : 'secondary'}>
-                          {assessment.status === 'completed' ? 'Completed' : 'In Progress'}
+                          {assessment.status === 'completed' ? t('assessments.status.completed') : t('assessments.status.in_progress')}
                         </Badge>
                         <div className="text-sm font-medium w-12 text-right">
                           {Math.round(assessment.completionPct)}%
@@ -152,7 +154,7 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="flex h-full items-center justify-center text-muted-foreground">
-                No recent assessments
+                {t('dashboard.noRecent')}
               </div>
             )}
           </CardContent>
