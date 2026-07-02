@@ -86,25 +86,31 @@ export default function ResultsDashboard() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500 print:bg-white print:text-black print:p-0">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 print:hidden">
-        <div>
-          <div className="flex items-center gap-2 text-muted-foreground mb-2">
-            <Link href={`/assessments/${id}`}>
-              <span className="hover:text-primary cursor-pointer flex items-center text-sm font-medium">
-                <ChevronLeft className="w-4 h-4 mr-1" /> {t('assessment.back')}
-              </span>
-            </Link>
+      <div className="flex flex-col gap-3 print:hidden">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2 text-muted-foreground mb-2">
+              <Link href={`/assessments/${id}`}>
+                <span className="hover:text-primary cursor-pointer flex items-center text-sm font-medium">
+                  <ChevronLeft className="w-4 h-4 mr-1" /> {t('assessment.back')}
+                </span>
+              </Link>
+            </div>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('results.title')}</h1>
+            <p className="text-muted-foreground mt-1 text-sm">{assessment.name} • {assessment.systemName}</p>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('results.title')}</h1>
-          <p className="text-muted-foreground mt-1">{assessment.name} • {assessment.systemName}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={handleExportJson} className="gap-2">
-            <DownloadCloud className="w-4 h-4" /> {t('results.exportJson')}
-          </Button>
-          <Button onClick={handlePrint} className="gap-2">
-            <Download className="w-4 h-4" /> {t('results.exportPdf')}
-          </Button>
+          <div className="flex items-center gap-2 shrink-0">
+            <Button variant="outline" size="sm" onClick={handleExportJson} className="gap-1.5">
+              <DownloadCloud className="w-4 h-4" />
+              <span className="hidden sm:inline">{t('results.exportJson')}</span>
+              <span className="sm:hidden">JSON</span>
+            </Button>
+            <Button size="sm" onClick={handlePrint} className="gap-1.5">
+              <Download className="w-4 h-4" />
+              <span className="hidden sm:inline">{t('results.exportPdf')}</span>
+              <span className="sm:hidden">PDF</span>
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -119,9 +125,9 @@ export default function ResultsDashboard() {
       </div>
 
       {/* Top Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Score Card */}
-        <Card className="flex flex-col items-center justify-center p-8 text-center bg-gradient-to-br from-card to-card/50">
+        <Card className="flex flex-col items-center justify-center p-6 md:p-8 text-center bg-gradient-to-br from-card to-card/50">
           <div className="text-sm font-medium text-muted-foreground uppercase tracking-widest mb-4">{t('results.overallScore')}</div>
           <div className={cn("w-32 h-32 rounded-full flex items-center justify-center text-7xl font-bold border-4 shadow-xl mb-6", GRADE_COLORS[score.grade] || "text-foreground border-border")}>
             {score.grade}
@@ -131,7 +137,7 @@ export default function ResultsDashboard() {
         </Card>
 
         {/* Executive Summary */}
-        <Card className="lg:col-span-2">
+        <Card className="md:col-span-2">
           <CardHeader>
             <CardTitle>{t('results.executiveSummary')}</CardTitle>
           </CardHeader>
@@ -172,7 +178,7 @@ export default function ResultsDashboard() {
             <CardTitle>{t('results.frameworkScores')}</CardTitle>
             <CardDescription>{t('results.frameworkScoresDesc')}</CardDescription>
           </CardHeader>
-          <CardContent className="h-[350px]">
+          <CardContent className="h-[280px] md:h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
                 <PolarGrid stroke="hsl(var(--border))" />

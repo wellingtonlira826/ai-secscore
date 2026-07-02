@@ -60,7 +60,7 @@ export default function Assessments() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('assessments.title')}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('assessments.title')}</h1>
           <p className="text-muted-foreground mt-1">{t('assessments.subtitle')}</p>
         </div>
         
@@ -121,7 +121,7 @@ export default function Assessments() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {assessments.map(assessment => (
             <Card key={assessment.id} className="flex flex-col relative group">
-              <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute top-4 right-4 z-10 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10">

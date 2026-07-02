@@ -66,7 +66,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.title')}</h1>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('dashboard.title')}</h1>
         <p className="text-muted-foreground mt-1">{t('dashboard.subtitle')}</p>
       </div>
 
@@ -98,7 +98,7 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="flex flex-col h-[450px]">
+        <Card className="flex flex-col h-[320px] md:h-[450px]">
           <CardHeader>
             <CardTitle>{t('dashboard.frameworkScores')}</CardTitle>
             <CardDescription>{t('dashboard.frameworkScoresDesc')}</CardDescription>
@@ -125,7 +125,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="flex flex-col h-[450px]">
+        <Card className="flex flex-col h-[320px] md:h-[450px]">
           <CardHeader>
             <CardTitle>{t('dashboard.recentAssessments')}</CardTitle>
             <CardDescription>{t('dashboard.recentAssessmentsDesc')}</CardDescription>

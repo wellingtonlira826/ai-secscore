@@ -44,7 +44,7 @@ export default function CompareAssessments() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('compare.title')}</h1>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('compare.title')}</h1>
         <p className="text-muted-foreground mt-1">{t('compare.subtitle')}</p>
       </div>
 
@@ -104,24 +104,24 @@ export default function CompareAssessments() {
 
       {isReady && comparison && !loadingCompare && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="text-center p-6 flex flex-col justify-center border-l-4 border-l-muted">
-              <div className="text-sm font-medium text-muted-foreground mb-2">{t('compare.baseline')}</div>
-              <div className="text-4xl font-bold mb-2">{Math.round(comparison.assessment1.overallScore)}</div>
-              <Badge variant="outline" className="mx-auto">{comparison.assessment1.grade} {t('results.grade')}</Badge>
+          <div className="grid grid-cols-3 gap-3 md:gap-6">
+            <Card className="text-center p-4 md:p-6 flex flex-col justify-center border-l-4 border-l-muted">
+              <div className="text-xs md:text-sm font-medium text-muted-foreground mb-2">{t('compare.baseline')}</div>
+              <div className="text-2xl md:text-4xl font-bold mb-2">{Math.round(comparison.assessment1.overallScore)}</div>
+              <Badge variant="outline" className="mx-auto text-xs">{comparison.assessment1.grade}</Badge>
             </Card>
             
-            <Card className="text-center p-6 flex flex-col justify-center items-center bg-primary/5 border-primary/20">
-              <div className="text-sm font-medium text-muted-foreground mb-2">{t('compare.overallProgression')}</div>
-              <div className="text-5xl font-bold">
+            <Card className="text-center p-4 md:p-6 flex flex-col justify-center items-center bg-primary/5 border-primary/20">
+              <div className="text-xs md:text-sm font-medium text-muted-foreground mb-2 hidden sm:block">{t('compare.overallProgression')}</div>
+              <div className="text-3xl md:text-5xl font-bold">
                 {formatDiff(comparison.overallDiff)}
               </div>
             </Card>
 
-            <Card className="text-center p-6 flex flex-col justify-center border-l-4 border-l-primary">
-              <div className="text-sm font-medium text-muted-foreground mb-2">{t('compare.target')}</div>
-              <div className="text-4xl font-bold mb-2">{Math.round(comparison.assessment2.overallScore)}</div>
-              <Badge className="mx-auto bg-primary">{comparison.assessment2.grade} {t('results.grade')}</Badge>
+            <Card className="text-center p-4 md:p-6 flex flex-col justify-center border-l-4 border-l-primary">
+              <div className="text-xs md:text-sm font-medium text-muted-foreground mb-2">{t('compare.target')}</div>
+              <div className="text-2xl md:text-4xl font-bold mb-2">{Math.round(comparison.assessment2.overallScore)}</div>
+              <Badge className="mx-auto bg-primary text-xs">{comparison.assessment2.grade}</Badge>
             </Card>
           </div>
 
@@ -156,13 +156,13 @@ export default function CompareAssessments() {
               <CardContent>
                 <div className="space-y-4">
                   {comparison.frameworkDiffs.map(fd => (
-                    <div key={fd.frameworkId} className="flex items-center justify-between p-3 rounded-lg border bg-card">
-                      <div className="font-medium">{fd.frameworkName}</div>
-                      <div className="flex items-center gap-6 text-sm">
-                        <div className="text-muted-foreground w-12 text-right">{Math.round(fd.score1)}</div>
-                        <ArrowRight className="w-4 h-4 text-muted-foreground opacity-50" />
-                        <div className="font-medium w-12 text-right">{Math.round(fd.score2)}</div>
-                        <div className="w-20 flex justify-end font-bold">
+                    <div key={fd.frameworkId} className="flex items-center justify-between p-3 rounded-lg border bg-card gap-2">
+                      <div className="font-medium text-sm truncate min-w-0 flex-1">{fd.frameworkName}</div>
+                      <div className="flex items-center gap-2 md:gap-4 text-sm shrink-0">
+                        <div className="text-muted-foreground w-8 md:w-12 text-right">{Math.round(fd.score1)}</div>
+                        <ArrowRight className="w-3 h-3 md:w-4 md:h-4 text-muted-foreground opacity-50 shrink-0" />
+                        <div className="font-medium w-8 md:w-12 text-right">{Math.round(fd.score2)}</div>
+                        <div className="w-16 md:w-20 flex justify-end font-bold">
                           {formatDiff(fd.diff)}
                         </div>
                       </div>

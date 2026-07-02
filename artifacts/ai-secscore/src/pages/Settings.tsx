@@ -58,20 +58,20 @@ export default function Settings() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('settings.title')}</h1>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('settings.title')}</h1>
         <p className="text-muted-foreground mt-1">{t('settings.subtitle')}</p>
       </div>
 
       <Card className="max-w-3xl">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <CardTitle>{t('settings.frameworkWeights')}</CardTitle>
               <CardDescription>
                 {t('settings.description')}
               </CardDescription>
             </div>
-            <Button disabled={!hasChanges || updateWeights.isPending} onClick={handleSave} className="gap-2">
+            <Button disabled={!hasChanges || updateWeights.isPending} onClick={handleSave} className="gap-2 sm:shrink-0 w-full sm:w-auto">
               <Save className="w-4 h-4" />
               {updateWeights.isPending ? t('settings.saving') : t('settings.save')}
             </Button>

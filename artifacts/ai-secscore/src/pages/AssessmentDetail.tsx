@@ -11,29 +11,31 @@ import {
   useUpdateAssessment 
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, ChevronRight, Check, Loader2, ArrowRight } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CheckCircle2, Check, Loader2, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { useIsMobile } from "@/hooks/use-mobile";
 
-// Custom Segmented Control for Maturity Level
 function MaturitySelector({ value, onChange }: { value: number | null, onChange: (v: number | null) => void }) {
+  const { t } = useTranslation();
   const options = [
-    { val: 0, label: "0", desc: "Not Implemented" },
-    { val: 1, label: "1", desc: "Partially" },
-    { val: 2, label: "2", desc: "Largely" },
-    { val: 3, label: "3", desc: "Fully" },
-    { val: null, label: "N/A", desc: "Not Applicable" }
+    { val: 0, label: t('assessment.maturity.0'), desc: "Not Implemented" },
+    { val: 1, label: t('assessment.maturity.1'), desc: "Partially" },
+    { val: 2, label: t('assessment.maturity.2'), desc: "Largely" },
+    { val: 3, label: t('assessment.maturity.3'), desc: "Fully" },
+    { val: null, label: t('assessment.maturity.na'), desc: "Not Applicable" }
   ];
 
   return (
-    <div className="flex gap-1.5 p-1 bg-muted/50 rounded-lg w-max border border-border/50">
+    <div className="flex flex-wrap gap-1.5 p-1 bg-muted/50 rounded-lg border border-border/50">
       {options.map((opt, i) => {
         const isSelected = value === opt.val;
         return (
@@ -41,7 +43,7 @@ function MaturitySelector({ value, onChange }: { value: number | null, onChange:
             key={i}
             onClick={() => onChange(opt.val)}
             className={cn(
-              "px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
+              "flex-1 min-w-[2.5rem] px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
               isSelected 
                 ? "bg-primary text-primary-foreground shadow-sm ring-1 ring-primary/50" 
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -76,8 +78,6 @@ function QuestionItem({
   const triggerSave = (level: number | null, notes: string) => {
     setIsSaving(true);
     onSave(question.id, level, notes);
-    
-    // Simulate save delay for UI
     setTimeout(() => {
       setIsSaving(false);
       setShowSaved(true);
@@ -92,7 +92,6 @@ function QuestionItem({
 
   const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setLocalNotes(e.target.value);
-    
     if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     saveTimeoutRef.current = setTimeout(() => {
       triggerSave(localLevel, e.target.value);
@@ -101,36 +100,36 @@ function QuestionItem({
 
   return (
     <Card className="border-l-4 border-l-transparent hover:border-l-primary/50 transition-colors">
-      <CardContent className="p-6">
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="flex-1 space-y-2">
-            <div className="flex items-center gap-2 mb-1">
-              <Badge variant="outline" className="text-xs font-normal">Section: {question.section}</Badge>
-              <div className="flex gap-0.5 ml-2" title={`Criticality: ${question.weight}/3`}>
+      <CardContent className="p-4 md:p-6">
+        <div className="flex flex-col gap-4">
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2 mb-1">
+              <Badge variant="outline" className="text-xs font-normal truncate max-w-[200px]">{question.section}</Badge>
+              <div className="flex gap-0.5" title={`Criticality: ${question.weight}/3`}>
                 {[1,2,3].map(i => (
                   <div key={i} className={cn("w-2 h-2 rounded-full", i <= question.weight ? "bg-orange-500" : "bg-muted")} />
                 ))}
               </div>
             </div>
-            <h4 className="text-base font-medium leading-tight">{t(`questions.${question.id}.text`, question.text)}</h4>
+            <h4 className="text-sm md:text-base font-medium leading-snug">{t(`questions.${question.id}.text`, question.text) as string}</h4>
             {question.remediation && (
-              <p className="text-sm text-muted-foreground mt-2 border-l-2 pl-3 py-1 border-muted italic">
-                {t(`questions.${question.id}.remediation`, question.remediation)}
+              <p className="text-xs md:text-sm text-muted-foreground mt-2 border-l-2 pl-3 py-1 border-muted italic">
+                {t(`questions.${question.id}.remediation`, question.remediation) as string}
               </p>
             )}
           </div>
           
-          <div className="w-full lg:w-72 shrink-0 space-y-4 flex flex-col justify-between">
+          <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-muted-foreground">Maturity</span>
+              <span className="text-sm font-medium text-muted-foreground">{t('assessment.maturity.0') === '0' ? 'Maturity' : 'Maturidade'}</span>
               <div className="h-5 flex items-center">
                 {isSaving ? (
                   <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Loader2 className="w-3 h-3 animate-spin" /> Saving
+                    <Loader2 className="w-3 h-3 animate-spin" /> {t('assessment.saving')}
                   </span>
                 ) : showSaved ? (
                   <span className="text-xs text-emerald-500 flex items-center gap-1">
-                    <Check className="w-3 h-3" /> Saved
+                    <Check className="w-3 h-3" /> {t('assessment.saved')}
                   </span>
                 ) : null}
               </div>
@@ -139,8 +138,8 @@ function QuestionItem({
             <MaturitySelector value={localLevel} onChange={handleLevelChange} />
             
             <Textarea 
-              placeholder="Evidence / Notes (optional)" 
-              className="h-20 text-sm resize-none"
+              placeholder={t('assessment.notes')}
+              className="h-16 md:h-20 text-sm resize-none"
               value={localNotes}
               onChange={handleNotesChange}
             />
@@ -156,6 +155,8 @@ export default function AssessmentDetail() {
   const id = parseInt(params.id || "0");
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useTranslation();
+  const isMobile = useIsMobile();
 
   const { data: assessment, isLoading: loadingAsses } = useGetAssessment(id, { 
     query: { enabled: !!id, queryKey: getGetAssessmentQueryKey(id) } 
@@ -171,7 +172,6 @@ export default function AssessmentDetail() {
 
   const [activeFwId, setActiveFwId] = useState<number | null>(null);
 
-  // Initialize active framework
   useEffect(() => {
     if (frameworks && frameworks.length > 0 && !activeFwId) {
       setActiveFwId(frameworks[0].id);
@@ -181,17 +181,17 @@ export default function AssessmentDetail() {
   if (loadingAsses || loadingFw || loadingQ || loadingAns) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-12 w-1/3" />
-        <div className="flex gap-6">
-          <Skeleton className="w-64 h-[600px]" />
-          <Skeleton className="flex-1 h-[600px]" />
+        <Skeleton className="h-10 w-2/3" />
+        <div className="flex flex-col md:flex-row gap-6">
+          <Skeleton className="w-full md:w-64 h-48 md:h-[600px]" />
+          <Skeleton className="flex-1 h-[400px] md:h-[600px]" />
         </div>
       </div>
     );
   }
 
   if (!assessment || !frameworks || !questions || !answers) {
-    return <div className="p-8 text-center text-destructive">Failed to load assessment data.</div>;
+    return <div className="p-8 text-center text-destructive">{t('common.error')}</div>;
   }
 
   const activeQuestions = questions.filter(q => q.frameworkId === activeFwId);
@@ -204,7 +204,6 @@ export default function AssessmentDetail() {
       { assessmentId: id, questionId, data: { maturityLevel, notes } },
       {
         onSuccess: (data) => {
-          // Patch cache directly to avoid refetch loops
           queryClient.setQueryData(getListAnswersQueryKey(id), (old: any) => {
             if (!old) return [data];
             const exists = old.find((a: any) => a.id === data.id);
@@ -222,104 +221,152 @@ export default function AssessmentDetail() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getGetAssessmentQueryKey(id) });
-          toast({ title: "Assessment Completed", description: "You can now view the results." });
+          toast({ title: t('assessment.markComplete'), description: t('assessment.viewResults') });
         }
       }
     );
   };
 
   return (
-    <div className="h-full flex flex-col space-y-6 animate-in fade-in duration-500">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold tracking-tight">{assessment.name}</h1>
-            <Badge variant={assessment.status === 'completed' ? 'default' : 'outline'} className="uppercase">
+    <div className="flex flex-col gap-4 md:gap-6 animate-in fade-in duration-500">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2 md:gap-3">
+            <h1 className="text-xl md:text-3xl font-bold tracking-tight truncate">{assessment.name}</h1>
+            <Badge variant={assessment.status === 'completed' ? 'default' : 'outline'} className="uppercase shrink-0">
               {assessment.status.replace('_', ' ')}
             </Badge>
           </div>
-          <p className="text-muted-foreground mt-1">System: {assessment.systemName}</p>
+          <p className="text-muted-foreground mt-1 text-sm">System: {assessment.systemName}</p>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 shrink-0">
           <Link href={`/assessments/${id}/results`}>
-            <Button variant="outline" className="gap-2">
-              View Results <ArrowRight className="w-4 h-4" />
+            <Button variant="outline" size="sm" className="gap-1.5">
+              {t('assessment.viewResults')} <ArrowRight className="w-3.5 h-3.5" />
             </Button>
           </Link>
           {assessment.status !== 'completed' && (
-            <Button onClick={handleComplete} className="gap-2">
-              <CheckCircle2 className="w-4 h-4" />
-              Mark as Completed
+            <Button onClick={handleComplete} size="sm" className="gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">{t('assessment.markComplete')}</span>
+              <span className="sm:hidden">Complete</span>
             </Button>
           )}
         </div>
       </div>
 
-      <div className="flex gap-8 h-full min-h-[600px]">
-        {/* Sidebar Nav */}
-        <div className="w-64 shrink-0 space-y-2">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">Frameworks</h3>
-          {frameworks.map(fw => {
-            const fwQuestions = questions.filter(q => q.frameworkId === fw.id);
-            const fwAnswers = answers.filter(a => fwQuestions.some(q => q.id === a.questionId));
-            const fwAnswered = fwAnswers.filter(a => a.maturityLevel !== null || (a.notes && a.notes.length > 0)).length;
-            const isDone = fwQuestions.length > 0 && fwAnswered === fwQuestions.length;
-            
-            return (
-              <button
-                key={fw.id}
-                onClick={() => setActiveFwId(fw.id)}
-                className={cn(
-                  "w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors border",
-                  activeFwId === fw.id 
-                    ? "bg-primary/10 border-primary/30 text-primary font-medium" 
-                    : "bg-card border-transparent hover:bg-accent hover:border-border text-muted-foreground"
-                )}
-              >
-                <div className="truncate pr-2">
-                  <div className="truncate">{fw.slug}</div>
-                  <div className="text-xs opacity-70 mt-0.5">{fwAnswered} / {fwQuestions.length}</div>
-                </div>
-                {isDone && <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />}
-              </button>
-            );
-          })}
-        </div>
+      {/* Mobile: framework select dropdown */}
+      {isMobile && (
+        <div className="space-y-3">
+          <Select value={activeFwId?.toString() ?? ""} onValueChange={(v) => setActiveFwId(parseInt(v))}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select Framework" />
+            </SelectTrigger>
+            <SelectContent>
+              {frameworks.map(fw => {
+                const fwQuestions = questions.filter(q => q.frameworkId === fw.id);
+                const fwAnswers = answers.filter(a => fwQuestions.some(q => q.id === a.questionId));
+                const fwAnswered = fwAnswers.filter(a => a.maturityLevel !== null || (a.notes && a.notes.length > 0)).length;
+                return (
+                  <SelectItem key={fw.id} value={fw.id.toString()}>
+                    {fw.slug} ({fwAnswered}/{fwQuestions.length})
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
 
-        {/* Main Content */}
-        <div className="flex-1 max-w-4xl space-y-6">
-          <div className="bg-card p-4 rounded-xl border border-border flex items-center gap-6 sticky top-0 z-10 shadow-sm">
-            <div className="flex-1">
-              <div className="flex justify-between text-sm font-medium mb-2">
-                <span>{frameworks.find(f => f.id === activeFwId)?.name}</span>
-                <span>{Math.round(progressPct)}%</span>
-              </div>
-              <Progress value={progressPct} className="h-2" />
+          {/* Progress bar */}
+          <div className="bg-card p-3 rounded-xl border border-border">
+            <div className="flex justify-between text-sm font-medium mb-2">
+              <span className="truncate pr-2">{frameworks.find(f => f.id === activeFwId)?.name}</span>
+              <span className="shrink-0">{Math.round(progressPct)}%</span>
             </div>
+            <Progress value={progressPct} className="h-2" />
           </div>
+        </div>
+      )}
 
-          <div className="space-y-4 pb-20">
-            {activeQuestions.map(q => {
-              const ans = answers.find(a => a.questionId === q.id);
+      {/* Desktop: two-column layout */}
+      {!isMobile && (
+        <div className="flex gap-8 min-h-[600px]">
+          {/* Framework nav sidebar */}
+          <div className="w-64 shrink-0 space-y-2">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">Frameworks</h3>
+            {frameworks.map(fw => {
+              const fwQuestions = questions.filter(q => q.frameworkId === fw.id);
+              const fwAnswers = answers.filter(a => fwQuestions.some(q => q.id === a.questionId));
+              const fwAnswered = fwAnswers.filter(a => a.maturityLevel !== null || (a.notes && a.notes.length > 0)).length;
+              const isDone = fwQuestions.length > 0 && fwAnswered === fwQuestions.length;
+              
               return (
-                <QuestionItem 
-                  key={q.id} 
-                  question={q} 
-                  answer={ans} 
-                  onSave={handleSaveAnswer} 
-                />
+                <button
+                  key={fw.id}
+                  onClick={() => setActiveFwId(fw.id)}
+                  className={cn(
+                    "w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors border",
+                    activeFwId === fw.id 
+                      ? "bg-primary/10 border-primary/30 text-primary font-medium" 
+                      : "bg-card border-transparent hover:bg-accent hover:border-border text-muted-foreground"
+                  )}
+                >
+                  <div className="truncate pr-2">
+                    <div className="truncate">{fw.slug}</div>
+                    <div className="text-xs opacity-70 mt-0.5">{fwAnswered} / {fwQuestions.length}</div>
+                  </div>
+                  {isDone && <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />}
+                </button>
               );
             })}
-            
-            {activeQuestions.length === 0 && (
-              <div className="p-12 text-center text-muted-foreground bg-muted/20 rounded-xl border border-dashed">
-                No questions found for this framework.
+          </div>
+
+          {/* Main content */}
+          <div className="flex-1 max-w-4xl space-y-6">
+            <div className="bg-card p-4 rounded-xl border border-border flex items-center gap-6 sticky top-0 z-10 shadow-sm">
+              <div className="flex-1">
+                <div className="flex justify-between text-sm font-medium mb-2">
+                  <span>{frameworks.find(f => f.id === activeFwId)?.name}</span>
+                  <span>{Math.round(progressPct)}%</span>
+                </div>
+                <Progress value={progressPct} className="h-2" />
               </div>
-            )}
+            </div>
+
+            <div className="space-y-4 pb-20">
+              {activeQuestions.map(q => {
+                const ans = answers.find(a => a.questionId === q.id);
+                return (
+                  <QuestionItem key={q.id} question={q} answer={ans} onSave={handleSaveAnswer} />
+                );
+              })}
+              {activeQuestions.length === 0 && (
+                <div className="p-12 text-center text-muted-foreground bg-muted/20 rounded-xl border border-dashed">
+                  No questions found for this framework.
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Mobile: questions list */}
+      {isMobile && (
+        <div className="space-y-3 pb-8">
+          {activeQuestions.map(q => {
+            const ans = answers.find(a => a.questionId === q.id);
+            return (
+              <QuestionItem key={q.id} question={q} answer={ans} onSave={handleSaveAnswer} />
+            );
+          })}
+          {activeQuestions.length === 0 && (
+            <div className="p-8 text-center text-muted-foreground bg-muted/20 rounded-xl border border-dashed">
+              No questions found for this framework.
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
