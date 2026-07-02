@@ -1,0 +1,57 @@
+Replit Agent Prompt — i18n, Theming & Enterprise UI Upgrade
+
+Upgrade the existing AI SecScore application with full internationalization, theme switching, and an enterprise-grade visual redesign. Do not break any existing functionality (assessment engine, scoring, dashboard, exports).
+
+1. Internationalization (i18n)
+
+
+Implement full i18n using react-i18next with three languages: Portuguese (pt-BR), Spanish (es), and English (en)
+Translate everything: navigation, buttons, form labels, validation messages, empty states, toasts, the results dashboard, maturity grade labels, risk levels, remediation recommendations, and all framework question banks (OWASP LLM, NIST AI RMF, MITRE ATLAS, ISO 42001, SAIF, LGPD/BACEN section)
+Store translations in structured JSON files per language (/locales/pt-BR, /locales/es, /locales/en), organized by namespace (common, auth, assessment, dashboard, frameworks)
+Language selector in the header (flag icon + language name dropdown) and also on the login page
+Auto-detect browser language on first visit; persist the user's choice in localStorage and in their profile
+Exported PDF/JSON reports must respect the selected language, including dates and number formatting (use Intl APIs)
+Keep framework names and official term codes (e.g., "LLM01: Prompt Injection", "Govern/Map/Measure/Manage") in English with the translated description alongside
+
+
+2. Dark & Light themes
+
+
+Implement theme switching with three options: Light, Dark, System (follows OS preference)
+Use CSS variables / Tailwind dark mode class strategy so every component adapts — including charts (Recharts theme-aware colors), tables, modals, and the PDF export cover
+Persist preference in localStorage + user profile; no flash of wrong theme on load (apply theme before first paint)
+Design tokens: define a consistent palette for both themes — dark theme with deep navy/slate backgrounds and a single accent color (electric blue or emerald); light theme clean white/gray-50 with the same accent. Ensure WCAG AA contrast in both
+
+
+3. Enterprise-grade login & auth experience
+
+
+Redesign the login/signup screens with a split-screen enterprise layout:
+
+Left panel: brand area with the AI SecScore logo, a short tagline, subtle animated gradient or abstract security-themed illustration (SVG, no heavy assets), and 3 short value bullets (multi-framework, weighted scoring, executive reports)
+Right panel: clean auth card with the Replit Auth flow, language selector, and theme toggle
+
+
+
+Add a polished loading state, error states with friendly copy, and a "session expired" screen
+After login, show a brief personalized greeting ("Welcome back, {name}") on the dashboard
+
+
+4. Overall visual polish & responsiveness
+
+
+Apply a consistent enterprise design system across the app: shadcn/ui components, Inter or IBM Plex Sans typography, 8px spacing grid, subtle shadows, rounded-xl cards, skeleton loaders instead of spinners
+Sidebar collapses to icons on tablet and becomes a bottom nav / hamburger drawer on mobile
+Assessment flow fully usable on mobile: sticky progress bar, large tap targets on the 0–3 maturity scale, swipe or next/prev navigation between framework sections
+Results dashboard responsive: radar chart resizes gracefully, cards stack in a single column on small screens, tables become scrollable or card-based on mobile
+Add smooth micro-interactions: hover states, animated score counter on the results page, transition when switching themes
+Add a favicon and proper page titles per route (translated)
+
+
+Acceptance criteria
+
+
+Switching language instantly updates the entire UI including question banks, with no reload
+Switching theme updates every screen including charts, with preference persisted
+Login page looks professional on desktop, tablet, and a 375px-wide phone
+Lighthouse accessibility score ≥ 90 in both themes
