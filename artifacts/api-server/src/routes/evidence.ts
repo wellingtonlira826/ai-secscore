@@ -12,8 +12,10 @@ import {
   ListAllEvidenceParams,
   ListAllEvidenceResponse,
 } from "@workspace/api-zod";
+import { ObjectStorageService, ObjectNotFoundError } from "../lib/objectStorage";
 
 const router: IRouter = Router();
+const objectStorageService = new ObjectStorageService();
 
 router.get(
   "/assessments/:assessmentId/answers/:questionId/evidence",
@@ -96,6 +98,26 @@ router.post(
       return;
     }
 
+    const objectPath = body.data.objectPath;
+    const expectedPrefix = `/objects/uploads/${userId}/`;
+    if (!objectPath.startsWith(expectedPrefix)) {
+      res.status(403).json({ error: "Forbidden: objectPath does not belong to this user" });
+      return;
+    }
+
+    try {
+      await objectStorageService.trySetObjectEntityAclPolicy(objectPath, {
+        owner: userId,
+        visibility: "private",
+      });
+    } catch (err) {
+      if (err instanceof ObjectNotFoundError) {
+        res.status(404).json({ error: "Uploaded object not found" });
+        return;
+      }
+      throw err;
+    }
+
     const [evidence] = await db
       .insert(evidenceTable)
       .values({
@@ -105,7 +127,7 @@ router.post(
         fileName: body.data.fileName,
         fileSize: body.data.fileSize,
         contentType: body.data.contentType,
-        objectPath: body.data.objectPath,
+        objectPath,
         description: body.data.description ?? null,
       })
       .returning();
