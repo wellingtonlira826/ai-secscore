@@ -1,0 +1,47 @@
+Principais Prioridades de Remediação
+Lacunas de severidade crítica e alta identificadas
+NIST AI RMF 1.0
+MAP
+Have the intended use cases, context of deployment, and potential misuse scenarios been documented for each AI system?
+Ação Recomendada: Document intended and foreseeable use cases. Conduct misuse scenario analysis and implement safeguards against the most likely adverse uses.
+Peso: 3/3
+Maturity: 0/3
+NIST AI RMF 1.0
+MANAGE
+Is there an incident response plan specific to AI system failures, including model degradation, adversarial attacks, and harmful outputs?
+Ação Recomendada: Develop an AI-specific incident response playbook. Conduct tabletop exercises. Define escalation paths and rollback procedures.
+Peso: 3/3
+Maturity: 0/3
+OWASP Top 10 for LLM Applications (2025)
+LLM01 – Prompt Injection
+Do you validate and sanitize all user inputs before passing them to the LLM to prevent prompt injection?
+Ação Recomendada: Implement input validation, output encoding, and consider using system-level prompt guards or a secondary classifier model to detect injection attempts.
+Peso: 3/3
+Maturity: 1/3
+OWASP Top 10 for LLM Applications (2025)
+LLM02 – Sensitive Information Disclosure
+Does the system prevent the LLM from outputting PII, credentials, or proprietary training data in responses?
+Ação Recomendada: Implement output filtering for PII and secrets. Apply DLP controls on LLM responses. Audit training data for sensitive content before ingestion.
+Peso: 3/3
+Maturity: 1/3
+OWASP Top 10 for LLM Applications (2025)
+LLM03 – Supply Chain
+Do you have an inventory of all third-party models, datasets, and plugins used in your AI pipeline?
+Ação Recomendada: Maintain a complete AI Bill of Materials (AI-BOM). Verify the provenance and integrity of all external models and datasets before use.
+Peso: 3/3
+Maturity: 1/3
+OWASP Top 10 for LLM Applications (2025)
+LLM05 – Improper Output Handling
+Is LLM output treated as untrusted and sanitized before being rendered in UI, stored, or passed to other systems?
+Ação Recomendada: Treat all LLM outputs as untrusted. Apply output encoding appropriate to the context (HTML, SQL, shell). Validate before downstream use.
+Peso: 3/3
+Maturity: 1/3
+OWASP Top 10 for LLM Applications (2025)
+LLM06 – Excessive Agency
+Is the LLM's ability to take autonomous actions (file I/O, API calls, code execution) limited to the minimum necessary?
+Ação Recomendada: Apply least-privilege to all LLM tool access. Require human-in-the-loop confirmation for high-impact actions. Restrict LLM to read-only operations where possible.
+Peso: 3/3
+Maturity: 1/3
+NIST AI RMF 1.0
+MANAGE
+Can AI systems be quickly disabled or rolled back when risks exceed acceptable thresholds?

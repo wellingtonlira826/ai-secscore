@@ -456,6 +456,12 @@ export const GetAssessmentSummaryParams = zod.object({
   "assessmentId": zod.coerce.number()
 })
 
+export const getAssessmentSummaryQueryLangDefault = `en`;
+
+export const GetAssessmentSummaryQueryParams = zod.object({
+  "lang": zod.enum(['en', 'es', 'pt-BR']).default(getAssessmentSummaryQueryLangDefault)
+})
+
 export const GetAssessmentSummaryResponse = zod.object({
   "assessmentId": zod.number(),
   "assessmentName": zod.string(),

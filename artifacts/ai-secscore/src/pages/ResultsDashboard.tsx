@@ -33,14 +33,16 @@ const RISK_COLORS: Record<string, string> = {
 };
 
 export default function ResultsDashboard() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language as "en" | "es" | "pt-BR";
   const params = useParams();
   const id = parseInt(params.id || "0");
 
   const { data: assessment, isLoading: loadingAsses } = useGetAssessment(id, { query: { enabled: !!id, queryKey: getGetAssessmentQueryKey(id) } });
   const { data: score, isLoading: loadingScore } = useGetAssessmentScore(id, { query: { enabled: !!id, queryKey: getGetAssessmentScoreQueryKey(id) } });
   const { data: gaps, isLoading: loadingGaps } = useGetAssessmentGaps(id, { query: { enabled: !!id, queryKey: getGetAssessmentGapsQueryKey(id) } });
-  const { data: summary, isLoading: loadingSumm } = useGetAssessmentSummary(id, { query: { enabled: !!id, queryKey: getGetAssessmentSummaryQueryKey(id) } });
+  const summaryLangParam = { lang } as any;
+  const { data: summary, isLoading: loadingSumm } = useGetAssessmentSummary(id, summaryLangParam, { query: { enabled: !!id, queryKey: [...getGetAssessmentSummaryQueryKey(id), lang] } });
 
   const handlePrint = () => {
     window.print();
@@ -229,10 +231,10 @@ export default function ResultsDashboard() {
                         <Badge variant="outline" className="text-xs">{gap.frameworkName}</Badge>
                         <Badge variant="secondary" className="text-xs">{gap.section}</Badge>
                       </div>
-                      <h4 className="text-base font-medium mt-2">{gap.questionText}</h4>
+                      <h4 className="text-base font-medium mt-2">{t(`questions.${gap.questionId}.text`, gap.questionText)}</h4>
                       {gap.remediation && (
                         <div className="mt-3 p-3 bg-muted/30 rounded-md text-sm text-muted-foreground border-l-2 border-primary">
-                          <strong className="text-foreground">{t('results.remediation')}</strong> {gap.remediation}
+                          <strong className="text-foreground">{t('results.remediation')}</strong> {t(`questions.${gap.questionId}.remediation`, gap.remediation)}
                         </div>
                       )}
                     </div>

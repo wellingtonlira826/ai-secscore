@@ -40,6 +40,7 @@ import type {
   FrameworkWeightsInput,
   FrameworkWithQuestions,
   GapItem,
+  GetAssessmentSummaryParams,
   HandleBrowserLoginCallbackParams,
   HealthStatus,
   ListQuestionsParams,
@@ -1906,20 +1907,29 @@ export function useGetAssessmentGaps<TData = Awaited<ReturnType<typeof getAssess
 
 
 
-export const getGetAssessmentSummaryUrl = (assessmentId: number,) => {
+export const getGetAssessmentSummaryUrl = (assessmentId: number,
+    params?: GetAssessmentSummaryParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/assessments/${assessmentId}/summary`
+  return stringifiedParams.length > 0 ? `/api/assessments/${assessmentId}/summary?${stringifiedParams}` : `/api/assessments/${assessmentId}/summary`
 }
 
 /**
  * @summary Get a template-based executive summary for an assessment
  */
-export const getAssessmentSummary = async (assessmentId: number, options?: RequestInit): Promise<ExecutiveSummary> => {
+export const getAssessmentSummary = async (assessmentId: number,
+    params?: GetAssessmentSummaryParams, options?: RequestInit): Promise<ExecutiveSummary> => {
 
-  return customFetch<ExecutiveSummary>(getGetAssessmentSummaryUrl(assessmentId),
+  return customFetch<ExecutiveSummary>(getGetAssessmentSummaryUrl(assessmentId,params),
   {
     ...options,
     method: 'GET'
@@ -1932,23 +1942,25 @@ export const getAssessmentSummary = async (assessmentId: number, options?: Reque
 
 
 
-export const getGetAssessmentSummaryQueryKey = (assessmentId: number,) => {
+export const getGetAssessmentSummaryQueryKey = (assessmentId: number,
+    params?: GetAssessmentSummaryParams,) => {
     return [
-    `/api/assessments/${assessmentId}/summary`
+    `/api/assessments/${assessmentId}/summary`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetAssessmentSummaryQueryOptions = <TData = Awaited<ReturnType<typeof getAssessmentSummary>>, TError = ErrorType<ErrorEnvelope>>(assessmentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAssessmentSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getGetAssessmentSummaryQueryOptions = <TData = Awaited<ReturnType<typeof getAssessmentSummary>>, TError = ErrorType<ErrorEnvelope>>(assessmentId: number,
+    params?: GetAssessmentSummaryParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAssessmentSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetAssessmentSummaryQueryKey(assessmentId);
+  const queryKey =  queryOptions?.queryKey ?? getGetAssessmentSummaryQueryKey(assessmentId,params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAssessmentSummary>>> = ({ signal }) => getAssessmentSummary(assessmentId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAssessmentSummary>>> = ({ signal }) => getAssessmentSummary(assessmentId,params, { signal, ...requestOptions });
 
 
 
@@ -1966,11 +1978,12 @@ export type GetAssessmentSummaryQueryError = ErrorType<ErrorEnvelope>
  */
 
 export function useGetAssessmentSummary<TData = Awaited<ReturnType<typeof getAssessmentSummary>>, TError = ErrorType<ErrorEnvelope>>(
- assessmentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAssessmentSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+ assessmentId: number,
+    params?: GetAssessmentSummaryParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAssessmentSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
-  const queryOptions = getGetAssessmentSummaryQueryOptions(assessmentId,options)
+  const queryOptions = getGetAssessmentSummaryQueryOptions(assessmentId,params,options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

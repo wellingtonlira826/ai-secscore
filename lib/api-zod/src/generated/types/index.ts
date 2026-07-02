@@ -37,6 +37,8 @@ export * from './frameworkWeightsInput';
 export * from './frameworkWeightsInputWeightsItem';
 export * from './frameworkWithQuestions';
 export * from './gapItem';
+export * from './getAssessmentSummaryLang';
+export * from './getAssessmentSummaryParams';
 export * from './handleBrowserLoginCallbackParams';
 export * from './healthStatus';
 export * from './listQuestionsParams';

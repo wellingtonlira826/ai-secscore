@@ -333,6 +333,19 @@ export type ListQuestionsParams = {
 frameworkId?: number;
 };
 
+export type GetAssessmentSummaryParams = {
+lang?: GetAssessmentSummaryLang;
+};
+
+export type GetAssessmentSummaryLang = typeof GetAssessmentSummaryLang[keyof typeof GetAssessmentSummaryLang];
+
+
+export const GetAssessmentSummaryLang = {
+  en: 'en',
+  es: 'es',
+  'pt-BR': 'pt-BR',
+} as const;
+
 export type CompareAssessmentsParams = {
 id1: number;
 id2: number;

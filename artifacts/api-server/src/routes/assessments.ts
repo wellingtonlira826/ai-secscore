@@ -647,46 +647,117 @@ router.get("/assessments/:assessmentId/summary", async (req, res): Promise<void>
     return;
   }
 
+  const lang = (req.query.lang as string) || "en";
+
   const score = await computeScore(params.data.assessmentId, userId);
   const { overallScore, grade, frameworkScores } = score;
 
   const riskLabel = overallScore >= 75 ? "Low" : overallScore >= 60 ? "Medium" : overallScore >= 40 ? "High" : "Critical";
 
   const topFrameworks = [...frameworkScores].sort((a, b) => b.score - a.score);
-  const bestFramework = topFrameworks[0];
   const worstFramework = topFrameworks[topFrameworks.length - 1];
 
-  const summaryText = `This executive summary presents the AI security assessment results for "${assessment.systemName}" conducted as part of the "${assessment.name}" assessment. The system achieved an overall AI Security Score of ${overallScore.toFixed(1)}/100, earning a grade of "${grade}" with an overall risk level classified as "${riskLabel}". ${
-    overallScore >= 75
-      ? "The system demonstrates a commendable security posture with solid foundational controls across the evaluated frameworks."
-      : overallScore >= 60
-      ? "The system demonstrates partial implementation of AI security controls with notable gaps requiring attention."
-      : overallScore >= 40
-      ? "The system has significant security gaps that pose elevated risk and require prioritized remediation efforts."
-      : "The system has critical security deficiencies that require immediate and comprehensive remediation."
-  }`;
+  const T = {
+    en: {
+      intro: (sys: string, name: string, score: string, grade: string, risk: string) =>
+        `This executive summary presents the AI security assessment results for "${sys}" conducted as part of the "${name}" assessment. The system achieved an overall AI Security Score of ${score}/100, earning a grade of "${grade}" with an overall risk level classified as "${risk}".`,
+      posture: (s: number) =>
+        s >= 75
+          ? "The system demonstrates a commendable security posture with solid foundational controls across the evaluated frameworks."
+          : s >= 60
+          ? "The system demonstrates partial implementation of AI security controls with notable gaps requiring attention."
+          : s >= 40
+          ? "The system has significant security gaps that pose elevated risk and require prioritized remediation efforts."
+          : "The system has critical security deficiencies that require immediate and comprehensive remediation.",
+      frameworkLine: (name: string, score: string, risk: string) => `${name}: score of ${score}/100 (${risk} risk)`,
+      inProgress: "Assessment in progress — complete more questions to identify strengths.",
+      inProgressWeak: "Assessment in progress — complete more questions to identify weaknesses.",
+      rec1: (name: string, score: string) => `Prioritize remediation of ${name} controls (current score: ${score}/100).`,
+      rec2: "Conduct a detailed gap analysis for all high-weight questions scoring below 2 (Largely Implemented).",
+      rec3: "Establish a quarterly AI security review cycle to track remediation progress.",
+      rec4Low: "Maintain current security posture and consider pursuing formal certification (e.g., ISO/IEC 42001).",
+      rec4High: "Engage a third-party AI security assessment to validate findings and provide independent verification.",
+      rec5: "Implement continuous monitoring and alerting for AI-specific threats identified in this assessment.",
+    },
+    es: {
+      intro: (sys: string, name: string, score: string, grade: string, risk: string) =>
+        `Este resumen ejecutivo presenta los resultados de la evaluación de seguridad de IA para "${sys}" realizada como parte de la evaluación "${name}". El sistema obtuvo una Puntuación de Seguridad de IA de ${score}/100, con una calificación de "${grade}" y un nivel de riesgo general clasificado como "${risk}".`,
+      posture: (s: number) =>
+        s >= 75
+          ? "El sistema demuestra una postura de seguridad destacable con controles fundamentales sólidos en todos los marcos evaluados."
+          : s >= 60
+          ? "El sistema demuestra una implementación parcial de los controles de seguridad de IA con brechas notables que requieren atención."
+          : s >= 40
+          ? "El sistema presenta brechas de seguridad significativas que representan un riesgo elevado y requieren una remediación priorizada."
+          : "El sistema tiene deficiencias críticas de seguridad que requieren remediación inmediata y exhaustiva.",
+      frameworkLine: (name: string, score: string, risk: string) => `${name}: puntuación de ${score}/100 (riesgo ${risk})`,
+      inProgress: "Evaluación en curso — complete más preguntas para identificar fortalezas.",
+      inProgressWeak: "Evaluación en curso — complete más preguntas para identificar debilidades.",
+      rec1: (name: string, score: string) => `Priorizar la remediación de los controles de ${name} (puntuación actual: ${score}/100).`,
+      rec2: "Realizar un análisis detallado de brechas para todas las preguntas de alto peso con puntuación inferior a 2 (Implementado en su mayoría).",
+      rec3: "Establecer un ciclo trimestral de revisión de seguridad de IA para realizar seguimiento del progreso de remediación.",
+      rec4Low: "Mantener la postura de seguridad actual y considerar la obtención de certificación formal (p. ej., ISO/IEC 42001).",
+      rec4High: "Contratar una evaluación de seguridad de IA de terceros para validar los hallazgos y proporcionar verificación independiente.",
+      rec5: "Implementar monitoreo continuo y alertas para amenazas específicas de IA identificadas en esta evaluación.",
+    },
+    "pt-BR": {
+      intro: (sys: string, name: string, score: string, grade: string, risk: string) =>
+        `Este resumo executivo apresenta os resultados da avaliação de segurança de IA para "${sys}" realizada como parte da avaliação "${name}". O sistema obteve uma Pontuação de Segurança de IA de ${score}/100, com nota "${grade}" e nível de risco geral classificado como "${risk}".`,
+      posture: (s: number) =>
+        s >= 75
+          ? "O sistema demonstra uma postura de segurança exemplar com controles fundamentais sólidos em todos os frameworks avaliados."
+          : s >= 60
+          ? "O sistema demonstra implementação parcial dos controles de segurança de IA com lacunas notáveis que requerem atenção."
+          : s >= 40
+          ? "O sistema apresenta lacunas de segurança significativas que representam risco elevado e requerem remediação priorizada."
+          : "O sistema possui deficiências críticas de segurança que requerem remediação imediata e abrangente.",
+      frameworkLine: (name: string, score: string, risk: string) => `${name}: pontuação de ${score}/100 (risco ${risk})`,
+      inProgress: "Avaliação em andamento — responda mais perguntas para identificar pontos fortes.",
+      inProgressWeak: "Avaliação em andamento — responda mais perguntas para identificar pontos fracos.",
+      rec1: (name: string, score: string) => `Priorizar a remediação dos controles de ${name} (pontuação atual: ${score}/100).`,
+      rec2: "Realizar uma análise detalhada de lacunas para todas as perguntas de alto peso com pontuação inferior a 2 (Amplamente Implementado).",
+      rec3: "Estabelecer um ciclo trimestral de revisão de segurança de IA para acompanhar o progresso da remediação.",
+      rec4Low: "Manter a postura de segurança atual e considerar a obtenção de certificação formal (ex.: ISO/IEC 42001).",
+      rec4High: "Contratar uma avaliação de segurança de IA de terceiros para validar os resultados e fornecer verificação independente.",
+      rec5: "Implementar monitoramento contínuo e alertas para ameaças específicas de IA identificadas nesta avaliação.",
+    },
+  } as Record<string, {
+    intro: (sys: string, name: string, score: string, grade: string, risk: string) => string;
+    posture: (s: number) => string;
+    frameworkLine: (name: string, score: string, risk: string) => string;
+    inProgress: string;
+    inProgressWeak: string;
+    rec1: (name: string, score: string) => string;
+    rec2: string;
+    rec3: string;
+    rec4Low: string;
+    rec4High: string;
+    rec5: string;
+  }>;
+
+  const t = T[lang] || T["en"];
+
+  const summaryText = `${t.intro(assessment.systemName, assessment.name, overallScore.toFixed(1), grade, riskLabel)} ${t.posture(overallScore)}`;
 
   const strengths = topFrameworks
     .slice(0, 3)
     .filter((f) => f.score >= 60)
-    .map((f) => `${f.frameworkName}: score of ${f.score.toFixed(1)}/100 (${f.riskLevel} risk)`);
+    .map((f) => t.frameworkLine(f.frameworkName, f.score.toFixed(1), f.riskLevel));
 
   const weaknesses = topFrameworks
     .slice(-3)
     .filter((f) => f.score < 75)
     .reverse()
-    .map((f) => `${f.frameworkName}: score of ${f.score.toFixed(1)}/100 (${f.riskLevel} risk)`);
+    .map((f) => t.frameworkLine(f.frameworkName, f.score.toFixed(1), f.riskLevel));
 
   const recommendations = [
     worstFramework
-      ? `Prioritize remediation of ${worstFramework.frameworkName} controls (current score: ${worstFramework.score.toFixed(1)}/100).`
+      ? t.rec1(worstFramework.frameworkName, worstFramework.score.toFixed(1))
       : null,
-    "Conduct a detailed gap analysis for all high-weight questions scoring below 2 (Largely Implemented).",
-    "Establish a quarterly AI security review cycle to track remediation progress.",
-    overallScore < 75
-      ? "Engage a third-party AI security assessment to validate findings and provide independent verification."
-      : "Maintain current security posture and consider pursuing formal certification (e.g., ISO/IEC 42001).",
-    "Implement continuous monitoring and alerting for AI-specific threats identified in this assessment.",
+    t.rec2,
+    t.rec3,
+    overallScore < 75 ? t.rec4High : t.rec4Low,
+    t.rec5,
   ].filter(Boolean) as string[];
 
   const result = {

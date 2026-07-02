@@ -696,6 +696,13 @@ paths:
           required: true
           schema:
             type: integer
+        - name: lang
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [en, es, pt-BR]
+            default: en
       responses:
         "200":
           description: Executive summary text
