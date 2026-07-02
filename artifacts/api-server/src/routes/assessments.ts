@@ -364,11 +364,7 @@ router.delete("/assessments/:assessmentId", async (req, res): Promise<void> => {
 
   const userId = req.user.id;
 
-  // Delete answers first
-  await db
-    .delete(answersTable)
-    .where(eq(answersTable.assessmentId, params.data.assessmentId));
-
+  // Verify ownership before any mutation
   const [deleted] = await db
     .delete(assessmentsTable)
     .where(
@@ -383,6 +379,11 @@ router.delete("/assessments/:assessmentId", async (req, res): Promise<void> => {
     res.status(404).json({ error: "Assessment not found" });
     return;
   }
+
+  // Only delete answers after ownership is confirmed
+  await db
+    .delete(answersTable)
+    .where(eq(answersTable.assessmentId, params.data.assessmentId));
 
   res.sendStatus(204);
 });
