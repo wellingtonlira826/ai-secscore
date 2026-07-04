@@ -7,7 +7,7 @@ import {
   frameworksTable,
   userFrameworkWeightsTable,
 } from "@workspace/db";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, inArray } from "drizzle-orm";
 import {
   ListAssessmentsResponse,
   CreateAssessmentBody,
@@ -58,7 +58,12 @@ async function computeCompletionPct(assessmentId: number, userId: string): Promi
   return Math.round((answered / total) * 100);
 }
 
-async function computeScore(assessmentId: number, userId: string) {
+// Shared, user-scoped reference data reused across every assessment's scoring.
+// Loading this once (instead of per-assessment) removes the N+1 in the history
+// route where scores are computed for many assessments at a time.
+type ScoringContext = Awaited<ReturnType<typeof loadScoringContext>>;
+
+async function loadScoringContext(userId: string) {
   const allQuestions = await db
     .select({
       id: questionsTable.id,
@@ -66,13 +71,6 @@ async function computeScore(assessmentId: number, userId: string) {
       weight: questionsTable.weight,
     })
     .from(questionsTable);
-
-  const answers = await db
-    .select()
-    .from(answersTable)
-    .where(eq(answersTable.assessmentId, assessmentId));
-
-  const answerMap = new Map(answers.map((a) => [a.questionId, a.maturityLevel]));
 
   const frameworks = await db.select().from(frameworksTable).orderBy(frameworksTable.id);
 
@@ -82,6 +80,18 @@ async function computeScore(assessmentId: number, userId: string) {
     .where(eq(userFrameworkWeightsTable.userId, userId));
 
   const weightMap = new Map(userWeights.map((w) => [w.frameworkId, w.weight]));
+
+  return { allQuestions, frameworks, weightMap };
+}
+
+// Pure scoring — no DB access — over pre-fetched answers and shared context.
+function scoreFromAnswers(
+  assessmentId: number,
+  answers: Array<{ questionId: number; maturityLevel: number | null }>,
+  ctx: ScoringContext,
+) {
+  const { allQuestions, frameworks, weightMap } = ctx;
+  const answerMap = new Map(answers.map((a) => [a.questionId, a.maturityLevel]));
 
   // Compute per-framework scores
   const frameworkScores = frameworks.map((fw) => {
@@ -140,6 +150,15 @@ async function computeScore(assessmentId: number, userId: string) {
     answeredCount,
     totalCount,
   };
+}
+
+async function computeScore(assessmentId: number, userId: string) {
+  const ctx = await loadScoringContext(userId);
+  const answers = await db
+    .select()
+    .from(answersTable)
+    .where(eq(answersTable.assessmentId, assessmentId));
+  return scoreFromAnswers(assessmentId, answers, ctx);
 }
 
 // ── Assessments CRUD ──────────────────────────────────────────────────────────
@@ -246,10 +265,25 @@ router.get("/assessments/history", async (req, res): Promise<void> => {
     .where(eq(assessmentsTable.userId, userId))
     .orderBy(assessmentsTable.createdAt);
 
-  const totalQCount = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(questionsTable);
-  const total = totalQCount[0]?.count ?? 0;
+  // Load shared scoring reference data once, and fetch every assessment's
+  // answers in a single query, then score in memory (no per-assessment N+1).
+  const ctx = await loadScoringContext(userId);
+  const total = ctx.allQuestions.length;
+
+  const assessmentIds = assessments.map((a) => a.id);
+  const allAnswers = assessmentIds.length
+    ? await db
+        .select()
+        .from(answersTable)
+        .where(inArray(answersTable.assessmentId, assessmentIds))
+    : [];
+
+  const answersByAssessment = new Map<number, typeof allAnswers>();
+  for (const ans of allAnswers) {
+    const list = answersByAssessment.get(ans.assessmentId);
+    if (list) list.push(ans);
+    else answersByAssessment.set(ans.assessmentId, [ans]);
+  }
 
   const groups = new Map<
     string,
@@ -265,12 +299,9 @@ router.get("/assessments/history", async (req, res): Promise<void> => {
   >();
 
   for (const a of assessments) {
-    const score = await computeScore(a.id, userId);
-    const answered = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(answersTable)
-      .where(eq(answersTable.assessmentId, a.id));
-    const completionPct = total > 0 ? Math.round(((answered[0]?.count ?? 0) / total) * 100) : 0;
+    const answers = answersByAssessment.get(a.id) ?? [];
+    const score = scoreFromAnswers(a.id, answers, ctx);
+    const completionPct = total > 0 ? Math.round((answers.length / total) * 100) : 0;
 
     const point = {
       assessmentId: a.id,

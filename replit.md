@@ -1,6 +1,6 @@
-# [Project name]
+# AI SecScore
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+AI SecScore is an AI security assessment platform: authenticated users evaluate their AI/LLM systems against security frameworks, answer maturity questionnaires, upload evidence, and get scored reports with gap analysis and history tracking.
 
 ## Run & Operate
 
@@ -22,15 +22,28 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/ai-secscore/` — React + Vite frontend (pages in `src/pages`, i18n locales in `src/i18n/locales/{en,es,pt-BR}.json`, shared UI in `src/components`).
+- `artifacts/api-server/` — Express 5 API. Entry `src/app.ts`; routes registered in `src/routes/index.ts`; auth/session helpers in `src/lib/auth.ts`; object storage in `src/lib/objectStorage.ts`.
+- `lib/db/` — Drizzle schema (source of truth for DB): `src/schema/{auth,assessments,evidence}.ts`.
+- `lib/api-spec/` — OpenAPI spec (source of truth for API contracts). `lib/api-zod/` and `lib/api-client-react/` are generated from it.
+- Scoring logic lives in `artifacts/api-server/src/routes/assessments.ts` (`loadScoringContext` + `scoreFromAnswers`).
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Contract-first: the OpenAPI spec drives generated Zod schemas (`@workspace/api-zod`) and React Query hooks (`@workspace/api-client-react`). Do not hand-edit generated files; run codegen instead.
+- Auth is Replit OIDC with server-side sessions in Postgres. Sessions are accepted via the `sid` cookie or `Authorization: Bearer <sid>` (mobile + tests). All authorization is row-scoped by `userId` — cross-user access returns 404, not 403.
+- Scoring reference data (questions, frameworks, user weights) is loaded once per request via `loadScoringContext`, and `scoreFromAnswers` is a pure function — this keeps the history endpoint free of N+1 queries.
+- Security middleware in `app.ts`: `helmet`, CORS restricted to `REPLIT_DOMAINS` origins, 1mb body limit, and a 300-req/15min rate limiter on `/api` (behind `trust proxy 1`).
+- Frontend routes are lazy-loaded and wrapped in an `ErrorBoundary` so a render failure shows a localized fallback instead of a blank screen.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Create and manage security assessments for AI/LLM systems.
+- Answer maturity questionnaires mapped to multiple security frameworks with configurable per-framework weights.
+- Upload and view evidence files attached to assessments.
+- View scored results with grades, risk posture, framework breakdown, gap/remediation priorities, and an executive summary.
+- Compare two assessments and track each system's score history over time (with CSV export).
+- Full UI localization in English, Spanish, and Brazilian Portuguese.
 
 ## User preferences
 

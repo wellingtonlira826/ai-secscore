@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import NotFound from "@/pages/not-found";
 
 // Pages (lazy-loaded for code-splitting)
@@ -39,8 +40,9 @@ function PageFallback() {
 function Router() {
   return (
     <AppLayout>
-      <Suspense fallback={<PageFallback />}>
-        <Switch>
+      <ErrorBoundary>
+        <Suspense fallback={<PageFallback />}>
+          <Switch>
           <Route path="/" component={Dashboard} />
           <Route path="/assessments" component={Assessments} />
           <Route path="/assessments/compare" component={CompareAssessments} />
@@ -48,9 +50,10 @@ function Router() {
           <Route path="/assessments/:id/results" component={ResultsDashboard} />
           <Route path="/history" component={History} />
           <Route path="/settings" component={Settings} />
-          <Route component={NotFound} />
-        </Switch>
-      </Suspense>
+            <Route component={NotFound} />
+          </Switch>
+        </Suspense>
+      </ErrorBoundary>
     </AppLayout>
   );
 }

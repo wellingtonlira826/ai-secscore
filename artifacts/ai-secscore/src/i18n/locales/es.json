@@ -77,7 +77,8 @@
     "assessmentsCount_one": "{{count}} evaluación",
     "assessmentsCount_other": "{{count}} evaluaciones",
     "viewAssessment": "Ver",
-    "scoreOverTime": "Puntuación en el tiempo"
+    "scoreOverTime": "Puntuación en el tiempo",
+    "exportCsv": "Exportar CSV"
   },
   "results": {
     "title": "Resultados de la Evaluación",
@@ -128,6 +129,11 @@
     "uploadSuccess": "Subida exitosa",
     "delete": "Eliminar",
     "uploading": "Subiendo..."
+  },
+  "errorBoundary": {
+    "title": "Algo salió mal",
+    "description": "Ocurrió un error inesperado al mostrar esta página. Intenta recargar.",
+    "reload": "Recargar Página"
   },
   "login": {
     "title": "AI SecScore",

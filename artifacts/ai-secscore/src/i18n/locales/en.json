@@ -77,7 +77,8 @@
     "assessmentsCount_one": "{{count}} assessment",
     "assessmentsCount_other": "{{count}} assessments",
     "viewAssessment": "View",
-    "scoreOverTime": "Score over time"
+    "scoreOverTime": "Score over time",
+    "exportCsv": "Export CSV"
   },
   "results": {
     "title": "Assessment Results",
@@ -128,6 +129,11 @@
     "uploadSuccess": "Upload successful",
     "delete": "Delete",
     "uploading": "Uploading..."
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred while rendering this page. Try reloading.",
+    "reload": "Reload Page"
   },
   "login": {
     "title": "AI SecScore",

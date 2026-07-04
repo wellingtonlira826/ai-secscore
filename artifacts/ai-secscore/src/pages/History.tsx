@@ -13,8 +13,53 @@ import {
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
 } from "recharts";
-import { LineChart as LineChartIcon, TrendingUp } from "lucide-react";
+import { LineChart as LineChartIcon, TrendingUp, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+
+function exportHistoryCsv(groups: AssessmentHistoryGroup[]): void {
+  const header = [
+    "System",
+    "Assessment",
+    "Status",
+    "Score",
+    "Completion %",
+    "Created At",
+  ];
+  const escape = (value: string | number): string => {
+    const s = String(value);
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const rows: string[] = [header.join(",")];
+  for (const group of groups) {
+    const points = [...group.points].sort(
+      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+    for (const p of points) {
+      rows.push(
+        [
+          escape(group.systemName),
+          escape(p.assessmentName),
+          escape(p.status),
+          escape(Math.round(p.overallScore)),
+          escape(p.completionPct),
+          escape(new Date(p.createdAt).toISOString()),
+        ].join(",")
+      );
+    }
+  }
+  const blob = new Blob([`\uFEFF${rows.join("\n")}`], {
+    type: "text/csv;charset=utf-8;",
+  });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `secscore-history-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
 
 function SystemHistoryCard({ group }: { group: AssessmentHistoryGroup }) {
   const { t, i18n } = useTranslation();
@@ -162,9 +207,16 @@ export default function History() {
           <p className="text-muted-foreground mt-1">{t("history.subtitle")}</p>
         </div>
         {groups && groups.length > 0 && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground shrink-0">
-            <TrendingUp className="w-4 h-4" />
-            {t("history.systemsTracked")}: <span className="font-semibold text-foreground">{groups.length}</span>
+          <div className="flex items-center gap-4 shrink-0">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <TrendingUp className="w-4 h-4" />
+              {t("history.systemsTracked")}:{" "}
+              <span className="font-semibold text-foreground">{groups.length}</span>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => exportHistoryCsv(groups)}>
+              <Download className="w-4 h-4 mr-2" />
+              {t("history.exportCsv")}
+            </Button>
           </div>
         )}
       </div>
