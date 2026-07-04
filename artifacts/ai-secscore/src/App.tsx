@@ -1,33 +1,56 @@
+import { lazy, Suspense } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { Skeleton } from "@/components/ui/skeleton";
 import NotFound from "@/pages/not-found";
 
-// Pages
-import Dashboard from "@/pages/Dashboard";
-import Assessments from "@/pages/Assessments";
-import AssessmentDetail from "@/pages/AssessmentDetail";
-import ResultsDashboard from "@/pages/ResultsDashboard";
-import CompareAssessments from "@/pages/CompareAssessments";
-import Settings from "@/pages/Settings";
+// Pages (lazy-loaded for code-splitting)
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const Assessments = lazy(() => import("@/pages/Assessments"));
+const AssessmentDetail = lazy(() => import("@/pages/AssessmentDetail"));
+const ResultsDashboard = lazy(() => import("@/pages/ResultsDashboard"));
+const CompareAssessments = lazy(() => import("@/pages/CompareAssessments"));
+const History = lazy(() => import("@/pages/History"));
+const Settings = lazy(() => import("@/pages/Settings"));
 
 const queryClient = new QueryClient();
+
+function PageFallback() {
+  return (
+    <div className="space-y-6">
+      <div>
+        <Skeleton className="h-8 w-64 mb-2" />
+        <Skeleton className="h-4 w-96" />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Skeleton className="h-32" />
+        <Skeleton className="h-32" />
+        <Skeleton className="h-32" />
+        <Skeleton className="h-32" />
+      </div>
+    </div>
+  );
+}
 
 function Router() {
   return (
     <AppLayout>
-      <Switch>
-        <Route path="/" component={Dashboard} />
-        <Route path="/assessments" component={Assessments} />
-        <Route path="/assessments/compare" component={CompareAssessments} />
-        <Route path="/assessments/:id" component={AssessmentDetail} />
-        <Route path="/assessments/:id/results" component={ResultsDashboard} />
-        <Route path="/settings" component={Settings} />
-        <Route component={NotFound} />
-      </Switch>
+      <Suspense fallback={<PageFallback />}>
+        <Switch>
+          <Route path="/" component={Dashboard} />
+          <Route path="/assessments" component={Assessments} />
+          <Route path="/assessments/compare" component={CompareAssessments} />
+          <Route path="/assessments/:id" component={AssessmentDetail} />
+          <Route path="/assessments/:id/results" component={ResultsDashboard} />
+          <Route path="/history" component={History} />
+          <Route path="/settings" component={Settings} />
+          <Route component={NotFound} />
+        </Switch>
+      </Suspense>
     </AppLayout>
   );
 }

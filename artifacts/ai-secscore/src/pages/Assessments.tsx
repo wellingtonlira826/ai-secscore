@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useListAssessments, useCreateAssessment, useDeleteAssessment, getListAssessmentsQueryKey } from "@workspace/api-client-react";
+import { useListAssessments, useCreateAssessment, useDeleteAssessment, useDuplicateAssessment, getListAssessmentsQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Plus, Trash2, FileText, ChevronRight, ClipboardList } from "lucide-react";
+import { Plus, Trash2, Copy, FileText, ChevronRight, ClipboardList } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 
@@ -22,6 +22,7 @@ export default function Assessments() {
   const { data: assessments, isLoading } = useListAssessments();
   const createAssessment = useCreateAssessment();
   const deleteAssessment = useDeleteAssessment();
+  const duplicateAssessment = useDuplicateAssessment();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
@@ -52,6 +53,18 @@ export default function Assessments() {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getListAssessmentsQueryKey() });
         toast({ title: t('common.delete'), description: "Assessment removed." });
+      }
+    });
+  };
+
+  const handleDuplicate = (id: number) => {
+    duplicateAssessment.mutate({ assessmentId: id }, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: getListAssessmentsQueryKey() });
+        toast({ title: t('assessments.duplicated') });
+      },
+      onError: (err: any) => {
+        toast({ title: t('common.error'), description: err?.message || t('assessments.duplicateError'), variant: "destructive" });
       }
     });
   };
@@ -121,7 +134,17 @@ export default function Assessments() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {assessments.map(assessment => (
             <Card key={assessment.id} className="flex flex-col relative group">
-              <div className="absolute top-4 right-4 z-10 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+              <div className="absolute top-4 right-4 z-10 flex items-center gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
+                  disabled={duplicateAssessment.isPending}
+                  onClick={() => handleDuplicate(assessment.id)}
+                  title={t('assessments.duplicate') as string}
+                >
+                  <Copy className="w-4 h-4" />
+                </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10">

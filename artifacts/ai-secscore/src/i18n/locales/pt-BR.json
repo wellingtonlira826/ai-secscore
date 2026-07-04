@@ -3,7 +3,8 @@
     "dashboard": "Painel",
     "assessments": "Avaliações",
     "compare": "Comparar",
-    "settings": "Configurações"
+    "settings": "Configurações",
+    "history": "Histórico"
   },
   "dashboard": {
     "title": "Centro de Comando de Segurança",
@@ -21,7 +22,12 @@
     "frameworkScores": "Melhores Pontuações de Frameworks",
     "frameworkScoresDesc": "Desempenho médio nos frameworks ativos",
     "noFrameworkData": "Nenhum dado de pontuação de framework disponível",
-    "noRecent": "Nenhuma avaliação recente"
+    "noRecent": "Nenhuma avaliação recente",
+    "needsAttention": "Requer Atenção",
+    "needsAttentionDesc": "Avaliações em andamento sem alterações há mais de 7 dias",
+    "resume": "Retomar",
+    "staleDays_one": "{{count}} dia inativa",
+    "staleDays_other": "{{count}} dias inativa"
   },
   "assessments": {
     "title": "Avaliações",
@@ -39,7 +45,10 @@
     "deleteDesc": "Esta ação não pode ser desfeita. Todas as respostas e pontuações serão excluídas permanentemente.",
     "noAssessments": "Nenhuma Avaliação Encontrada",
     "startFirst": "Crie sua primeira avaliação para começar a avaliar seus sistemas de IA.",
-    "open": "Abrir Avaliação"
+    "open": "Abrir Avaliação",
+    "duplicate": "Duplicar",
+    "duplicated": "Avaliação duplicada",
+    "duplicateError": "Falha ao duplicar a avaliação"
   },
   "assessment": {
     "back": "Voltar para Avaliação",
@@ -57,6 +66,18 @@
     },
     "notes": "Evidência / Notas (opcional)",
     "evidence": "Evidência"
+  },
+  "history": {
+    "title": "Histórico de Pontuações",
+    "subtitle": "Acompanhe como a postura de segurança de cada sistema evolui ao longo do tempo.",
+    "empty": "Ainda não há histórico",
+    "emptyDesc": "Crie e pontue avaliações para começar a construir uma linha do tempo da postura de segurança dos seus sistemas.",
+    "latestScore": "Última Pontuação",
+    "systemsTracked": "Sistemas Monitorados",
+    "assessmentsCount_one": "{{count}} avaliação",
+    "assessmentsCount_other": "{{count}} avaliações",
+    "viewAssessment": "Ver",
+    "scoreOverTime": "Pontuação ao longo do tempo"
   },
   "results": {
     "title": "Resultados da Avaliação",

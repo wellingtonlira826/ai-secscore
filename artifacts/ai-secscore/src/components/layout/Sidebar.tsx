@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   ClipboardList,
   GitCompare,
+  LineChart,
   Settings,
   LogOut,
   Sun,
@@ -34,6 +35,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
     { href: "/", label: t("nav.dashboard"), icon: LayoutDashboard },
     { href: "/assessments", label: t("nav.assessments"), icon: ClipboardList },
     { href: "/assessments/compare", label: t("nav.compare"), icon: GitCompare },
+    { href: "/history", label: t("nav.history"), icon: LineChart },
     { href: "/settings", label: t("nav.settings"), icon: Settings },
   ];
 

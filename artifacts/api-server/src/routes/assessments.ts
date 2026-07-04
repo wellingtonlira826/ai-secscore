@@ -31,6 +31,9 @@ import {
   GetAssessmentSummaryResponse,
   CompareAssessmentsQueryParams,
   CompareAssessmentsResponse,
+  GetAssessmentHistoryResponse,
+  DuplicateAssessmentParams,
+  DuplicateAssessmentResponse,
 } from "@workspace/api-zod";
 
 const router: IRouter = Router();
@@ -229,6 +232,72 @@ router.get("/assessments/compare", async (req, res): Promise<void> => {
   res.json(CompareAssessmentsResponse.parse(result));
 });
 
+router.get("/assessments/history", async (req, res): Promise<void> => {
+  if (!req.isAuthenticated()) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+
+  const userId = req.user.id;
+
+  const assessments = await db
+    .select()
+    .from(assessmentsTable)
+    .where(eq(assessmentsTable.userId, userId))
+    .orderBy(assessmentsTable.createdAt);
+
+  const totalQCount = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(questionsTable);
+  const total = totalQCount[0]?.count ?? 0;
+
+  const groups = new Map<
+    string,
+    Array<{
+      assessmentId: number;
+      assessmentName: string;
+      status: "in_progress" | "completed";
+      overallScore: number;
+      grade: "A" | "B" | "C" | "D" | "F";
+      completionPct: number;
+      createdAt: string;
+    }>
+  >();
+
+  for (const a of assessments) {
+    const score = await computeScore(a.id, userId);
+    const answered = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(answersTable)
+      .where(eq(answersTable.assessmentId, a.id));
+    const completionPct = total > 0 ? Math.round(((answered[0]?.count ?? 0) / total) * 100) : 0;
+
+    const point = {
+      assessmentId: a.id,
+      assessmentName: a.name,
+      status: a.status,
+      overallScore: score.overallScore,
+      grade: score.grade,
+      completionPct,
+      createdAt: a.createdAt.toISOString(),
+    };
+
+    const existing = groups.get(a.systemName);
+    if (existing) {
+      existing.push(point);
+    } else {
+      groups.set(a.systemName, [point]);
+    }
+  }
+
+  const result = Array.from(groups.entries()).map(([systemName, points]) => ({
+    systemName,
+    points,
+  }));
+
+  res.json(GetAssessmentHistoryResponse.parse(result));
+});
+
 router.post("/assessments", async (req, res): Promise<void> => {
   if (!req.isAuthenticated()) {
     res.status(401).json({ error: "Unauthorized" });
@@ -386,6 +455,76 @@ router.delete("/assessments/:assessmentId", async (req, res): Promise<void> => {
     .where(eq(answersTable.assessmentId, params.data.assessmentId));
 
   res.sendStatus(204);
+});
+
+router.post("/assessments/:assessmentId/duplicate", async (req, res): Promise<void> => {
+  if (!req.isAuthenticated()) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+
+  const params = DuplicateAssessmentParams.safeParse(req.params);
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+
+  const userId = req.user.id;
+
+  // Verify ownership before copying
+  const [source] = await db
+    .select()
+    .from(assessmentsTable)
+    .where(
+      and(
+        eq(assessmentsTable.id, params.data.assessmentId),
+        eq(assessmentsTable.userId, userId)
+      )
+    );
+
+  if (!source) {
+    res.status(404).json({ error: "Assessment not found" });
+    return;
+  }
+
+  const [copy] = await db
+    .insert(assessmentsTable)
+    .values({
+      userId,
+      name: `${source.name} (copy)`,
+      systemName: source.systemName,
+      description: source.description,
+      status: "in_progress",
+    })
+    .returning();
+
+  // Copy answers from the source assessment
+  const sourceAnswers = await db
+    .select()
+    .from(answersTable)
+    .where(eq(answersTable.assessmentId, source.id));
+
+  if (sourceAnswers.length > 0) {
+    await db.insert(answersTable).values(
+      sourceAnswers.map((a) => ({
+        assessmentId: copy.id,
+        questionId: a.questionId,
+        maturityLevel: a.maturityLevel,
+        notes: a.notes,
+        updatedAt: new Date(),
+      }))
+    );
+  }
+
+  const totalQCount = await db.select({ count: sql<number>`count(*)::int` }).from(questionsTable);
+  const total = totalQCount[0]?.count ?? 0;
+  const answered = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(answersTable)
+    .where(eq(answersTable.assessmentId, copy.id));
+  const completionPct = total > 0 ? Math.round(((answered[0]?.count ?? 0) / total) * 100) : 0;
+
+  res.status(201).json(DuplicateAssessmentResponse.parse({ ...copy, completionPct }));
 });
 
 // ── Answers ───────────────────────────────────────────────────────────────────

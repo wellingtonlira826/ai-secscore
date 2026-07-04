@@ -285,6 +285,40 @@ export interface AssessmentComparison {
   frameworkDiffs: FrameworkDiff[];
 }
 
+export type AssessmentHistoryPointStatus = typeof AssessmentHistoryPointStatus[keyof typeof AssessmentHistoryPointStatus];
+
+
+export const AssessmentHistoryPointStatus = {
+  in_progress: 'in_progress',
+  completed: 'completed',
+} as const;
+
+export type AssessmentHistoryPointGrade = typeof AssessmentHistoryPointGrade[keyof typeof AssessmentHistoryPointGrade];
+
+
+export const AssessmentHistoryPointGrade = {
+  A: 'A',
+  B: 'B',
+  C: 'C',
+  D: 'D',
+  F: 'F',
+} as const;
+
+export interface AssessmentHistoryPoint {
+  assessmentId: number;
+  assessmentName: string;
+  status: AssessmentHistoryPointStatus;
+  overallScore: number;
+  grade: AssessmentHistoryPointGrade;
+  completionPct: number;
+  createdAt: string;
+}
+
+export interface AssessmentHistoryGroup {
+  systemName: string;
+  points: AssessmentHistoryPoint[];
+}
+
 export interface FrameworkWeight {
   frameworkId: number;
   frameworkName: string;

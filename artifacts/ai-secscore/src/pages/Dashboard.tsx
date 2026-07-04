@@ -1,6 +1,7 @@
-import { useGetDashboard } from "@workspace/api-client-react";
+import { useGetDashboard, useListAssessments } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { 
   BarChart, 
@@ -11,7 +12,7 @@ import {
   Tooltip as RechartsTooltip, 
   ResponsiveContainer 
 } from "recharts";
-import { ShieldAlert, Activity, CheckCircle2, ListTodo } from "lucide-react";
+import { ShieldAlert, Activity, CheckCircle2, ListTodo, AlertTriangle, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "react-i18next";
 
@@ -33,6 +34,7 @@ function StatCard({ title, value, icon: Icon, description }: any) {
 export default function Dashboard() {
   const { t } = useTranslation();
   const { data: dashboard, isLoading, error } = useGetDashboard();
+  const { data: allAssessments } = useListAssessments();
 
   if (isLoading) {
     return (
@@ -62,6 +64,18 @@ export default function Dashboard() {
       </div>
     );
   }
+
+  const STALE_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+  const staleAssessments = (allAssessments ?? [])
+    .filter(
+      (a) =>
+        a.status === "in_progress" &&
+        now - new Date(a.updatedAt).getTime() > STALE_THRESHOLD_MS
+    )
+    .sort(
+      (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+    );
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -96,6 +110,45 @@ export default function Dashboard() {
           description={t('dashboard.avgScoreDesc')}
         />
       </div>
+
+      {staleAssessments.length > 0 && (
+        <Card className="border-amber-500/40 bg-amber-500/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <AlertTriangle className="w-5 h-5 text-amber-500" />
+              {t('dashboard.needsAttention')}
+            </CardTitle>
+            <CardDescription>{t('dashboard.needsAttentionDesc')}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {staleAssessments.map((a) => {
+              const days = Math.floor(
+                (now - new Date(a.updatedAt).getTime()) / (24 * 60 * 60 * 1000)
+              );
+              return (
+                <div
+                  key={a.id}
+                  className="flex items-center justify-between gap-4 p-3 rounded-lg border border-border bg-card"
+                >
+                  <div className="min-w-0">
+                    <div className="font-medium truncate" title={a.name}>{a.name}</div>
+                    <div className="text-sm text-muted-foreground truncate">{a.systemName}</div>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span className="hidden sm:flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-500">
+                      <Clock className="w-3.5 h-3.5" />
+                      {t('dashboard.staleDays', { count: days })}
+                    </span>
+                    <Link href={`/assessments/${a.id}`}>
+                      <Button size="sm" variant="outline">{t('dashboard.resume')}</Button>
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="flex flex-col h-[320px] md:h-[450px]">

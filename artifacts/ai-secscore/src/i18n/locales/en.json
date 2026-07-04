@@ -3,7 +3,8 @@
     "dashboard": "Dashboard",
     "assessments": "Assessments",
     "compare": "Compare",
-    "settings": "Settings"
+    "settings": "Settings",
+    "history": "History"
   },
   "dashboard": {
     "title": "Security Command Center",
@@ -21,7 +22,12 @@
     "frameworkScores": "Top Framework Scores",
     "frameworkScoresDesc": "Average performance across active frameworks",
     "noFrameworkData": "No framework score data available",
-    "noRecent": "No recent assessments"
+    "noRecent": "No recent assessments",
+    "needsAttention": "Needs Attention",
+    "needsAttentionDesc": "In-progress assessments untouched for over 7 days",
+    "resume": "Resume",
+    "staleDays_one": "{{count}} day inactive",
+    "staleDays_other": "{{count}} days inactive"
   },
   "assessments": {
     "title": "Assessments",
@@ -39,7 +45,10 @@
     "deleteDesc": "This action cannot be undone. All answers and scores will be permanently deleted.",
     "noAssessments": "No Assessments Found",
     "startFirst": "Create your first assessment to begin evaluating your AI systems against security frameworks.",
-    "open": "Open Assessment"
+    "open": "Open Assessment",
+    "duplicate": "Duplicate",
+    "duplicated": "Assessment duplicated",
+    "duplicateError": "Failed to duplicate assessment"
   },
   "assessment": {
     "back": "Back to Assessment",
@@ -57,6 +66,18 @@
     },
     "notes": "Evidence / Notes (optional)",
     "evidence": "Evidence"
+  },
+  "history": {
+    "title": "Score History",
+    "subtitle": "Track how each system's security posture evolves over time.",
+    "empty": "No history yet",
+    "emptyDesc": "Create and score assessments to start building a security posture timeline for your systems.",
+    "latestScore": "Latest Score",
+    "systemsTracked": "Systems Tracked",
+    "assessmentsCount_one": "{{count}} assessment",
+    "assessmentsCount_other": "{{count}} assessments",
+    "viewAssessment": "View",
+    "scoreOverTime": "Score over time"
   },
   "results": {
     "title": "Assessment Results",

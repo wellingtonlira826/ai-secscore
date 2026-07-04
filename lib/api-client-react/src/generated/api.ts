@@ -24,6 +24,7 @@ import type {
   AnswerInput,
   Assessment,
   AssessmentComparison,
+  AssessmentHistoryGroup,
   AssessmentInput,
   AssessmentScore,
   AssessmentUpdate,
@@ -2079,6 +2080,153 @@ export function useCompareAssessments<TData = Awaited<ReturnType<typeof compareA
 
 
 
+
+export const getGetAssessmentHistoryUrl = () => {
+
+
+
+
+  return `/api/assessments/history`
+}
+
+/**
+ * @summary Get score history grouped by system name
+ */
+export const getAssessmentHistory = async ( options?: RequestInit): Promise<AssessmentHistoryGroup[]> => {
+
+  return customFetch<AssessmentHistoryGroup[]>(getGetAssessmentHistoryUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetAssessmentHistoryQueryKey = () => {
+    return [
+    `/api/assessments/history`
+    ] as const;
+    }
+
+
+export const getGetAssessmentHistoryQueryOptions = <TData = Awaited<ReturnType<typeof getAssessmentHistory>>, TError = ErrorType<ErrorEnvelope>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAssessmentHistory>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAssessmentHistoryQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAssessmentHistory>>> = ({ signal }) => getAssessmentHistory({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAssessmentHistory>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetAssessmentHistoryQueryResult = NonNullable<Awaited<ReturnType<typeof getAssessmentHistory>>>
+export type GetAssessmentHistoryQueryError = ErrorType<ErrorEnvelope>
+
+
+/**
+ * @summary Get score history grouped by system name
+ */
+
+export function useGetAssessmentHistory<TData = Awaited<ReturnType<typeof getAssessmentHistory>>, TError = ErrorType<ErrorEnvelope>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAssessmentHistory>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetAssessmentHistoryQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getDuplicateAssessmentUrl = (assessmentId: number,) => {
+
+
+
+
+  return `/api/assessments/${assessmentId}/duplicate`
+}
+
+/**
+ * @summary Duplicate an assessment along with its answers
+ */
+export const duplicateAssessment = async (assessmentId: number, options?: RequestInit): Promise<Assessment> => {
+
+  return customFetch<Assessment>(getDuplicateAssessmentUrl(assessmentId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getDuplicateAssessmentMutationOptions = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof duplicateAssessment>>, TError,{assessmentId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof duplicateAssessment>>, TError,{assessmentId: number}, TContext> => {
+
+const mutationKey = ['duplicateAssessment'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof duplicateAssessment>>, {assessmentId: number}> = (props) => {
+          const {assessmentId} = props ?? {};
+
+          return  duplicateAssessment(assessmentId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DuplicateAssessmentMutationResult = NonNullable<Awaited<ReturnType<typeof duplicateAssessment>>>
+
+    export type DuplicateAssessmentMutationError = ErrorType<ErrorEnvelope>
+
+    /**
+ * @summary Duplicate an assessment along with its answers
+ */
+export const useDuplicateAssessment = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof duplicateAssessment>>, TError,{assessmentId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof duplicateAssessment>>,
+        TError,
+        {assessmentId: number},
+        TContext
+      > => {
+      return useMutation(getDuplicateAssessmentMutationOptions(options));
+    }
 
 export const getListFrameworkWeightsUrl = () => {
 

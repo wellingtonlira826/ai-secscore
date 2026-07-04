@@ -3,7 +3,8 @@
     "dashboard": "Panel",
     "assessments": "Evaluaciones",
     "compare": "Comparar",
-    "settings": "Ajustes"
+    "settings": "Ajustes",
+    "history": "Historial"
   },
   "dashboard": {
     "title": "Centro de Comando de Seguridad",
@@ -21,7 +22,12 @@
     "frameworkScores": "Mejores Puntuaciones de Marcos",
     "frameworkScoresDesc": "Rendimiento promedio en los marcos activos",
     "noFrameworkData": "No hay datos de puntuación de marcos disponibles",
-    "noRecent": "No hay evaluaciones recientes"
+    "noRecent": "No hay evaluaciones recientes",
+    "needsAttention": "Requiere Atención",
+    "needsAttentionDesc": "Evaluaciones en curso sin cambios durante más de 7 días",
+    "resume": "Reanudar",
+    "staleDays_one": "{{count}} día inactiva",
+    "staleDays_other": "{{count}} días inactiva"
   },
   "assessments": {
     "title": "Evaluaciones",
@@ -39,7 +45,10 @@
     "deleteDesc": "Esta acción no se puede deshacer. Todas las respuestas y puntuaciones se eliminarán permanentemente.",
     "noAssessments": "No Se Encontraron Evaluaciones",
     "startFirst": "Crea tu primera evaluación para comenzar a evaluar tus sistemas de IA.",
-    "open": "Abrir Evaluación"
+    "open": "Abrir Evaluación",
+    "duplicate": "Duplicar",
+    "duplicated": "Evaluación duplicada",
+    "duplicateError": "No se pudo duplicar la evaluación"
   },
   "assessment": {
     "back": "Volver a la Evaluación",
@@ -57,6 +66,18 @@
     },
     "notes": "Evidencia / Notas (opcional)",
     "evidence": "Evidencia"
+  },
+  "history": {
+    "title": "Historial de Puntuaciones",
+    "subtitle": "Sigue cómo evoluciona la postura de seguridad de cada sistema con el tiempo.",
+    "empty": "Aún no hay historial",
+    "emptyDesc": "Crea y puntúa evaluaciones para comenzar a construir una línea de tiempo de la postura de seguridad de tus sistemas.",
+    "latestScore": "Última Puntuación",
+    "systemsTracked": "Sistemas Rastreados",
+    "assessmentsCount_one": "{{count}} evaluación",
+    "assessmentsCount_other": "{{count}} evaluaciones",
+    "viewAssessment": "Ver",
+    "scoreOverTime": "Puntuación en el tiempo"
   },
   "results": {
     "title": "Resultados de la Evaluación",

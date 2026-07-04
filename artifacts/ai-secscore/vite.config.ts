@@ -40,6 +40,20 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "react-vendor": ["react", "react-dom", "wouter"],
+          "chart-vendor": ["recharts"],
+          "query-vendor": ["@tanstack/react-query"],
+          "i18n-vendor": [
+            "i18next",
+            "react-i18next",
+            "i18next-browser-languagedetector",
+          ],
+        },
+      },
+    },
   },
   server: {
     port,

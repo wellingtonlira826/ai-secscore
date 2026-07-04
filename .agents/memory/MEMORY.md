@@ -1,2 +1,3 @@
 - [Orval codegen types conflict](orval-codegen-types.md) — generated index.ts exports both Zod values and TS interfaces with same name; patch script in api-spec/package.json removes the types barrel line
 - [api-zod Zod schema naming](api-zod-naming.md) — auth route mobile schemas are ExchangeMobileTokenBody/Response and LogoutResponse (not "AuthorizationCode" or "MobileSession" variants)
+- [api-zod codegen type exports](api-zod-codegen.md) — generated TS types are stripped from the api-zod index; re-export named, and always run pnpm typecheck since esbuild skips it.

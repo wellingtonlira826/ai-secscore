@@ -528,6 +528,44 @@ export const CompareAssessmentsResponse = zod.object({
 
 
 /**
+ * @summary Get score history grouped by system name
+ */
+export const GetAssessmentHistoryResponseItem = zod.object({
+  "systemName": zod.string(),
+  "points": zod.array(zod.object({
+  "assessmentId": zod.number(),
+  "assessmentName": zod.string(),
+  "status": zod.enum(['in_progress', 'completed']),
+  "overallScore": zod.number(),
+  "grade": zod.enum(['A', 'B', 'C', 'D', 'F']),
+  "completionPct": zod.number(),
+  "createdAt": zod.coerce.date()
+}))
+})
+export const GetAssessmentHistoryResponse = zod.array(GetAssessmentHistoryResponseItem)
+
+
+/**
+ * @summary Duplicate an assessment along with its answers
+ */
+export const DuplicateAssessmentParams = zod.object({
+  "assessmentId": zod.coerce.number()
+})
+
+export const DuplicateAssessmentResponse = zod.object({
+  "id": zod.number(),
+  "userId": zod.string(),
+  "name": zod.string(),
+  "systemName": zod.string(),
+  "description": zod.string().nullish(),
+  "status": zod.enum(['in_progress', 'completed']),
+  "completionPct": zod.number().describe('Percentage of questions answered (0–100)'),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+})
+
+
+/**
  * @summary Get user-specific framework weights
  */
 export const ListFrameworkWeightsResponseItem = zod.object({
