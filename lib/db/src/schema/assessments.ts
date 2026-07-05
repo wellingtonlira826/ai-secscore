@@ -17,6 +17,8 @@ export const frameworksTable = pgTable("frameworks", {
   slug: text("slug").notNull().unique(),
   description: text("description").notNull(),
   defaultWeight: real("default_weight").notNull().default(1),
+  category: text("category"),
+  referenceUrl: text("reference_url"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -63,6 +65,8 @@ export const assessmentsTable = pgTable("assessments", {
   systemName: text("system_name").notNull(),
   description: text("description"),
   status: assessmentStatusEnum("status").notNull().default("in_progress"),
+  reviewFrequencyDays: integer("review_frequency_days"),
+  nextReviewAt: timestamp("next_review_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });
