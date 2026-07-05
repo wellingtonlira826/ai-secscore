@@ -43,7 +43,7 @@ Assessment responses and evidence files can contain sensitive internal security 
 
 ### Denial of Service
 
-Public endpoints that mint upload URLs or trigger storage/database work can be abused for cost and resource exhaustion. The application must avoid unauthenticated high-cost operations and should ensure public routes cannot be used to fill private storage or amplify backend work without user accountability.
+Public endpoints that mint upload URLs or trigger storage/database work can be abused for cost and resource exhaustion. The application must avoid unauthenticated high-cost operations and should ensure public routes cannot be used to fill private storage or amplify backend work without user accountability. Authenticated evidence-upload flows also need server-enforced byte/object quotas and orphan cleanup so a low-privilege account cannot exhaust shared object storage through oversized direct uploads.
 
 ### Elevation of Privilege
 
