@@ -14,4 +14,9 @@ export interface AssessmentUpdate {
   systemName?: string;
   description?: string;
   status?: AssessmentUpdateStatus;
+  /**
+     * How often (in days) this assessment should be reviewed; server computes nextReviewAt
+     * @nullable
+     */
+  reviewFrequencyDays?: number | null;
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useListAssessments, useCreateAssessment, useDeleteAssessment, useDuplicateAssessment, getListAssessmentsQueryKey } from "@workspace/api-client-react";
+import { useListAssessments, useCreateAssessment, useDeleteAssessment, useDuplicateAssessment, useListSharedAssessments, getListAssessmentsQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Plus, Trash2, Copy, FileText, ChevronRight, ClipboardList } from "lucide-react";
+import { Plus, Trash2, Copy, FileText, ChevronRight, ClipboardList, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 
@@ -23,6 +23,7 @@ export default function Assessments() {
   const createAssessment = useCreateAssessment();
   const deleteAssessment = useDeleteAssessment();
   const duplicateAssessment = useDuplicateAssessment();
+  const { data: shared } = useListSharedAssessments();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
@@ -201,6 +202,38 @@ export default function Assessments() {
             {t('assessments.startFirst')}
           </p>
           <Button onClick={() => setCreateDialogOpen(true)}>{t('assessments.createTitle')}</Button>
+        </div>
+      )}
+
+      {shared && shared.length > 0 && (
+        <div className="space-y-4 pt-4">
+          <div className="flex items-center gap-2">
+            <Users className="w-5 h-5 text-primary" />
+            <h2 className="text-xl font-semibold tracking-tight">{t('share.sharedWithMe')}</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {shared.map((s) => (
+              <Link key={s.id} href={`/assessments/${s.id}`}>
+                <Card className="flex flex-col cursor-pointer hover:bg-accent/30 transition-colors h-full">
+                  <CardContent className="p-6 flex flex-col flex-1">
+                    <div className="flex items-start justify-between mb-4 gap-2">
+                      <div className="min-w-0">
+                        <h3 className="font-semibold text-lg truncate" title={s.name}>{s.name}</h3>
+                        <p className="text-sm text-muted-foreground truncate" title={s.systemName}>{s.systemName}</p>
+                      </div>
+                      <Badge variant="outline" className="shrink-0 capitalize">
+                        {s.role === 'editor' ? t('share.role.editor') : t('share.role.viewer')}
+                      </Badge>
+                    </div>
+                    <div className="mt-auto flex items-center justify-between text-sm text-muted-foreground">
+                      <span className="truncate" title={s.ownerEmail ?? undefined}>{s.ownerEmail}</span>
+                      <ChevronRight className="w-4 h-4 shrink-0" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
         </div>
       )}
     </div>

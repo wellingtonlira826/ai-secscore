@@ -61,6 +61,64 @@ function exportHistoryCsv(groups: AssessmentHistoryGroup[]): void {
   URL.revokeObjectURL(url);
 }
 
+function scoreColor(score: number): string {
+  if (score >= 80) return "bg-emerald-500";
+  if (score >= 60) return "bg-blue-500";
+  if (score >= 40) return "bg-amber-500";
+  if (score >= 20) return "bg-orange-500";
+  return "bg-red-500";
+}
+
+function HeatmapOverview({ groups }: { groups: AssessmentHistoryGroup[] }) {
+  const { t, i18n } = useTranslation();
+  const maxCols = Math.max(...groups.map((g) => g.points.length));
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <TrendingUp className="w-5 h-5 text-primary" />
+          {t("history.heatmapTitle")}
+        </CardTitle>
+        <CardDescription>{t("history.heatmapDesc")}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-2 overflow-x-auto">
+          {groups.map((group) => {
+            const points = [...group.points].sort(
+              (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            );
+            return (
+              <div key={group.systemName} className="flex items-center gap-3">
+                <div className="w-32 shrink-0 truncate text-sm font-medium" title={group.systemName}>
+                  {group.systemName}
+                </div>
+                <div className="flex gap-1.5">
+                  {Array.from({ length: maxCols }).map((_, i) => {
+                    const p = points[i];
+                    if (!p) return <div key={i} className="w-8 h-8 rounded-md bg-muted/40" />;
+                    const s = Math.round(p.overallScore);
+                    return (
+                      <Link key={p.assessmentId} href={`/assessments/${p.assessmentId}/results`}>
+                        <div
+                          className={`w-8 h-8 rounded-md flex items-center justify-center text-[10px] font-bold text-white cursor-pointer hover:ring-2 hover:ring-ring transition-all ${scoreColor(s)}`}
+                          title={`${p.assessmentName} — ${s} (${new Date(p.createdAt).toLocaleDateString(i18n.language)})`}
+                        >
+                          {s}
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 function SystemHistoryCard({ group }: { group: AssessmentHistoryGroup }) {
   const { t, i18n } = useTranslation();
 
@@ -222,10 +280,13 @@ export default function History() {
       </div>
 
       {groups && groups.length > 0 ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {groups.map((group) => (
-            <SystemHistoryCard key={group.systemName} group={group} />
-          ))}
+        <div className="space-y-6">
+          <HeatmapOverview groups={groups} />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {groups.map((group) => (
+              <SystemHistoryCard key={group.systemName} group={group} />
+            ))}
+          </div>
         </div>
       ) : (
         <div className="text-center py-24 border border-dashed rounded-xl bg-card/50">

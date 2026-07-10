@@ -96,6 +96,8 @@ export const ListFrameworksResponseItem = zod.object({
   "slug": zod.string(),
   "description": zod.string(),
   "defaultWeight": zod.number().describe('Default weight (0.0–1.0, equal by default)'),
+  "category": zod.string().nullish(),
+  "referenceUrl": zod.string().nullish(),
   "questionCount": zod.number()
 })
 export const ListFrameworksResponse = zod.array(ListFrameworksResponseItem)
@@ -158,6 +160,8 @@ export const ListAssessmentsResponseItem = zod.object({
   "description": zod.string().nullish(),
   "status": zod.enum(['in_progress', 'completed']),
   "completionPct": zod.number().describe('Percentage of questions answered (0–100)'),
+  "reviewFrequencyDays": zod.number().nullish().describe('How often (in days) this assessment should be reviewed'),
+  "nextReviewAt": zod.coerce.date().nullish().describe('When the next reassessment is due'),
   "createdAt": zod.coerce.date(),
   "updatedAt": zod.coerce.date()
 })
@@ -185,6 +189,8 @@ export const CreateAssessmentResponse = zod.object({
   "description": zod.string().nullish(),
   "status": zod.enum(['in_progress', 'completed']),
   "completionPct": zod.number().describe('Percentage of questions answered (0–100)'),
+  "reviewFrequencyDays": zod.number().nullish().describe('How often (in days) this assessment should be reviewed'),
+  "nextReviewAt": zod.coerce.date().nullish().describe('When the next reassessment is due'),
   "createdAt": zod.coerce.date(),
   "updatedAt": zod.coerce.date()
 })
@@ -205,6 +211,8 @@ export const GetAssessmentResponse = zod.object({
   "description": zod.string().nullish(),
   "status": zod.enum(['in_progress', 'completed']),
   "completionPct": zod.number().describe('Percentage of questions answered (0–100)'),
+  "reviewFrequencyDays": zod.number().nullish().describe('How often (in days) this assessment should be reviewed'),
+  "nextReviewAt": zod.coerce.date().nullish().describe('When the next reassessment is due'),
   "createdAt": zod.coerce.date(),
   "updatedAt": zod.coerce.date()
 })
@@ -225,7 +233,8 @@ export const UpdateAssessmentBody = zod.object({
   "name": zod.string().min(1).optional(),
   "systemName": zod.string().min(1).optional(),
   "description": zod.string().optional(),
-  "status": zod.enum(['in_progress', 'completed']).optional()
+  "status": zod.enum(['in_progress', 'completed']).optional(),
+  "reviewFrequencyDays": zod.number().nullish().describe('How often (in days) this assessment should be reviewed; server computes nextReviewAt')
 })
 
 export const UpdateAssessmentResponse = zod.object({
@@ -236,6 +245,8 @@ export const UpdateAssessmentResponse = zod.object({
   "description": zod.string().nullish(),
   "status": zod.enum(['in_progress', 'completed']),
   "completionPct": zod.number().describe('Percentage of questions answered (0–100)'),
+  "reviewFrequencyDays": zod.number().nullish().describe('How often (in days) this assessment should be reviewed'),
+  "nextReviewAt": zod.coerce.date().nullish().describe('When the next reassessment is due'),
   "createdAt": zod.coerce.date(),
   "updatedAt": zod.coerce.date()
 })
@@ -560,6 +571,8 @@ export const DuplicateAssessmentResponse = zod.object({
   "description": zod.string().nullish(),
   "status": zod.enum(['in_progress', 'completed']),
   "completionPct": zod.number().describe('Percentage of questions answered (0–100)'),
+  "reviewFrequencyDays": zod.number().nullish().describe('How often (in days) this assessment should be reviewed'),
+  "nextReviewAt": zod.coerce.date().nullish().describe('When the next reassessment is due'),
   "createdAt": zod.coerce.date(),
   "updatedAt": zod.coerce.date()
 })
@@ -610,12 +623,216 @@ export const GetDashboardResponse = zod.object({
   "description": zod.string().nullish(),
   "status": zod.enum(['in_progress', 'completed']),
   "completionPct": zod.number().describe('Percentage of questions answered (0–100)'),
+  "reviewFrequencyDays": zod.number().nullish().describe('How often (in days) this assessment should be reviewed'),
+  "nextReviewAt": zod.coerce.date().nullish().describe('When the next reassessment is due'),
   "createdAt": zod.coerce.date(),
   "updatedAt": zod.coerce.date()
 })),
   "topFrameworkScores": zod.array(zod.object({
   "frameworkName": zod.string(),
   "avgScore": zod.number()
+}))
+})
+
+
+/**
+ * @summary List remediation items for an assessment
+ */
+export const ListRemediationItemsParams = zod.object({
+  "assessmentId": zod.coerce.number()
+})
+
+export const ListRemediationItemsResponseItem = zod.object({
+  "id": zod.number(),
+  "assessmentId": zod.number(),
+  "questionId": zod.number().nullish(),
+  "userId": zod.string(),
+  "title": zod.string(),
+  "description": zod.string().nullish(),
+  "owner": zod.string().nullish(),
+  "dueDate": zod.coerce.date().nullish(),
+  "priority": zod.enum(['low', 'medium', 'high', 'critical']),
+  "status": zod.enum(['open', 'in_progress', 'resolved']),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+})
+export const ListRemediationItemsResponse = zod.array(ListRemediationItemsResponseItem)
+
+
+/**
+ * @summary Create a remediation item
+ */
+export const CreateRemediationItemParams = zod.object({
+  "assessmentId": zod.coerce.number()
+})
+
+
+
+
+export const CreateRemediationItemBody = zod.object({
+  "title": zod.string().min(1),
+  "description": zod.string().optional(),
+  "questionId": zod.number().optional(),
+  "owner": zod.string().optional(),
+  "dueDate": zod.coerce.date().optional(),
+  "priority": zod.enum(['low', 'medium', 'high', 'critical']).optional(),
+  "status": zod.enum(['open', 'in_progress', 'resolved']).optional()
+})
+
+export const CreateRemediationItemResponse = zod.object({
+  "id": zod.number(),
+  "assessmentId": zod.number(),
+  "questionId": zod.number().nullish(),
+  "userId": zod.string(),
+  "title": zod.string(),
+  "description": zod.string().nullish(),
+  "owner": zod.string().nullish(),
+  "dueDate": zod.coerce.date().nullish(),
+  "priority": zod.enum(['low', 'medium', 'high', 'critical']),
+  "status": zod.enum(['open', 'in_progress', 'resolved']),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Update a remediation item
+ */
+export const UpdateRemediationItemParams = zod.object({
+  "assessmentId": zod.coerce.number(),
+  "itemId": zod.coerce.number()
+})
+
+
+
+
+export const UpdateRemediationItemBody = zod.object({
+  "title": zod.string().min(1).optional(),
+  "description": zod.string().nullish(),
+  "owner": zod.string().nullish(),
+  "dueDate": zod.coerce.date().nullish(),
+  "priority": zod.enum(['low', 'medium', 'high', 'critical']).optional(),
+  "status": zod.enum(['open', 'in_progress', 'resolved']).optional()
+})
+
+export const UpdateRemediationItemResponse = zod.object({
+  "id": zod.number(),
+  "assessmentId": zod.number(),
+  "questionId": zod.number().nullish(),
+  "userId": zod.string(),
+  "title": zod.string(),
+  "description": zod.string().nullish(),
+  "owner": zod.string().nullish(),
+  "dueDate": zod.coerce.date().nullish(),
+  "priority": zod.enum(['low', 'medium', 'high', 'critical']),
+  "status": zod.enum(['open', 'in_progress', 'resolved']),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Delete a remediation item
+ */
+export const DeleteRemediationItemParams = zod.object({
+  "assessmentId": zod.coerce.number(),
+  "itemId": zod.coerce.number()
+})
+
+export const DeleteRemediationItemResponse = zod.void()
+
+
+/**
+ * @summary List collaborators for an assessment
+ */
+export const ListCollaboratorsParams = zod.object({
+  "assessmentId": zod.coerce.number()
+})
+
+export const ListCollaboratorsResponseItem = zod.object({
+  "id": zod.number(),
+  "assessmentId": zod.number(),
+  "ownerId": zod.string(),
+  "collaboratorEmail": zod.string(),
+  "role": zod.enum(['viewer', 'editor']),
+  "createdAt": zod.coerce.date()
+})
+export const ListCollaboratorsResponse = zod.array(ListCollaboratorsResponseItem)
+
+
+/**
+ * @summary Share an assessment with another user by email
+ */
+export const AddCollaboratorParams = zod.object({
+  "assessmentId": zod.coerce.number()
+})
+
+export const addCollaboratorBodyCollaboratorEmailMin = 3;
+
+
+
+export const AddCollaboratorBody = zod.object({
+  "collaboratorEmail": zod.string().email().min(addCollaboratorBodyCollaboratorEmailMin),
+  "role": zod.enum(['viewer', 'editor'])
+})
+
+export const AddCollaboratorResponse = zod.object({
+  "id": zod.number(),
+  "assessmentId": zod.number(),
+  "ownerId": zod.string(),
+  "collaboratorEmail": zod.string(),
+  "role": zod.enum(['viewer', 'editor']),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Remove a collaborator from an assessment
+ */
+export const RemoveCollaboratorParams = zod.object({
+  "assessmentId": zod.coerce.number(),
+  "collaboratorId": zod.coerce.number()
+})
+
+export const RemoveCollaboratorResponse = zod.void()
+
+
+/**
+ * @summary List assessments shared with the current user
+ */
+export const ListSharedAssessmentsResponseItem = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "systemName": zod.string(),
+  "status": zod.enum(['in_progress', 'completed']),
+  "role": zod.enum(['viewer', 'editor']),
+  "ownerEmail": zod.string().nullable()
+})
+export const ListSharedAssessmentsResponse = zod.array(ListSharedAssessmentsResponseItem)
+
+
+/**
+ * @summary Get standards-mapping compliance view for an assessment
+ */
+export const GetComplianceViewParams = zod.object({
+  "assessmentId": zod.coerce.number()
+})
+
+export const GetComplianceViewResponse = zod.object({
+  "assessmentId": zod.number(),
+  "overallScore": zod.number(),
+  "categories": zod.array(zod.object({
+  "category": zod.string(),
+  "avgScore": zod.number(),
+  "frameworks": zod.array(zod.object({
+  "frameworkId": zod.number(),
+  "frameworkName": zod.string(),
+  "referenceUrl": zod.string().nullish(),
+  "score": zod.number(),
+  "riskLevel": zod.enum(['Critical', 'High', 'Medium', 'Low']),
+  "answeredCount": zod.number(),
+  "totalCount": zod.number()
+}))
 }))
 })
 

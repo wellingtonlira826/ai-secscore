@@ -886,6 +886,287 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorEnvelope"
 
+  # ── Remediation ─────────────────────────────────────────────────────────────
+
+  /assessments/{assessmentId}/remediation:
+    get:
+      tags: [Remediation]
+      operationId: listRemediationItems
+      summary: List remediation items for an assessment
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Remediation items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RemediationItem"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+    post:
+      tags: [Remediation]
+      operationId: createRemediationItem
+      summary: Create a remediation item
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemediationItemInput"
+      responses:
+        "201":
+          description: Created remediation item
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RemediationItem" }
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+
+  /assessments/{assessmentId}/remediation/{itemId}:
+    patch:
+      tags: [Remediation]
+      operationId: updateRemediationItem
+      summary: Update a remediation item
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema: { type: integer }
+        - name: itemId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemediationItemUpdate"
+      responses:
+        "200":
+          description: Updated remediation item
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RemediationItem" }
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+    delete:
+      tags: [Remediation]
+      operationId: deleteRemediationItem
+      summary: Delete a remediation item
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema: { type: integer }
+        - name: itemId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+
+  # ── Collaboration ───────────────────────────────────────────────────────────
+
+  /assessments/{assessmentId}/collaborators:
+    get:
+      tags: [Collaboration]
+      operationId: listCollaborators
+      summary: List collaborators for an assessment
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Collaborators
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Collaborator"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+    post:
+      tags: [Collaboration]
+      operationId: addCollaborator
+      summary: Share an assessment with another user by email
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CollaboratorInput"
+      responses:
+        "201":
+          description: Collaborator added
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Collaborator" }
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+
+  /assessments/{assessmentId}/collaborators/{collaboratorId}:
+    delete:
+      tags: [Collaboration]
+      operationId: removeCollaborator
+      summary: Remove a collaborator from an assessment
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema: { type: integer }
+        - name: collaboratorId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Removed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+
+  /shared-assessments:
+    get:
+      tags: [Collaboration]
+      operationId: listSharedAssessments
+      summary: List assessments shared with the current user
+      responses:
+        "200":
+          description: Shared assessments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SharedAssessment"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+
+  # ── Compliance ──────────────────────────────────────────────────────────────
+
+  /assessments/{assessmentId}/compliance:
+    get:
+      tags: [Compliance]
+      operationId: getComplianceView
+      summary: Get standards-mapping compliance view for an assessment
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Compliance view grouped by standard category
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ComplianceView" }
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+
 components:
   parameters:
     AuthorizationSessionHeader:
@@ -992,6 +1273,10 @@ components:
         defaultWeight:
           type: number
           description: Default weight (0.0–1.0, equal by default)
+        category:
+          type: ["string", "null"]
+        referenceUrl:
+          type: ["string", "null"]
         questionCount:
           type: integer
 
@@ -1057,6 +1342,13 @@ components:
         completionPct:
           type: number
           description: Percentage of questions answered (0–100)
+        reviewFrequencyDays:
+          type: ["integer", "null"]
+          description: How often (in days) this assessment should be reviewed
+        nextReviewAt:
+          type: ["string", "null"]
+          format: date-time
+          description: When the next reassessment is due
         createdAt:
           type: string
           format: date-time
@@ -1091,6 +1383,9 @@ components:
         status:
           type: string
           enum: [in_progress, completed]
+        reviewFrequencyDays:
+          type: ["integer", "null"]
+          description: How often (in days) this assessment should be reviewed; server computes nextReviewAt
 
     Answer:
       type: object
@@ -1398,3 +1693,179 @@ components:
                 type: string
               avgScore:
                 type: number
+
+    # ── Remediation schemas ───────────────────────────────────────────────────
+    RemediationItem:
+      type: object
+      required: [id, assessmentId, userId, title, priority, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        assessmentId:
+          type: integer
+        questionId:
+          type: ["integer", "null"]
+        userId:
+          type: string
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        owner:
+          type: ["string", "null"]
+        dueDate:
+          type: ["string", "null"]
+          format: date-time
+        priority:
+          type: string
+          enum: [low, medium, high, critical]
+        status:
+          type: string
+          enum: [open, in_progress, resolved]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    RemediationItemInput:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        questionId:
+          type: integer
+        owner:
+          type: string
+        dueDate:
+          type: string
+          format: date-time
+        priority:
+          type: string
+          enum: [low, medium, high, critical]
+        status:
+          type: string
+          enum: [open, in_progress, resolved]
+
+    RemediationItemUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+        description:
+          type: ["string", "null"]
+        owner:
+          type: ["string", "null"]
+        dueDate:
+          type: ["string", "null"]
+          format: date-time
+        priority:
+          type: string
+          enum: [low, medium, high, critical]
+        status:
+          type: string
+          enum: [open, in_progress, resolved]
+
+    # ── Collaboration schemas ─────────────────────────────────────────────────
+    Collaborator:
+      type: object
+      required: [id, assessmentId, ownerId, collaboratorEmail, role, createdAt]
+      properties:
+        id:
+          type: integer
+        assessmentId:
+          type: integer
+        ownerId:
+          type: string
+        collaboratorEmail:
+          type: string
+        role:
+          type: string
+          enum: [viewer, editor]
+        createdAt:
+          type: string
+          format: date-time
+
+    CollaboratorInput:
+      type: object
+      required: [collaboratorEmail, role]
+      properties:
+        collaboratorEmail:
+          type: string
+          format: email
+          minLength: 3
+        role:
+          type: string
+          enum: [viewer, editor]
+
+    SharedAssessment:
+      type: object
+      required: [id, name, systemName, status, role, ownerEmail]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        systemName:
+          type: string
+        status:
+          type: string
+          enum: [in_progress, completed]
+        role:
+          type: string
+          enum: [viewer, editor]
+        ownerEmail:
+          type: ["string", "null"]
+
+    # ── Compliance schemas ────────────────────────────────────────────────────
+    ComplianceFramework:
+      type: object
+      required: [frameworkId, frameworkName, score, riskLevel, answeredCount, totalCount]
+      properties:
+        frameworkId:
+          type: integer
+        frameworkName:
+          type: string
+        referenceUrl:
+          type: ["string", "null"]
+        score:
+          type: number
+        riskLevel:
+          type: string
+          enum: [Critical, High, Medium, Low]
+        answeredCount:
+          type: integer
+        totalCount:
+          type: integer
+
+    ComplianceCategory:
+      type: object
+      required: [category, avgScore, frameworks]
+      properties:
+        category:
+          type: string
+        avgScore:
+          type: number
+        frameworks:
+          type: array
+          items:
+            $ref: "#/components/schemas/ComplianceFramework"
+
+    ComplianceView:
+      type: object
+      required: [assessmentId, overallScore, categories]
+      properties:
+        assessmentId:
+          type: integer
+        overallScore:
+          type: number
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/ComplianceCategory"

@@ -51,7 +51,8 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Evidence download links must point at `/api/storage/objects/<path-without-leading-/objects/>`. The stored `objectPath` is `/objects/uploads/<uid>/<uuid>`; the storage route reconstructs `/objects/${wildcard}`, so strip the leading `/objects/` when building the href.
+- The frontend has no dedicated current-user hook — use `useAuth()` from `@workspace/replit-auth-web` (`user.id`, `user.email`). Editor/viewer role for a shared assessment is derived client-side: `isOwner = assessment.userId === user.id`, otherwise look up the role from `useListSharedAssessments()`. Backend still enforces authz; the UI gating is only to avoid inviting 403s.
 
 ## Pointers
 

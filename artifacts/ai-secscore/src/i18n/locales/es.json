@@ -27,7 +27,12 @@
     "needsAttentionDesc": "Evaluaciones en curso sin cambios durante más de 7 días",
     "resume": "Reanudar",
     "staleDays_one": "{{count}} día inactiva",
-    "staleDays_other": "{{count}} días inactiva"
+    "staleDays_other": "{{count}} días inactiva",
+    "reviewsDue": "Revisiones pendientes",
+    "reviewsDueDesc": "Estas evaluaciones deben reevaluarse",
+    "review": "Revisar",
+    "overdueDays_one": "{{count}} día vencido",
+    "overdueDays_other": "{{count}} días vencidos"
   },
   "assessments": {
     "title": "Evaluaciones",
@@ -78,7 +83,9 @@
     "assessmentsCount_other": "{{count}} evaluaciones",
     "viewAssessment": "Ver",
     "scoreOverTime": "Puntuación en el tiempo",
-    "exportCsv": "Exportar CSV"
+    "exportCsv": "Exportar CSV",
+    "heatmapTitle": "Mapa de calor de puntuaciones",
+    "heatmapDesc": "Puntuaciones de evaluaciones por sistema a lo largo del tiempo"
   },
   "results": {
     "title": "Resultados de la Evaluación",
@@ -128,7 +135,9 @@
     "description": "Descripción",
     "uploadSuccess": "Subida exitosa",
     "delete": "Eliminar",
-    "uploading": "Subiendo..."
+    "uploading": "Subiendo...",
+    "title": "Evidencia",
+    "uploadError": "Error al subir"
   },
   "errorBoundary": {
     "title": "Algo salió mal",
@@ -433,5 +442,56 @@
       "text": "¿Los sistemas de IA utilizados en toma de decisiones financieras (scoring de crédito, detección de fraude) están sujetos a requisitos de explicabilidad y supervisión humana?",
       "remediation": "Implemente métodos de IA explicable (XAI) para decisiones financieras de IA. Asegúrese de que la revisión humana esté disponible para decisiones automatizadas impugnadas."
     }
+  },
+  "remediation": {
+    "title": "Plan de Remediación",
+    "subtitle": "Rastrea y prioriza brechas de seguridad",
+    "add": "Agregar elemento",
+    "empty": "Aún no hay elementos de remediación",
+    "itemTitle": "Título",
+    "owner": "Responsable",
+    "due": "Fecha límite",
+    "readOnly": "Tienes acceso de solo lectura",
+    "saveError": "No se pudo guardar el elemento",
+    "priority": {
+      "low": "Baja",
+      "medium": "Media",
+      "high": "Alta",
+      "critical": "Crítica"
+    },
+    "status": {
+      "open": "Abierto",
+      "in_progress": "En progreso",
+      "resolved": "Resuelto"
+    }
+  },
+  "share": {
+    "title": "Compartir evaluación",
+    "subtitle": "Invita colaboradores por correo",
+    "button": "Compartir",
+    "add": "Agregar",
+    "added": "Colaborador agregado",
+    "error": "No se pudo agregar el colaborador",
+    "empty": "Aún no hay colaboradores",
+    "emailPlaceholder": "colega@ejemplo.com",
+    "invalidEmail": "Ingresa un correo válido",
+    "sharedWithMe": "Compartido conmigo",
+    "role": {
+      "viewer": "Lector",
+      "editor": "Editor"
+    }
+  },
+  "compliance": {
+    "title": "Mapeo de Cumplimiento",
+    "subtitle": "Puntuaciones mapeadas a marcos de seguridad",
+    "avgScore": "Puntuación promedio"
+  },
+  "schedule": {
+    "saved": "Programación actualizada",
+    "none": "Sin revisiones",
+    "overdue": "Revisión vencida",
+    "nextReview": "Próxima revisión",
+    "days_one": "Cada {{count}} día",
+    "days_other": "Cada {{count}} días"
   }
 }

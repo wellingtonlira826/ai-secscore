@@ -27,7 +27,12 @@
     "needsAttentionDesc": "Avaliações em andamento sem alterações há mais de 7 dias",
     "resume": "Retomar",
     "staleDays_one": "{{count}} dia inativa",
-    "staleDays_other": "{{count}} dias inativa"
+    "staleDays_other": "{{count}} dias inativa",
+    "reviewsDue": "Revisões pendentes",
+    "reviewsDueDesc": "Estas avaliações precisam ser reavaliadas",
+    "review": "Revisar",
+    "overdueDays_one": "{{count}} dia atrasado",
+    "overdueDays_other": "{{count}} dias atrasados"
   },
   "assessments": {
     "title": "Avaliações",
@@ -78,7 +83,9 @@
     "assessmentsCount_other": "{{count}} avaliações",
     "viewAssessment": "Ver",
     "scoreOverTime": "Pontuação ao longo do tempo",
-    "exportCsv": "Exportar CSV"
+    "exportCsv": "Exportar CSV",
+    "heatmapTitle": "Mapa de calor de pontuações",
+    "heatmapDesc": "Pontuações das avaliações por sistema ao longo do tempo"
   },
   "results": {
     "title": "Resultados da Avaliação",
@@ -128,7 +135,9 @@
     "description": "Descrição",
     "uploadSuccess": "Upload realizado com sucesso",
     "delete": "Excluir",
-    "uploading": "Enviando..."
+    "uploading": "Enviando...",
+    "title": "Evidência",
+    "uploadError": "Falha no envio"
   },
   "errorBoundary": {
     "title": "Algo deu errado",
@@ -433,5 +442,56 @@
       "text": "Sistemas de IA usados na tomada de decisões financeiras (pontuação de crédito, detecção de fraude) estão sujeitos a requisitos de explicabilidade e supervisão humana?",
       "remediation": "Implemente métodos de IA explicável (XAI) para decisões financeiras de IA. Garanta que a revisão humana esteja disponível para decisões automatizadas contestadas."
     }
+  },
+  "remediation": {
+    "title": "Plano de Remediação",
+    "subtitle": "Acompanhe e priorize lacunas de segurança",
+    "add": "Adicionar item",
+    "empty": "Ainda não há itens de remediação",
+    "itemTitle": "Título",
+    "owner": "Responsável",
+    "due": "Prazo",
+    "readOnly": "Você tem acesso somente leitura",
+    "saveError": "Não foi possível salvar o item",
+    "priority": {
+      "low": "Baixa",
+      "medium": "Média",
+      "high": "Alta",
+      "critical": "Crítica"
+    },
+    "status": {
+      "open": "Aberto",
+      "in_progress": "Em andamento",
+      "resolved": "Resolvido"
+    }
+  },
+  "share": {
+    "title": "Compartilhar avaliação",
+    "subtitle": "Convide colaboradores por e-mail",
+    "button": "Compartilhar",
+    "add": "Adicionar",
+    "added": "Colaborador adicionado",
+    "error": "Não foi possível adicionar o colaborador",
+    "empty": "Ainda não há colaboradores",
+    "emailPlaceholder": "colega@exemplo.com",
+    "invalidEmail": "Insira um e-mail válido",
+    "sharedWithMe": "Compartilhado comigo",
+    "role": {
+      "viewer": "Leitor",
+      "editor": "Editor"
+    }
+  },
+  "compliance": {
+    "title": "Mapeamento de Conformidade",
+    "subtitle": "Pontuações mapeadas para frameworks de segurança",
+    "avgScore": "Pontuação média"
+  },
+  "schedule": {
+    "saved": "Agendamento atualizado",
+    "none": "Sem revisões",
+    "overdue": "Revisão atrasada",
+    "nextReview": "Próxima revisão",
+    "days_one": "A cada {{count}} dia",
+    "days_other": "A cada {{count}} dias"
   }
 }

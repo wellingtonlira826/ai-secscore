@@ -35,6 +35,7 @@ import {
   DuplicateAssessmentParams,
   DuplicateAssessmentResponse,
 } from "@workspace/api-zod";
+import { getAssessmentAccess, canEdit } from "../lib/access";
 
 const router: IRouter = Router();
 
@@ -369,21 +370,16 @@ router.get("/assessments/:assessmentId", async (req, res): Promise<void> => {
     return;
   }
 
-  const userId = req.user.id;
-  const [assessment] = await db
-    .select()
-    .from(assessmentsTable)
-    .where(
-      and(
-        eq(assessmentsTable.id, params.data.assessmentId),
-        eq(assessmentsTable.userId, userId)
-      )
-    );
-
-  if (!assessment) {
+  const access = await getAssessmentAccess(
+    params.data.assessmentId,
+    req.user.id,
+    req.user.email,
+  );
+  if (!access) {
     res.status(404).json({ error: "Assessment not found" });
     return;
   }
+  const assessment = access.assessment;
 
   const totalQCount = await db
     .select({ count: sql<number>`count(*)::int` })
@@ -416,22 +412,37 @@ router.patch("/assessments/:assessmentId", async (req, res): Promise<void> => {
     return;
   }
 
-  const userId = req.user.id;
+  const access = await getAssessmentAccess(
+    params.data.assessmentId,
+    req.user.id,
+    req.user.email,
+  );
+  if (!access) {
+    res.status(404).json({ error: "Assessment not found" });
+    return;
+  }
+  if (!canEdit(access.role)) {
+    res.status(403).json({ error: "Forbidden: read-only access" });
+    return;
+  }
+
   const updateData: Record<string, unknown> = {};
   if (body.data.name !== undefined) updateData.name = body.data.name;
   if (body.data.systemName !== undefined) updateData.systemName = body.data.systemName;
   if (body.data.description !== undefined) updateData.description = body.data.description;
   if (body.data.status !== undefined) updateData.status = body.data.status;
+  // Scheduling: client sends reviewFrequencyDays; server derives nextReviewAt.
+  if (body.data.reviewFrequencyDays !== undefined) {
+    const days = body.data.reviewFrequencyDays;
+    updateData.reviewFrequencyDays = days;
+    updateData.nextReviewAt =
+      days == null ? null : new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+  }
 
   const [updated] = await db
     .update(assessmentsTable)
     .set(updateData)
-    .where(
-      and(
-        eq(assessmentsTable.id, params.data.assessmentId),
-        eq(assessmentsTable.userId, userId)
-      )
-    )
+    .where(eq(assessmentsTable.id, params.data.assessmentId))
     .returning();
 
   if (!updated) {
@@ -572,18 +583,12 @@ router.get("/assessments/:assessmentId/answers", async (req, res): Promise<void>
     return;
   }
 
-  const userId = req.user.id;
-  const [assessment] = await db
-    .select()
-    .from(assessmentsTable)
-    .where(
-      and(
-        eq(assessmentsTable.id, params.data.assessmentId),
-        eq(assessmentsTable.userId, userId)
-      )
-    );
-
-  if (!assessment) {
+  const access = await getAssessmentAccess(
+    params.data.assessmentId,
+    req.user.id,
+    req.user.email,
+  );
+  if (!access) {
     res.status(404).json({ error: "Assessment not found" });
     return;
   }
@@ -614,21 +619,17 @@ router.put("/assessments/:assessmentId/answers/:questionId", async (req, res): P
     return;
   }
 
-  const userId = req.user.id;
-
-  // Verify ownership
-  const [assessment] = await db
-    .select()
-    .from(assessmentsTable)
-    .where(
-      and(
-        eq(assessmentsTable.id, params.data.assessmentId),
-        eq(assessmentsTable.userId, userId)
-      )
-    );
-
-  if (!assessment) {
+  const access = await getAssessmentAccess(
+    params.data.assessmentId,
+    req.user.id,
+    req.user.email,
+  );
+  if (!access) {
     res.status(404).json({ error: "Assessment not found" });
+    return;
+  }
+  if (!canEdit(access.role)) {
+    res.status(403).json({ error: "Forbidden: read-only access" });
     return;
   }
 
@@ -691,23 +692,20 @@ router.get("/assessments/:assessmentId/score", async (req, res): Promise<void> =
     return;
   }
 
-  const userId = req.user.id;
-  const [assessment] = await db
-    .select()
-    .from(assessmentsTable)
-    .where(
-      and(
-        eq(assessmentsTable.id, params.data.assessmentId),
-        eq(assessmentsTable.userId, userId)
-      )
-    );
-
-  if (!assessment) {
+  const access = await getAssessmentAccess(
+    params.data.assessmentId,
+    req.user.id,
+    req.user.email,
+  );
+  if (!access) {
     res.status(404).json({ error: "Assessment not found" });
     return;
   }
 
-  const score = await computeScore(params.data.assessmentId, userId);
+  const score = await computeScore(
+    params.data.assessmentId,
+    access.assessment.userId,
+  );
   res.json(GetAssessmentScoreResponse.parse(score));
 });
 
@@ -723,18 +721,12 @@ router.get("/assessments/:assessmentId/gaps", async (req, res): Promise<void> =>
     return;
   }
 
-  const userId = req.user.id;
-  const [assessment] = await db
-    .select()
-    .from(assessmentsTable)
-    .where(
-      and(
-        eq(assessmentsTable.id, params.data.assessmentId),
-        eq(assessmentsTable.userId, userId)
-      )
-    );
-
-  if (!assessment) {
+  const access = await getAssessmentAccess(
+    params.data.assessmentId,
+    req.user.id,
+    req.user.email,
+  );
+  if (!access) {
     res.status(404).json({ error: "Assessment not found" });
     return;
   }
@@ -801,25 +793,23 @@ router.get("/assessments/:assessmentId/summary", async (req, res): Promise<void>
     return;
   }
 
-  const userId = req.user.id;
-  const [assessment] = await db
-    .select()
-    .from(assessmentsTable)
-    .where(
-      and(
-        eq(assessmentsTable.id, params.data.assessmentId),
-        eq(assessmentsTable.userId, userId)
-      )
-    );
-
-  if (!assessment) {
+  const access = await getAssessmentAccess(
+    params.data.assessmentId,
+    req.user.id,
+    req.user.email,
+  );
+  if (!access) {
     res.status(404).json({ error: "Assessment not found" });
     return;
   }
+  const assessment = access.assessment;
 
   const lang = (req.query.lang as string) || "en";
 
-  const score = await computeScore(params.data.assessmentId, userId);
+  const score = await computeScore(
+    params.data.assessmentId,
+    access.assessment.userId,
+  );
   const { overallScore, grade, frameworkScores } = score;
 
   const riskLabel = overallScore >= 75 ? "Low" : overallScore >= 60 ? "Medium" : overallScore >= 40 ? "High" : "Critical";

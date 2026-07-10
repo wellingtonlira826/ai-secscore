@@ -27,7 +27,12 @@
     "needsAttentionDesc": "In-progress assessments untouched for over 7 days",
     "resume": "Resume",
     "staleDays_one": "{{count}} day inactive",
-    "staleDays_other": "{{count}} days inactive"
+    "staleDays_other": "{{count}} days inactive",
+    "reviewsDue": "Reviews due",
+    "reviewsDueDesc": "These assessments are due for reassessment",
+    "review": "Review",
+    "overdueDays_one": "{{count}} day overdue",
+    "overdueDays_other": "{{count}} days overdue"
   },
   "assessments": {
     "title": "Assessments",
@@ -78,7 +83,9 @@
     "assessmentsCount_other": "{{count}} assessments",
     "viewAssessment": "View",
     "scoreOverTime": "Score over time",
-    "exportCsv": "Export CSV"
+    "exportCsv": "Export CSV",
+    "heatmapTitle": "Score heatmap",
+    "heatmapDesc": "Assessment scores across systems over time"
   },
   "results": {
     "title": "Assessment Results",
@@ -128,7 +135,9 @@
     "description": "Description",
     "uploadSuccess": "Upload successful",
     "delete": "Delete",
-    "uploading": "Uploading..."
+    "uploading": "Uploading...",
+    "title": "Evidence",
+    "uploadError": "Upload failed"
   },
   "errorBoundary": {
     "title": "Something went wrong",
@@ -163,5 +172,56 @@
       "D": "D",
       "F": "F"
     }
+  },
+  "remediation": {
+    "title": "Remediation Plan",
+    "subtitle": "Track and prioritize security gaps",
+    "add": "Add Item",
+    "empty": "No remediation items yet",
+    "itemTitle": "Title",
+    "owner": "Owner",
+    "due": "Due date",
+    "readOnly": "You have read-only access",
+    "saveError": "Could not save remediation item",
+    "priority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "status": {
+      "open": "Open",
+      "in_progress": "In progress",
+      "resolved": "Resolved"
+    }
+  },
+  "share": {
+    "title": "Share Assessment",
+    "subtitle": "Invite collaborators by email",
+    "button": "Share",
+    "add": "Add",
+    "added": "Collaborator added",
+    "error": "Could not add collaborator",
+    "empty": "No collaborators yet",
+    "emailPlaceholder": "colleague@example.com",
+    "invalidEmail": "Enter a valid email",
+    "sharedWithMe": "Shared with me",
+    "role": {
+      "viewer": "Viewer",
+      "editor": "Editor"
+    }
+  },
+  "compliance": {
+    "title": "Compliance Mapping",
+    "subtitle": "Scores mapped to security frameworks",
+    "avgScore": "Average score"
+  },
+  "schedule": {
+    "saved": "Schedule updated",
+    "none": "No reviews",
+    "overdue": "Review overdue",
+    "nextReview": "Next review",
+    "days_one": "Every {{count}} day",
+    "days_other": "Every {{count}} days"
   }
 }

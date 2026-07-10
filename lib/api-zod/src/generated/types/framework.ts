@@ -13,5 +13,9 @@ export interface Framework {
   description: string;
   /** Default weight (0.0–1.0, equal by default) */
   defaultWeight: number;
+  /** @nullable */
+  category?: string | null;
+  /** @nullable */
+  referenceUrl?: string | null;
   questionCount: number;
 }

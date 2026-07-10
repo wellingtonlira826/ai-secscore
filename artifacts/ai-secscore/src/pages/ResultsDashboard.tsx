@@ -13,9 +13,10 @@ import { Progress } from "@/components/ui/progress";
 import { 
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip as RechartsTooltip 
 } from "recharts";
-import { Download, ChevronLeft, AlertTriangle, ShieldCheck, DownloadCloud } from "lucide-react";
+import { Download, ChevronLeft, AlertTriangle, ShieldCheck, DownloadCloud, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { RemediationPlan } from "@/components/features/RemediationPlan";
 
 const GRADE_COLORS: Record<string, string> = {
   'A': 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20',
@@ -99,7 +100,13 @@ export default function ResultsDashboard() {
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('results.title')}</h1>
             <p className="text-muted-foreground mt-1 text-sm">{assessment.name} • {assessment.systemName}</p>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <Link href={`/assessments/${id}/compliance`}>
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <Layers className="w-4 h-4" />
+                <span className="hidden sm:inline">{t('compliance.title')}</span>
+              </Button>
+            </Link>
             <Button variant="outline" size="sm" onClick={handleExportJson} className="gap-1.5">
               <DownloadCloud className="w-4 h-4" />
               <span className="hidden sm:inline">{t('results.exportJson')}</span>
@@ -259,6 +266,9 @@ export default function ResultsDashboard() {
           )}
         </CardContent>
       </Card>
+
+      {/* Remediation Plan */}
+      <RemediationPlan assessmentId={id} />
     </div>
   );
 }

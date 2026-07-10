@@ -17,6 +17,16 @@ export interface Assessment {
   status: AssessmentStatus;
   /** Percentage of questions answered (0–100) */
   completionPct: number;
+  /**
+     * How often (in days) this assessment should be reviewed
+     * @nullable
+     */
+  reviewFrequencyDays?: number | null;
+  /**
+     * When the next reassessment is due
+     * @nullable
+     */
+  nextReviewAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }

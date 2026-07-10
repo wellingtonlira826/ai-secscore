@@ -58,6 +58,10 @@ export interface Framework {
   description: string;
   /** Default weight (0.0–1.0, equal by default) */
   defaultWeight: number;
+  /** @nullable */
+  category?: string | null;
+  /** @nullable */
+  referenceUrl?: string | null;
   questionCount: number;
 }
 
@@ -104,6 +108,16 @@ export interface Assessment {
   status: AssessmentStatus;
   /** Percentage of questions answered (0–100) */
   completionPct: number;
+  /**
+     * How often (in days) this assessment should be reviewed
+     * @nullable
+     */
+  reviewFrequencyDays?: number | null;
+  /**
+     * When the next reassessment is due
+     * @nullable
+     */
+  nextReviewAt?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -131,6 +145,11 @@ export interface AssessmentUpdate {
   systemName?: string;
   description?: string;
   status?: AssessmentUpdateStatus;
+  /**
+     * How often (in days) this assessment should be reviewed; server computes nextReviewAt
+     * @nullable
+     */
+  reviewFrequencyDays?: number | null;
 }
 
 export interface Answer {
@@ -347,6 +366,196 @@ export interface DashboardSummary {
   avgScore: number | null;
   recentAssessments: Assessment[];
   topFrameworkScores: DashboardSummaryTopFrameworkScoresItem[];
+}
+
+export type RemediationItemPriority = typeof RemediationItemPriority[keyof typeof RemediationItemPriority];
+
+
+export const RemediationItemPriority = {
+  low: 'low',
+  medium: 'medium',
+  high: 'high',
+  critical: 'critical',
+} as const;
+
+export type RemediationItemStatus = typeof RemediationItemStatus[keyof typeof RemediationItemStatus];
+
+
+export const RemediationItemStatus = {
+  open: 'open',
+  in_progress: 'in_progress',
+  resolved: 'resolved',
+} as const;
+
+export interface RemediationItem {
+  id: number;
+  assessmentId: number;
+  /** @nullable */
+  questionId?: number | null;
+  userId: string;
+  title: string;
+  /** @nullable */
+  description?: string | null;
+  /** @nullable */
+  owner?: string | null;
+  /** @nullable */
+  dueDate?: string | null;
+  priority: RemediationItemPriority;
+  status: RemediationItemStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type RemediationItemInputPriority = typeof RemediationItemInputPriority[keyof typeof RemediationItemInputPriority];
+
+
+export const RemediationItemInputPriority = {
+  low: 'low',
+  medium: 'medium',
+  high: 'high',
+  critical: 'critical',
+} as const;
+
+export type RemediationItemInputStatus = typeof RemediationItemInputStatus[keyof typeof RemediationItemInputStatus];
+
+
+export const RemediationItemInputStatus = {
+  open: 'open',
+  in_progress: 'in_progress',
+  resolved: 'resolved',
+} as const;
+
+export interface RemediationItemInput {
+  /** @minLength 1 */
+  title: string;
+  description?: string;
+  questionId?: number;
+  owner?: string;
+  dueDate?: string;
+  priority?: RemediationItemInputPriority;
+  status?: RemediationItemInputStatus;
+}
+
+export type RemediationItemUpdatePriority = typeof RemediationItemUpdatePriority[keyof typeof RemediationItemUpdatePriority];
+
+
+export const RemediationItemUpdatePriority = {
+  low: 'low',
+  medium: 'medium',
+  high: 'high',
+  critical: 'critical',
+} as const;
+
+export type RemediationItemUpdateStatus = typeof RemediationItemUpdateStatus[keyof typeof RemediationItemUpdateStatus];
+
+
+export const RemediationItemUpdateStatus = {
+  open: 'open',
+  in_progress: 'in_progress',
+  resolved: 'resolved',
+} as const;
+
+export interface RemediationItemUpdate {
+  /** @minLength 1 */
+  title?: string;
+  /** @nullable */
+  description?: string | null;
+  /** @nullable */
+  owner?: string | null;
+  /** @nullable */
+  dueDate?: string | null;
+  priority?: RemediationItemUpdatePriority;
+  status?: RemediationItemUpdateStatus;
+}
+
+export type CollaboratorRole = typeof CollaboratorRole[keyof typeof CollaboratorRole];
+
+
+export const CollaboratorRole = {
+  viewer: 'viewer',
+  editor: 'editor',
+} as const;
+
+export interface Collaborator {
+  id: number;
+  assessmentId: number;
+  ownerId: string;
+  collaboratorEmail: string;
+  role: CollaboratorRole;
+  createdAt: string;
+}
+
+export type CollaboratorInputRole = typeof CollaboratorInputRole[keyof typeof CollaboratorInputRole];
+
+
+export const CollaboratorInputRole = {
+  viewer: 'viewer',
+  editor: 'editor',
+} as const;
+
+export interface CollaboratorInput {
+  /** @minLength 3 */
+  collaboratorEmail: string;
+  role: CollaboratorInputRole;
+}
+
+export type SharedAssessmentStatus = typeof SharedAssessmentStatus[keyof typeof SharedAssessmentStatus];
+
+
+export const SharedAssessmentStatus = {
+  in_progress: 'in_progress',
+  completed: 'completed',
+} as const;
+
+export type SharedAssessmentRole = typeof SharedAssessmentRole[keyof typeof SharedAssessmentRole];
+
+
+export const SharedAssessmentRole = {
+  viewer: 'viewer',
+  editor: 'editor',
+} as const;
+
+export interface SharedAssessment {
+  id: number;
+  name: string;
+  systemName: string;
+  status: SharedAssessmentStatus;
+  role: SharedAssessmentRole;
+  /** @nullable */
+  ownerEmail: string | null;
+}
+
+export type ComplianceFrameworkRiskLevel = typeof ComplianceFrameworkRiskLevel[keyof typeof ComplianceFrameworkRiskLevel];
+
+
+export const ComplianceFrameworkRiskLevel = {
+  Critical: 'Critical',
+  High: 'High',
+  Medium: 'Medium',
+  Low: 'Low',
+} as const;
+
+export interface ComplianceFramework {
+  frameworkId: number;
+  frameworkName: string;
+  /** @nullable */
+  referenceUrl?: string | null;
+  score: number;
+  riskLevel: ComplianceFrameworkRiskLevel;
+  answeredCount: number;
+  totalCount: number;
+}
+
+export interface ComplianceCategory {
+  category: string;
+  avgScore: number;
+  frameworks: ComplianceFramework[];
+}
+
+export interface ComplianceView {
+  assessmentId: number;
+  overallScore: number;
+  categories: ComplianceCategory[];
 }
 
 /**

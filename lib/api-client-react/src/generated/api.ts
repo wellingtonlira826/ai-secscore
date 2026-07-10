@@ -30,7 +30,10 @@ import type {
   AssessmentUpdate,
   AuthUserEnvelope,
   BeginBrowserLoginParams,
+  Collaborator,
+  CollaboratorInput,
   CompareAssessmentsParams,
+  ComplianceView,
   DashboardSummary,
   ErrorEnvelope,
   Evidence,
@@ -49,8 +52,12 @@ import type {
   MobileTokenExchangeRequest,
   MobileTokenExchangeSuccess,
   Question,
+  RemediationItem,
+  RemediationItemInput,
+  RemediationItemUpdate,
   RequestUploadUrlBody,
-  RequestUploadUrlResponse
+  RequestUploadUrlResponse,
+  SharedAssessment
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -2440,6 +2447,673 @@ export function useGetDashboard<TData = Awaited<ReturnType<typeof getDashboard>>
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
   const queryOptions = getGetDashboardQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getListRemediationItemsUrl = (assessmentId: number,) => {
+
+
+
+
+  return `/api/assessments/${assessmentId}/remediation`
+}
+
+/**
+ * @summary List remediation items for an assessment
+ */
+export const listRemediationItems = async (assessmentId: number, options?: RequestInit): Promise<RemediationItem[]> => {
+
+  return customFetch<RemediationItem[]>(getListRemediationItemsUrl(assessmentId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListRemediationItemsQueryKey = (assessmentId: number,) => {
+    return [
+    `/api/assessments/${assessmentId}/remediation`
+    ] as const;
+    }
+
+
+export const getListRemediationItemsQueryOptions = <TData = Awaited<ReturnType<typeof listRemediationItems>>, TError = ErrorType<ErrorEnvelope>>(assessmentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listRemediationItems>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListRemediationItemsQueryKey(assessmentId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listRemediationItems>>> = ({ signal }) => listRemediationItems(assessmentId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: assessmentId !== null && assessmentId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listRemediationItems>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListRemediationItemsQueryResult = NonNullable<Awaited<ReturnType<typeof listRemediationItems>>>
+export type ListRemediationItemsQueryError = ErrorType<ErrorEnvelope>
+
+
+/**
+ * @summary List remediation items for an assessment
+ */
+
+export function useListRemediationItems<TData = Awaited<ReturnType<typeof listRemediationItems>>, TError = ErrorType<ErrorEnvelope>>(
+ assessmentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listRemediationItems>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListRemediationItemsQueryOptions(assessmentId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateRemediationItemUrl = (assessmentId: number,) => {
+
+
+
+
+  return `/api/assessments/${assessmentId}/remediation`
+}
+
+/**
+ * @summary Create a remediation item
+ */
+export const createRemediationItem = async (assessmentId: number,
+    remediationItemInput: RemediationItemInput, options?: RequestInit): Promise<RemediationItem> => {
+
+  return customFetch<RemediationItem>(getCreateRemediationItemUrl(assessmentId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(remediationItemInput)
+  }
+);}
+
+
+
+
+export const getCreateRemediationItemMutationOptions = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createRemediationItem>>, TError,{assessmentId: number;data: BodyType<RemediationItemInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createRemediationItem>>, TError,{assessmentId: number;data: BodyType<RemediationItemInput>}, TContext> => {
+
+const mutationKey = ['createRemediationItem'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createRemediationItem>>, {assessmentId: number;data: BodyType<RemediationItemInput>}> = (props) => {
+          const {assessmentId,data} = props ?? {};
+
+          return  createRemediationItem(assessmentId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateRemediationItemMutationResult = NonNullable<Awaited<ReturnType<typeof createRemediationItem>>>
+    export type CreateRemediationItemMutationBody = BodyType<RemediationItemInput>
+    export type CreateRemediationItemMutationError = ErrorType<ErrorEnvelope>
+
+    /**
+ * @summary Create a remediation item
+ */
+export const useCreateRemediationItem = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createRemediationItem>>, TError,{assessmentId: number;data: BodyType<RemediationItemInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createRemediationItem>>,
+        TError,
+        {assessmentId: number;data: BodyType<RemediationItemInput>},
+        TContext
+      > => {
+      return useMutation(getCreateRemediationItemMutationOptions(options));
+    }
+
+export const getUpdateRemediationItemUrl = (assessmentId: number,
+    itemId: number,) => {
+
+
+
+
+  return `/api/assessments/${assessmentId}/remediation/${itemId}`
+}
+
+/**
+ * @summary Update a remediation item
+ */
+export const updateRemediationItem = async (assessmentId: number,
+    itemId: number,
+    remediationItemUpdate: RemediationItemUpdate, options?: RequestInit): Promise<RemediationItem> => {
+
+  return customFetch<RemediationItem>(getUpdateRemediationItemUrl(assessmentId,itemId),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(remediationItemUpdate)
+  }
+);}
+
+
+
+
+export const getUpdateRemediationItemMutationOptions = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateRemediationItem>>, TError,{assessmentId: number;itemId: number;data: BodyType<RemediationItemUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateRemediationItem>>, TError,{assessmentId: number;itemId: number;data: BodyType<RemediationItemUpdate>}, TContext> => {
+
+const mutationKey = ['updateRemediationItem'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateRemediationItem>>, {assessmentId: number;itemId: number;data: BodyType<RemediationItemUpdate>}> = (props) => {
+          const {assessmentId,itemId,data} = props ?? {};
+
+          return  updateRemediationItem(assessmentId,itemId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateRemediationItemMutationResult = NonNullable<Awaited<ReturnType<typeof updateRemediationItem>>>
+    export type UpdateRemediationItemMutationBody = BodyType<RemediationItemUpdate>
+    export type UpdateRemediationItemMutationError = ErrorType<ErrorEnvelope>
+
+    /**
+ * @summary Update a remediation item
+ */
+export const useUpdateRemediationItem = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateRemediationItem>>, TError,{assessmentId: number;itemId: number;data: BodyType<RemediationItemUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateRemediationItem>>,
+        TError,
+        {assessmentId: number;itemId: number;data: BodyType<RemediationItemUpdate>},
+        TContext
+      > => {
+      return useMutation(getUpdateRemediationItemMutationOptions(options));
+    }
+
+export const getDeleteRemediationItemUrl = (assessmentId: number,
+    itemId: number,) => {
+
+
+
+
+  return `/api/assessments/${assessmentId}/remediation/${itemId}`
+}
+
+/**
+ * @summary Delete a remediation item
+ */
+export const deleteRemediationItem = async (assessmentId: number,
+    itemId: number, options?: RequestInit): Promise<void> => {
+
+  return customFetch<void>(getDeleteRemediationItemUrl(assessmentId,itemId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeleteRemediationItemMutationOptions = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteRemediationItem>>, TError,{assessmentId: number;itemId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteRemediationItem>>, TError,{assessmentId: number;itemId: number}, TContext> => {
+
+const mutationKey = ['deleteRemediationItem'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteRemediationItem>>, {assessmentId: number;itemId: number}> = (props) => {
+          const {assessmentId,itemId} = props ?? {};
+
+          return  deleteRemediationItem(assessmentId,itemId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteRemediationItemMutationResult = NonNullable<Awaited<ReturnType<typeof deleteRemediationItem>>>
+
+    export type DeleteRemediationItemMutationError = ErrorType<ErrorEnvelope>
+
+    /**
+ * @summary Delete a remediation item
+ */
+export const useDeleteRemediationItem = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteRemediationItem>>, TError,{assessmentId: number;itemId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof deleteRemediationItem>>,
+        TError,
+        {assessmentId: number;itemId: number},
+        TContext
+      > => {
+      return useMutation(getDeleteRemediationItemMutationOptions(options));
+    }
+
+export const getListCollaboratorsUrl = (assessmentId: number,) => {
+
+
+
+
+  return `/api/assessments/${assessmentId}/collaborators`
+}
+
+/**
+ * @summary List collaborators for an assessment
+ */
+export const listCollaborators = async (assessmentId: number, options?: RequestInit): Promise<Collaborator[]> => {
+
+  return customFetch<Collaborator[]>(getListCollaboratorsUrl(assessmentId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListCollaboratorsQueryKey = (assessmentId: number,) => {
+    return [
+    `/api/assessments/${assessmentId}/collaborators`
+    ] as const;
+    }
+
+
+export const getListCollaboratorsQueryOptions = <TData = Awaited<ReturnType<typeof listCollaborators>>, TError = ErrorType<ErrorEnvelope>>(assessmentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listCollaborators>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListCollaboratorsQueryKey(assessmentId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listCollaborators>>> = ({ signal }) => listCollaborators(assessmentId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: assessmentId !== null && assessmentId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listCollaborators>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListCollaboratorsQueryResult = NonNullable<Awaited<ReturnType<typeof listCollaborators>>>
+export type ListCollaboratorsQueryError = ErrorType<ErrorEnvelope>
+
+
+/**
+ * @summary List collaborators for an assessment
+ */
+
+export function useListCollaborators<TData = Awaited<ReturnType<typeof listCollaborators>>, TError = ErrorType<ErrorEnvelope>>(
+ assessmentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listCollaborators>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListCollaboratorsQueryOptions(assessmentId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getAddCollaboratorUrl = (assessmentId: number,) => {
+
+
+
+
+  return `/api/assessments/${assessmentId}/collaborators`
+}
+
+/**
+ * @summary Share an assessment with another user by email
+ */
+export const addCollaborator = async (assessmentId: number,
+    collaboratorInput: CollaboratorInput, options?: RequestInit): Promise<Collaborator> => {
+
+  return customFetch<Collaborator>(getAddCollaboratorUrl(assessmentId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(collaboratorInput)
+  }
+);}
+
+
+
+
+export const getAddCollaboratorMutationOptions = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addCollaborator>>, TError,{assessmentId: number;data: BodyType<CollaboratorInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof addCollaborator>>, TError,{assessmentId: number;data: BodyType<CollaboratorInput>}, TContext> => {
+
+const mutationKey = ['addCollaborator'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof addCollaborator>>, {assessmentId: number;data: BodyType<CollaboratorInput>}> = (props) => {
+          const {assessmentId,data} = props ?? {};
+
+          return  addCollaborator(assessmentId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AddCollaboratorMutationResult = NonNullable<Awaited<ReturnType<typeof addCollaborator>>>
+    export type AddCollaboratorMutationBody = BodyType<CollaboratorInput>
+    export type AddCollaboratorMutationError = ErrorType<ErrorEnvelope>
+
+    /**
+ * @summary Share an assessment with another user by email
+ */
+export const useAddCollaborator = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addCollaborator>>, TError,{assessmentId: number;data: BodyType<CollaboratorInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof addCollaborator>>,
+        TError,
+        {assessmentId: number;data: BodyType<CollaboratorInput>},
+        TContext
+      > => {
+      return useMutation(getAddCollaboratorMutationOptions(options));
+    }
+
+export const getRemoveCollaboratorUrl = (assessmentId: number,
+    collaboratorId: number,) => {
+
+
+
+
+  return `/api/assessments/${assessmentId}/collaborators/${collaboratorId}`
+}
+
+/**
+ * @summary Remove a collaborator from an assessment
+ */
+export const removeCollaborator = async (assessmentId: number,
+    collaboratorId: number, options?: RequestInit): Promise<void> => {
+
+  return customFetch<void>(getRemoveCollaboratorUrl(assessmentId,collaboratorId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getRemoveCollaboratorMutationOptions = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeCollaborator>>, TError,{assessmentId: number;collaboratorId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof removeCollaborator>>, TError,{assessmentId: number;collaboratorId: number}, TContext> => {
+
+const mutationKey = ['removeCollaborator'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof removeCollaborator>>, {assessmentId: number;collaboratorId: number}> = (props) => {
+          const {assessmentId,collaboratorId} = props ?? {};
+
+          return  removeCollaborator(assessmentId,collaboratorId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RemoveCollaboratorMutationResult = NonNullable<Awaited<ReturnType<typeof removeCollaborator>>>
+
+    export type RemoveCollaboratorMutationError = ErrorType<ErrorEnvelope>
+
+    /**
+ * @summary Remove a collaborator from an assessment
+ */
+export const useRemoveCollaborator = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeCollaborator>>, TError,{assessmentId: number;collaboratorId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof removeCollaborator>>,
+        TError,
+        {assessmentId: number;collaboratorId: number},
+        TContext
+      > => {
+      return useMutation(getRemoveCollaboratorMutationOptions(options));
+    }
+
+export const getListSharedAssessmentsUrl = () => {
+
+
+
+
+  return `/api/shared-assessments`
+}
+
+/**
+ * @summary List assessments shared with the current user
+ */
+export const listSharedAssessments = async ( options?: RequestInit): Promise<SharedAssessment[]> => {
+
+  return customFetch<SharedAssessment[]>(getListSharedAssessmentsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListSharedAssessmentsQueryKey = () => {
+    return [
+    `/api/shared-assessments`
+    ] as const;
+    }
+
+
+export const getListSharedAssessmentsQueryOptions = <TData = Awaited<ReturnType<typeof listSharedAssessments>>, TError = ErrorType<ErrorEnvelope>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listSharedAssessments>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListSharedAssessmentsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listSharedAssessments>>> = ({ signal }) => listSharedAssessments({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listSharedAssessments>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListSharedAssessmentsQueryResult = NonNullable<Awaited<ReturnType<typeof listSharedAssessments>>>
+export type ListSharedAssessmentsQueryError = ErrorType<ErrorEnvelope>
+
+
+/**
+ * @summary List assessments shared with the current user
+ */
+
+export function useListSharedAssessments<TData = Awaited<ReturnType<typeof listSharedAssessments>>, TError = ErrorType<ErrorEnvelope>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listSharedAssessments>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListSharedAssessmentsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetComplianceViewUrl = (assessmentId: number,) => {
+
+
+
+
+  return `/api/assessments/${assessmentId}/compliance`
+}
+
+/**
+ * @summary Get standards-mapping compliance view for an assessment
+ */
+export const getComplianceView = async (assessmentId: number, options?: RequestInit): Promise<ComplianceView> => {
+
+  return customFetch<ComplianceView>(getGetComplianceViewUrl(assessmentId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetComplianceViewQueryKey = (assessmentId: number,) => {
+    return [
+    `/api/assessments/${assessmentId}/compliance`
+    ] as const;
+    }
+
+
+export const getGetComplianceViewQueryOptions = <TData = Awaited<ReturnType<typeof getComplianceView>>, TError = ErrorType<ErrorEnvelope>>(assessmentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getComplianceView>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetComplianceViewQueryKey(assessmentId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getComplianceView>>> = ({ signal }) => getComplianceView(assessmentId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: assessmentId !== null && assessmentId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getComplianceView>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetComplianceViewQueryResult = NonNullable<Awaited<ReturnType<typeof getComplianceView>>>
+export type GetComplianceViewQueryError = ErrorType<ErrorEnvelope>
+
+
+/**
+ * @summary Get standards-mapping compliance view for an assessment
+ */
+
+export function useGetComplianceView<TData = Awaited<ReturnType<typeof getComplianceView>>, TError = ErrorType<ErrorEnvelope>>(
+ assessmentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getComplianceView>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetComplianceViewQueryOptions(assessmentId,options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

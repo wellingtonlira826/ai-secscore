@@ -13,6 +13,7 @@ import {
   ListAllEvidenceResponse,
 } from "@workspace/api-zod";
 import { ObjectStorageService, ObjectNotFoundError } from "../lib/objectStorage";
+import { getAssessmentAccess, canEdit } from "../lib/access";
 
 const router: IRouter = Router();
 const objectStorageService = new ObjectStorageService();
@@ -31,18 +32,12 @@ router.get(
       return;
     }
 
-    const userId = req.user.id;
-    const [assessment] = await db
-      .select()
-      .from(assessmentsTable)
-      .where(
-        and(
-          eq(assessmentsTable.id, params.data.assessmentId),
-          eq(assessmentsTable.userId, userId)
-        )
-      );
-
-    if (!assessment) {
+    const access = await getAssessmentAccess(
+      params.data.assessmentId,
+      req.user.id,
+      req.user.email,
+    );
+    if (!access) {
       res.status(404).json({ error: "Assessment not found" });
       return;
     }
@@ -82,22 +77,21 @@ router.post(
       return;
     }
 
-    const userId = req.user.id;
-    const [assessment] = await db
-      .select()
-      .from(assessmentsTable)
-      .where(
-        and(
-          eq(assessmentsTable.id, params.data.assessmentId),
-          eq(assessmentsTable.userId, userId)
-        )
-      );
-
-    if (!assessment) {
+    const access = await getAssessmentAccess(
+      params.data.assessmentId,
+      req.user.id,
+      req.user.email,
+    );
+    if (!access) {
       res.status(404).json({ error: "Assessment not found" });
       return;
     }
+    if (!canEdit(access.role)) {
+      res.status(403).json({ error: "Forbidden: read-only access" });
+      return;
+    }
 
+    const userId = req.user.id;
     const objectPath = body.data.objectPath;
     const expectedPrefix = `/objects/uploads/${userId}/`;
     if (!objectPath.startsWith(expectedPrefix)) {
@@ -150,19 +144,17 @@ router.delete(
       return;
     }
 
-    const userId = req.user.id;
-    const [assessment] = await db
-      .select()
-      .from(assessmentsTable)
-      .where(
-        and(
-          eq(assessmentsTable.id, params.data.assessmentId),
-          eq(assessmentsTable.userId, userId)
-        )
-      );
-
-    if (!assessment) {
+    const access = await getAssessmentAccess(
+      params.data.assessmentId,
+      req.user.id,
+      req.user.email,
+    );
+    if (!access) {
       res.status(404).json({ error: "Assessment not found" });
+      return;
+    }
+    if (!canEdit(access.role)) {
+      res.status(403).json({ error: "Forbidden: read-only access" });
       return;
     }
 
@@ -199,18 +191,12 @@ router.get(
       return;
     }
 
-    const userId = req.user.id;
-    const [assessment] = await db
-      .select()
-      .from(assessmentsTable)
-      .where(
-        and(
-          eq(assessmentsTable.id, params.data.assessmentId),
-          eq(assessmentsTable.userId, userId)
-        )
-      );
-
-    if (!assessment) {
+    const access = await getAssessmentAccess(
+      params.data.assessmentId,
+      req.user.id,
+      req.user.email,
+    );
+    if (!access) {
       res.status(404).json({ error: "Assessment not found" });
       return;
     }

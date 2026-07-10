@@ -12,7 +12,7 @@ import {
   Tooltip as RechartsTooltip, 
   ResponsiveContainer 
 } from "recharts";
-import { ShieldAlert, Activity, CheckCircle2, ListTodo, AlertTriangle, Clock } from "lucide-react";
+import { ShieldAlert, Activity, CheckCircle2, ListTodo, AlertTriangle, Clock, CalendarClock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "react-i18next";
 
@@ -75,6 +75,12 @@ export default function Dashboard() {
     )
     .sort(
       (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+    );
+
+  const dueReviews = (allAssessments ?? [])
+    .filter((a) => a.nextReviewAt != null && new Date(a.nextReviewAt).getTime() <= now)
+    .sort(
+      (a, b) => new Date(a.nextReviewAt!).getTime() - new Date(b.nextReviewAt!).getTime()
     );
 
   return (
@@ -141,6 +147,45 @@ export default function Dashboard() {
                     </span>
                     <Link href={`/assessments/${a.id}`}>
                       <Button size="sm" variant="outline">{t('dashboard.resume')}</Button>
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      )}
+
+      {dueReviews.length > 0 && (
+        <Card className="border-red-500/40 bg-red-500/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <CalendarClock className="w-5 h-5 text-red-500" />
+              {t('dashboard.reviewsDue')}
+            </CardTitle>
+            <CardDescription>{t('dashboard.reviewsDueDesc')}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {dueReviews.map((a) => {
+              const days = Math.floor(
+                (now - new Date(a.nextReviewAt!).getTime()) / (24 * 60 * 60 * 1000)
+              );
+              return (
+                <div
+                  key={a.id}
+                  className="flex items-center justify-between gap-4 p-3 rounded-lg border border-border bg-card"
+                >
+                  <div className="min-w-0">
+                    <div className="font-medium truncate" title={a.name}>{a.name}</div>
+                    <div className="text-sm text-muted-foreground truncate">{a.systemName}</div>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span className="hidden sm:flex items-center gap-1.5 text-xs text-red-600 dark:text-red-500">
+                      <Clock className="w-3.5 h-3.5" />
+                      {t('dashboard.overdueDays', { count: days })}
+                    </span>
+                    <Link href={`/assessments/${a.id}`}>
+                      <Button size="sm" variant="outline">{t('dashboard.review')}</Button>
                     </Link>
                   </div>
                 </div>

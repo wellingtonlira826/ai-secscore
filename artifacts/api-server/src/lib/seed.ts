@@ -10,6 +10,8 @@ const FRAMEWORKS = [
     description:
       "The OWASP Top 10 for Large Language Model Applications identifies the ten most critical security risks specific to LLM-based systems.",
     defaultWeight: 1,
+    category: "Application Security",
+    referenceUrl: "https://genai.owasp.org/llm-top-10/",
   },
   {
     name: "NIST AI RMF 1.0",
@@ -17,6 +19,8 @@ const FRAMEWORKS = [
     description:
       "The NIST AI Risk Management Framework provides guidance to manage risks to individuals, organizations, and society from AI systems.",
     defaultWeight: 1,
+    category: "Governance & Risk",
+    referenceUrl: "https://www.nist.gov/itl/ai-risk-management-framework",
   },
   {
     name: "MITRE ATLAS",
@@ -24,6 +28,8 @@ const FRAMEWORKS = [
     description:
       "MITRE ATLAS (Adversarial Threat Landscape for Artificial-Intelligence Systems) is a knowledge base of adversarial ML tactics and techniques.",
     defaultWeight: 1,
+    category: "Threat Intelligence",
+    referenceUrl: "https://atlas.mitre.org/",
   },
   {
     name: "ISO/IEC 42001",
@@ -31,6 +37,8 @@ const FRAMEWORKS = [
     description:
       "ISO/IEC 42001 specifies requirements for establishing, implementing, maintaining and continually improving an AI management system.",
     defaultWeight: 1,
+    category: "Governance & Risk",
+    referenceUrl: "https://www.iso.org/standard/81230.html",
   },
   {
     name: "Google SAIF",
@@ -38,6 +46,8 @@ const FRAMEWORKS = [
     description:
       "Google's Secure AI Framework (SAIF) defines six core elements for building and deploying AI responsibly and securely.",
     defaultWeight: 1,
+    category: "Application Security",
+    referenceUrl: "https://saif.google/",
   },
   {
     name: "Data Protection & Financial Compliance",
@@ -45,6 +55,8 @@ const FRAMEWORKS = [
     description:
       "Combined LGPD (Brazil) and BACEN cybersecurity requirements (Resolução 4.893/85) applied to AI pipelines.",
     defaultWeight: 1,
+    category: "Privacy & Compliance",
+    referenceUrl: "https://www.gov.br/anpd/pt-br",
   },
 ];
 
@@ -610,7 +622,18 @@ const QUESTIONS: QuestionSeed[] = [
 export async function seedFrameworksAndQuestions() {
   const existingFrameworks = await db.select().from(frameworksTable);
   if (existingFrameworks.length > 0) {
-    logger.info("Frameworks already seeded, skipping.");
+    // Backfill newly-added catalog columns (category / referenceUrl) on
+    // frameworks that were seeded before these columns existed.
+    for (const fw of FRAMEWORKS) {
+      const existing = existingFrameworks.find((e) => e.slug === fw.slug);
+      if (existing && (existing.category == null || existing.referenceUrl == null)) {
+        await db
+          .update(frameworksTable)
+          .set({ category: fw.category, referenceUrl: fw.referenceUrl })
+          .where(eq(frameworksTable.slug, fw.slug));
+      }
+    }
+    logger.info("Frameworks already seeded, backfilled catalog metadata.");
     return;
   }
 
