@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "7hIG9DP2cc8q_ymW3OQMQ"
+uri = "file://DESIGN_SYSTEM.md"
+type = "text"
+title = "Design System Reference"
