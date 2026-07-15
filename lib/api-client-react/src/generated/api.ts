@@ -34,6 +34,10 @@ import type {
   CollaboratorInput,
   CompareAssessmentsParams,
   ComplianceView,
+  CorpAnswer,
+  CorpAnswerInput,
+  CorpDomain,
+  CorpQuestion,
   DashboardSummary,
   ErrorEnvelope,
   Evidence,
@@ -47,8 +51,10 @@ import type {
   GetAssessmentSummaryParams,
   HandleBrowserLoginCallbackParams,
   HealthStatus,
+  ListCorpQuestionsParams,
   ListQuestionsParams,
   LogoutSuccess,
+  MaturityLevel,
   MobileTokenExchangeRequest,
   MobileTokenExchangeSuccess,
   Question,
@@ -794,6 +800,394 @@ export function useListQuestions<TData = Awaited<ReturnType<typeof listQuestions
 
 
 
+
+export const getListCorpDomainsUrl = () => {
+
+
+
+
+  return `/api/corporate/domains`
+}
+
+/**
+ * @summary List corporate AI maturity domains
+ */
+export const listCorpDomains = async ( options?: RequestInit): Promise<CorpDomain[]> => {
+
+  return customFetch<CorpDomain[]>(getListCorpDomainsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListCorpDomainsQueryKey = () => {
+    return [
+    `/api/corporate/domains`
+    ] as const;
+    }
+
+
+export const getListCorpDomainsQueryOptions = <TData = Awaited<ReturnType<typeof listCorpDomains>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listCorpDomains>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListCorpDomainsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listCorpDomains>>> = ({ signal }) => listCorpDomains({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listCorpDomains>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListCorpDomainsQueryResult = NonNullable<Awaited<ReturnType<typeof listCorpDomains>>>
+export type ListCorpDomainsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List corporate AI maturity domains
+ */
+
+export function useListCorpDomains<TData = Awaited<ReturnType<typeof listCorpDomains>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listCorpDomains>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListCorpDomainsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getListCorpQuestionsUrl = (params?: ListCorpQuestionsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/corporate/questions?${stringifiedParams}` : `/api/corporate/questions`
+}
+
+/**
+ * @summary List corporate questions, optionally filtered by domain
+ */
+export const listCorpQuestions = async (params?: ListCorpQuestionsParams, options?: RequestInit): Promise<CorpQuestion[]> => {
+
+  return customFetch<CorpQuestion[]>(getListCorpQuestionsUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListCorpQuestionsQueryKey = (params?: ListCorpQuestionsParams,) => {
+    return [
+    `/api/corporate/questions`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getListCorpQuestionsQueryOptions = <TData = Awaited<ReturnType<typeof listCorpQuestions>>, TError = ErrorType<unknown>>(params?: ListCorpQuestionsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listCorpQuestions>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListCorpQuestionsQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listCorpQuestions>>> = ({ signal }) => listCorpQuestions(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listCorpQuestions>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListCorpQuestionsQueryResult = NonNullable<Awaited<ReturnType<typeof listCorpQuestions>>>
+export type ListCorpQuestionsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List corporate questions, optionally filtered by domain
+ */
+
+export function useListCorpQuestions<TData = Awaited<ReturnType<typeof listCorpQuestions>>, TError = ErrorType<unknown>>(
+ params?: ListCorpQuestionsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listCorpQuestions>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListCorpQuestionsQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getListMaturityLevelsUrl = () => {
+
+
+
+
+  return `/api/corporate/maturity-levels`
+}
+
+/**
+ * @summary List the 5-level corporate AI maturity model
+ */
+export const listMaturityLevels = async ( options?: RequestInit): Promise<MaturityLevel[]> => {
+
+  return customFetch<MaturityLevel[]>(getListMaturityLevelsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListMaturityLevelsQueryKey = () => {
+    return [
+    `/api/corporate/maturity-levels`
+    ] as const;
+    }
+
+
+export const getListMaturityLevelsQueryOptions = <TData = Awaited<ReturnType<typeof listMaturityLevels>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listMaturityLevels>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListMaturityLevelsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listMaturityLevels>>> = ({ signal }) => listMaturityLevels({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listMaturityLevels>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListMaturityLevelsQueryResult = NonNullable<Awaited<ReturnType<typeof listMaturityLevels>>>
+export type ListMaturityLevelsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List the 5-level corporate AI maturity model
+ */
+
+export function useListMaturityLevels<TData = Awaited<ReturnType<typeof listMaturityLevels>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listMaturityLevels>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListMaturityLevelsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getListCorpAnswersUrl = (assessmentId: number,) => {
+
+
+
+
+  return `/api/assessments/${assessmentId}/corporate-answers`
+}
+
+/**
+ * @summary Get all corporate answers for an assessment
+ */
+export const listCorpAnswers = async (assessmentId: number, options?: RequestInit): Promise<CorpAnswer[]> => {
+
+  return customFetch<CorpAnswer[]>(getListCorpAnswersUrl(assessmentId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListCorpAnswersQueryKey = (assessmentId: number,) => {
+    return [
+    `/api/assessments/${assessmentId}/corporate-answers`
+    ] as const;
+    }
+
+
+export const getListCorpAnswersQueryOptions = <TData = Awaited<ReturnType<typeof listCorpAnswers>>, TError = ErrorType<ErrorEnvelope>>(assessmentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listCorpAnswers>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListCorpAnswersQueryKey(assessmentId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listCorpAnswers>>> = ({ signal }) => listCorpAnswers(assessmentId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: assessmentId !== null && assessmentId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listCorpAnswers>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListCorpAnswersQueryResult = NonNullable<Awaited<ReturnType<typeof listCorpAnswers>>>
+export type ListCorpAnswersQueryError = ErrorType<ErrorEnvelope>
+
+
+/**
+ * @summary Get all corporate answers for an assessment
+ */
+
+export function useListCorpAnswers<TData = Awaited<ReturnType<typeof listCorpAnswers>>, TError = ErrorType<ErrorEnvelope>>(
+ assessmentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listCorpAnswers>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListCorpAnswersQueryOptions(assessmentId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getUpsertCorpAnswerUrl = (assessmentId: number,
+    questionId: number,) => {
+
+
+
+
+  return `/api/assessments/${assessmentId}/corporate-answers/${questionId}`
+}
+
+/**
+ * @summary Save or update a corporate answer for a question
+ */
+export const upsertCorpAnswer = async (assessmentId: number,
+    questionId: number,
+    corpAnswerInput: CorpAnswerInput, options?: RequestInit): Promise<CorpAnswer> => {
+
+  return customFetch<CorpAnswer>(getUpsertCorpAnswerUrl(assessmentId,questionId),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(corpAnswerInput)
+  }
+);}
+
+
+
+
+export const getUpsertCorpAnswerMutationOptions = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof upsertCorpAnswer>>, TError,{assessmentId: number;questionId: number;data: BodyType<CorpAnswerInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof upsertCorpAnswer>>, TError,{assessmentId: number;questionId: number;data: BodyType<CorpAnswerInput>}, TContext> => {
+
+const mutationKey = ['upsertCorpAnswer'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof upsertCorpAnswer>>, {assessmentId: number;questionId: number;data: BodyType<CorpAnswerInput>}> = (props) => {
+          const {assessmentId,questionId,data} = props ?? {};
+
+          return  upsertCorpAnswer(assessmentId,questionId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpsertCorpAnswerMutationResult = NonNullable<Awaited<ReturnType<typeof upsertCorpAnswer>>>
+    export type UpsertCorpAnswerMutationBody = BodyType<CorpAnswerInput>
+    export type UpsertCorpAnswerMutationError = ErrorType<ErrorEnvelope>
+
+    /**
+ * @summary Save or update a corporate answer for a question
+ */
+export const useUpsertCorpAnswer = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof upsertCorpAnswer>>, TError,{assessmentId: number;questionId: number;data: BodyType<CorpAnswerInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof upsertCorpAnswer>>,
+        TError,
+        {assessmentId: number;questionId: number;data: BodyType<CorpAnswerInput>},
+        TContext
+      > => {
+      return useMutation(getUpsertCorpAnswerMutationOptions(options));
+    }
 
 export const getListAssessmentsUrl = () => {
 

@@ -27,6 +27,7 @@ import { useTranslation } from "react-i18next";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ShareDialog } from "@/components/features/ShareDialog";
 import { QuestionEvidence } from "@/components/features/QuestionEvidence";
+import CorporateAssessmentDetail from "./CorporateAssessmentDetail";
 
 function MaturitySelector({ value, onChange, disabled }: { value: number | null, onChange: (v: number | null) => void, disabled?: boolean }) {
   const { t } = useTranslation();
@@ -209,6 +210,10 @@ export default function AssessmentDetail() {
 
   if (!assessment || !frameworks || !questions || !answers) {
     return <div className="p-8 text-center text-destructive">{t('common.error')}</div>;
+  }
+
+  if (assessment.type === "corporate") {
+    return <CorporateAssessmentDetail assessment={assessment} />;
   }
 
   const isOwner = !!user && assessment.userId === user.id;

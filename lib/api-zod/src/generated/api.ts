@@ -150,11 +150,135 @@ export const ListQuestionsResponse = zod.array(ListQuestionsResponseItem)
 
 
 /**
+ * @summary List corporate AI maturity domains
+ */
+export const ListCorpDomainsResponseItem = zod.object({
+  "id": zod.number(),
+  "slug": zod.string(),
+  "name": zod.string(),
+  "pillar": zod.string(),
+  "description": zod.string(),
+  "weight": zod.number(),
+  "order": zod.number(),
+  "questionCount": zod.number()
+})
+export const ListCorpDomainsResponse = zod.array(ListCorpDomainsResponseItem)
+
+
+/**
+ * @summary List corporate questions, optionally filtered by domain
+ */
+export const ListCorpQuestionsQueryParams = zod.object({
+  "domainId": zod.coerce.number().optional()
+})
+
+export const ListCorpQuestionsResponseItem = zod.object({
+  "id": zod.number(),
+  "domainId": zod.number(),
+  "order": zod.number(),
+  "text": zod.string(),
+  "description": zod.string(),
+  "objective": zod.string(),
+  "justification": zod.string(),
+  "marketReference": zod.string(),
+  "criticality": zod.enum(['baixa', 'media', 'alta', 'critica']),
+  "weight": zod.number().describe('Question weight 1–5'),
+  "answerType": zod.enum(['yes_no', 'scale_1_5', 'multiple_choice', 'text', 'percent']),
+  "options": zod.array(zod.string()).nullable(),
+  "required": zod.boolean(),
+  "eliminatory": zod.boolean()
+})
+export const ListCorpQuestionsResponse = zod.array(ListCorpQuestionsResponseItem)
+
+
+/**
+ * @summary List the 5-level corporate AI maturity model
+ */
+export const ListMaturityLevelsResponseItem = zod.object({
+  "id": zod.number(),
+  "level": zod.number(),
+  "name": zod.string(),
+  "description": zod.string(),
+  "characteristics": zod.array(zod.string())
+})
+export const ListMaturityLevelsResponse = zod.array(ListMaturityLevelsResponseItem)
+
+
+/**
+ * @summary Get all corporate answers for an assessment
+ */
+export const ListCorpAnswersParams = zod.object({
+  "assessmentId": zod.coerce.number()
+})
+
+export const listCorpAnswersResponseScaleValueMax = 5;
+
+
+
+export const ListCorpAnswersResponseItem = zod.object({
+  "id": zod.number(),
+  "assessmentId": zod.number(),
+  "questionId": zod.number(),
+  "boolValue": zod.boolean().nullable(),
+  "scaleValue": zod.number().min(1).max(listCorpAnswersResponseScaleValueMax).nullable(),
+  "choiceValue": zod.string().nullable(),
+  "textValue": zod.string().nullable(),
+  "percentValue": zod.number().nullable(),
+  "notes": zod.string().nullable(),
+  "updatedAt": zod.coerce.date()
+})
+export const ListCorpAnswersResponse = zod.array(ListCorpAnswersResponseItem)
+
+
+/**
+ * @summary Save or update a corporate answer for a question
+ */
+export const UpsertCorpAnswerParams = zod.object({
+  "assessmentId": zod.coerce.number(),
+  "questionId": zod.coerce.number()
+})
+
+export const upsertCorpAnswerBodyScaleValueMax = 5;
+
+export const upsertCorpAnswerBodyPercentValueMin = 0;
+export const upsertCorpAnswerBodyPercentValueMax = 100;
+
+
+
+export const UpsertCorpAnswerBody = zod.object({
+  "boolValue": zod.boolean().nullish(),
+  "scaleValue": zod.number().min(1).max(upsertCorpAnswerBodyScaleValueMax).nullish(),
+  "choiceValue": zod.string().nullish(),
+  "textValue": zod.string().nullish(),
+  "percentValue": zod.number().min(upsertCorpAnswerBodyPercentValueMin).max(upsertCorpAnswerBodyPercentValueMax).nullish(),
+  "notes": zod.string().nullish()
+})
+
+export const upsertCorpAnswerResponseScaleValueMax = 5;
+
+
+
+export const UpsertCorpAnswerResponse = zod.object({
+  "id": zod.number(),
+  "assessmentId": zod.number(),
+  "questionId": zod.number(),
+  "boolValue": zod.boolean().nullable(),
+  "scaleValue": zod.number().min(1).max(upsertCorpAnswerResponseScaleValueMax).nullable(),
+  "choiceValue": zod.string().nullable(),
+  "textValue": zod.string().nullable(),
+  "percentValue": zod.number().nullable(),
+  "notes": zod.string().nullable(),
+  "updatedAt": zod.coerce.date()
+})
+
+
+/**
  * @summary List all assessments for the authenticated user
  */
 export const ListAssessmentsResponseItem = zod.object({
   "id": zod.number(),
   "userId": zod.string(),
+  "type": zod.enum(['security', 'corporate']),
   "name": zod.string(),
   "systemName": zod.string(),
   "description": zod.string().nullish(),
@@ -171,11 +295,12 @@ export const ListAssessmentsResponse = zod.array(ListAssessmentsResponseItem)
 /**
  * @summary Create a new assessment
  */
-
+export const createAssessmentBodyTypeDefault = `security`;
 
 
 
 export const CreateAssessmentBody = zod.object({
+  "type": zod.enum(['security', 'corporate']).default(createAssessmentBodyTypeDefault),
   "name": zod.string().min(1),
   "systemName": zod.string().min(1),
   "description": zod.string().optional()
@@ -184,6 +309,7 @@ export const CreateAssessmentBody = zod.object({
 export const CreateAssessmentResponse = zod.object({
   "id": zod.number(),
   "userId": zod.string(),
+  "type": zod.enum(['security', 'corporate']),
   "name": zod.string(),
   "systemName": zod.string(),
   "description": zod.string().nullish(),
@@ -206,6 +332,7 @@ export const GetAssessmentParams = zod.object({
 export const GetAssessmentResponse = zod.object({
   "id": zod.number(),
   "userId": zod.string(),
+  "type": zod.enum(['security', 'corporate']),
   "name": zod.string(),
   "systemName": zod.string(),
   "description": zod.string().nullish(),
@@ -240,6 +367,7 @@ export const UpdateAssessmentBody = zod.object({
 export const UpdateAssessmentResponse = zod.object({
   "id": zod.number(),
   "userId": zod.string(),
+  "type": zod.enum(['security', 'corporate']),
   "name": zod.string(),
   "systemName": zod.string(),
   "description": zod.string().nullish(),
@@ -566,6 +694,7 @@ export const DuplicateAssessmentParams = zod.object({
 export const DuplicateAssessmentResponse = zod.object({
   "id": zod.number(),
   "userId": zod.string(),
+  "type": zod.enum(['security', 'corporate']),
   "name": zod.string(),
   "systemName": zod.string(),
   "description": zod.string().nullish(),
@@ -618,6 +747,7 @@ export const GetDashboardResponse = zod.object({
   "recentAssessments": zod.array(zod.object({
   "id": zod.number(),
   "userId": zod.string(),
+  "type": zod.enum(['security', 'corporate']),
   "name": zod.string(),
   "systemName": zod.string(),
   "description": zod.string().nullish(),

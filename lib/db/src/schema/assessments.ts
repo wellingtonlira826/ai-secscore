@@ -57,10 +57,12 @@ export type UserFrameworkWeight = typeof userFrameworkWeightsTable.$inferSelect;
 
 // ── Assessments ────────────────────────────────────────────────────────────────
 export const assessmentStatusEnum = pgEnum("assessment_status", ["in_progress", "completed"]);
+export const assessmentTypeEnum = pgEnum("assessment_type", ["security", "corporate"]);
 
 export const assessmentsTable = pgTable("assessments", {
   id: serial("id").primaryKey(),
   userId: text("user_id").notNull(),
+  type: assessmentTypeEnum("type").notNull().default("security"),
   name: text("name").notNull(),
   systemName: text("system_name").notNull(),
   description: text("description"),

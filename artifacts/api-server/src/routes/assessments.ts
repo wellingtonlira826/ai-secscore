@@ -348,6 +348,7 @@ router.post("/assessments", async (req, res): Promise<void> => {
     .insert(assessmentsTable)
     .values({
       userId,
+      type: parsed.data.type ?? "security",
       name: parsed.data.name,
       systemName: parsed.data.systemName,
       description: parsed.data.description ?? null,

@@ -16,6 +16,8 @@ tags:
     description: Assessment framework and question operations
   - name: Assessments
     description: Assessment lifecycle operations
+  - name: Corporate
+    description: Corporate AI maturity assessment catalog and answers
   - name: Answers
     description: Answer submission operations
   - name: Scoring
@@ -193,6 +195,142 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Question"
+
+  # ── Corporate AI maturity catalog ────────────────────────────────────────────
+
+  /corporate/domains:
+    get:
+      tags: [Corporate]
+      operationId: listCorpDomains
+      summary: List corporate AI maturity domains
+      responses:
+        "200":
+          description: List of domains
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CorpDomain"
+
+  /corporate/questions:
+    get:
+      tags: [Corporate]
+      operationId: listCorpQuestions
+      summary: List corporate questions, optionally filtered by domain
+      parameters:
+        - name: domainId
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of corporate questions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CorpQuestion"
+
+  /corporate/maturity-levels:
+    get:
+      tags: [Corporate]
+      operationId: listMaturityLevels
+      summary: List the 5-level corporate AI maturity model
+      responses:
+        "200":
+          description: Maturity levels
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MaturityLevel"
+
+  # ── Corporate answers ────────────────────────────────────────────────────────
+
+  /assessments/{assessmentId}/corporate-answers:
+    get:
+      tags: [Corporate]
+      operationId: listCorpAnswers
+      summary: Get all corporate answers for an assessment
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of corporate answers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CorpAnswer"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Assessment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  /assessments/{assessmentId}/corporate-answers/{questionId}:
+    put:
+      tags: [Corporate]
+      operationId: upsertCorpAnswer
+      summary: Save or update a corporate answer for a question
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CorpAnswerInput"
+      responses:
+        "200":
+          description: Saved corporate answer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorpAnswer"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
 
   # ── Assessments ──────────────────────────────────────────────────────────────
 
@@ -1324,12 +1462,15 @@ components:
 
     Assessment:
       type: object
-      required: [id, userId, name, systemName, status, completionPct, createdAt, updatedAt]
+      required: [id, userId, type, name, systemName, status, completionPct, createdAt, updatedAt]
       properties:
         id:
           type: integer
         userId:
           type: string
+        type:
+          type: string
+          enum: [security, corporate]
         name:
           type: string
         systemName:
@@ -1360,6 +1501,10 @@ components:
       type: object
       required: [name, systemName]
       properties:
+        type:
+          type: string
+          enum: [security, corporate]
+          default: security
         name:
           type: string
           minLength: 1
@@ -1415,6 +1560,131 @@ components:
           description: "0=Not implemented, 1=Partial, 2=Largely, 3=Fully, null=N/A"
         notes:
           type: string
+
+    # ── Corporate AI maturity schemas ────────────────────────────────────────
+    CorpDomain:
+      type: object
+      required: [id, slug, name, pillar, description, weight, order, questionCount]
+      properties:
+        id:
+          type: integer
+        slug:
+          type: string
+        name:
+          type: string
+        pillar:
+          type: string
+        description:
+          type: string
+        weight:
+          type: number
+        order:
+          type: integer
+        questionCount:
+          type: integer
+
+    CorpQuestion:
+      type: object
+      required: [id, domainId, order, text, description, objective, justification, marketReference, criticality, weight, answerType, options, required, eliminatory]
+      properties:
+        id:
+          type: integer
+        domainId:
+          type: integer
+        order:
+          type: integer
+        text:
+          type: string
+        description:
+          type: string
+        objective:
+          type: string
+        justification:
+          type: string
+        marketReference:
+          type: string
+        criticality:
+          type: string
+          enum: [baixa, media, alta, critica]
+        weight:
+          type: integer
+          description: Question weight 1–5
+        answerType:
+          type: string
+          enum: [yes_no, scale_1_5, multiple_choice, text, percent]
+        options:
+          type: ["array", "null"]
+          items:
+            type: string
+        required:
+          type: boolean
+        eliminatory:
+          type: boolean
+
+    MaturityLevel:
+      type: object
+      required: [id, level, name, description, characteristics]
+      properties:
+        id:
+          type: integer
+        level:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        characteristics:
+          type: array
+          items:
+            type: string
+
+    CorpAnswer:
+      type: object
+      required: [id, assessmentId, questionId, boolValue, scaleValue, choiceValue, textValue, percentValue, notes, updatedAt]
+      properties:
+        id:
+          type: integer
+        assessmentId:
+          type: integer
+        questionId:
+          type: integer
+        boolValue:
+          type: ["boolean", "null"]
+        scaleValue:
+          type: ["integer", "null"]
+          minimum: 1
+          maximum: 5
+        choiceValue:
+          type: ["string", "null"]
+        textValue:
+          type: ["string", "null"]
+        percentValue:
+          type: ["number", "null"]
+        notes:
+          type: ["string", "null"]
+        updatedAt:
+          type: string
+          format: date-time
+
+    CorpAnswerInput:
+      type: object
+      properties:
+        boolValue:
+          type: ["boolean", "null"]
+        scaleValue:
+          type: ["integer", "null"]
+          minimum: 1
+          maximum: 5
+        choiceValue:
+          type: ["string", "null"]
+        textValue:
+          type: ["string", "null"]
+        percentValue:
+          type: ["number", "null"]
+          minimum: 0
+          maximum: 100
+        notes:
+          type: ["string", "null"]
 
     # ── Evidence schemas ──────────────────────────────────────────────────────
     Evidence:

@@ -6,10 +6,12 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { AssessmentStatus } from './assessmentStatus';
+import type { AssessmentType } from './assessmentType';
 
 export interface Assessment {
   id: number;
   userId: string;
+  type: AssessmentType;
   name: string;
   systemName: string;
   /** @nullable */

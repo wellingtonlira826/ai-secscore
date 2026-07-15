@@ -29,6 +29,7 @@ export default function Assessments() {
   
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [newAssessment, setNewAssessment] = useState({ name: "", systemName: "", description: "" });
+  const [newType, setNewType] = useState<"security" | "corporate">("security");
 
   const handleCreate = () => {
     if (!newAssessment.name || !newAssessment.systemName) {
@@ -36,11 +37,12 @@ export default function Assessments() {
       return;
     }
     
-    createAssessment.mutate({ data: newAssessment }, {
+    createAssessment.mutate({ data: { ...newAssessment, type: newType } }, {
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: getListAssessmentsQueryKey() });
         setCreateDialogOpen(false);
         setNewAssessment({ name: "", systemName: "", description: "" });
+        setNewType("security");
         setLocation(`/assessments/${data.id}`);
       },
       onError: (err: any) => {
@@ -90,6 +92,27 @@ export default function Assessments() {
               <DialogTitle>{t('assessments.createTitle')}</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <Label>{t('assessments.type')}</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setNewType("security")}
+                    className={`p-3 rounded-lg border text-left transition-colors ${newType === "security" ? "border-primary bg-primary/10" : "border-border hover:bg-accent"}`}
+                  >
+                    <div className="text-sm font-medium">{t('assessments.typeSecurity')}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">{t('assessments.typeSecurityDesc')}</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setNewType("corporate")}
+                    className={`p-3 rounded-lg border text-left transition-colors ${newType === "corporate" ? "border-primary bg-primary/10" : "border-border hover:bg-accent"}`}
+                  >
+                    <div className="text-sm font-medium">{t('assessments.typeCorporate')}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">{t('assessments.typeCorporateDesc')}</div>
+                  </button>
+                </div>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="name">{t('assessments.name')}</Label>
                 <Input 
@@ -179,9 +202,14 @@ export default function Assessments() {
                 
                 <div className="mt-auto space-y-4">
                   <div className="flex items-center justify-between">
-                    <Badge variant={assessment.status === 'completed' ? 'default' : 'outline'}>
-                      {assessment.status === 'completed' ? t('assessments.status.completed') : t('assessments.status.in_progress')}
-                    </Badge>
+                    <div className="flex items-center gap-1.5">
+                      <Badge variant={assessment.status === 'completed' ? 'default' : 'outline'}>
+                        {assessment.status === 'completed' ? t('assessments.status.completed') : t('assessments.status.in_progress')}
+                      </Badge>
+                      {assessment.type === 'corporate' && (
+                        <Badge variant="secondary">{t('corporate.badge')}</Badge>
+                      )}
+                    </div>
                     <span className="text-sm font-medium">{Math.round(assessment.completionPct)}% {t('assessment.progress')}</span>
                   </div>
                   <Progress value={assessment.completionPct} className="h-2" />

@@ -1,6 +1,7 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 import { seedFrameworksAndQuestions } from "./lib/seed";
+import { seedCorporate } from "./lib/seedCorporate";
 
 const rawPort = process.env["PORT"];
 
@@ -27,6 +28,7 @@ app.listen(port, async (err) => {
   // Seed frameworks and questions on startup
   try {
     await seedFrameworksAndQuestions();
+    await seedCorporate();
   } catch (e) {
     logger.error({ err: e }, "Seed failed");
   }

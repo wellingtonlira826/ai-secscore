@@ -90,6 +90,14 @@ export interface FrameworkWithQuestions {
   questions: Question[];
 }
 
+export type AssessmentType = typeof AssessmentType[keyof typeof AssessmentType];
+
+
+export const AssessmentType = {
+  security: 'security',
+  corporate: 'corporate',
+} as const;
+
 export type AssessmentStatus = typeof AssessmentStatus[keyof typeof AssessmentStatus];
 
 
@@ -101,6 +109,7 @@ export const AssessmentStatus = {
 export interface Assessment {
   id: number;
   userId: string;
+  type: AssessmentType;
   name: string;
   systemName: string;
   /** @nullable */
@@ -122,7 +131,16 @@ export interface Assessment {
   updatedAt: string;
 }
 
+export type AssessmentInputType = typeof AssessmentInputType[keyof typeof AssessmentInputType];
+
+
+export const AssessmentInputType = {
+  security: 'security',
+  corporate: 'corporate',
+} as const;
+
 export interface AssessmentInput {
+  type?: AssessmentInputType;
   /** @minLength 1 */
   name: string;
   /** @minLength 1 */
@@ -173,6 +191,111 @@ export interface AnswerInput {
      */
   maturityLevel: number | null;
   notes?: string;
+}
+
+export interface CorpDomain {
+  id: number;
+  slug: string;
+  name: string;
+  pillar: string;
+  description: string;
+  weight: number;
+  order: number;
+  questionCount: number;
+}
+
+export type CorpQuestionCriticality = typeof CorpQuestionCriticality[keyof typeof CorpQuestionCriticality];
+
+
+export const CorpQuestionCriticality = {
+  baixa: 'baixa',
+  media: 'media',
+  alta: 'alta',
+  critica: 'critica',
+} as const;
+
+export type CorpQuestionAnswerType = typeof CorpQuestionAnswerType[keyof typeof CorpQuestionAnswerType];
+
+
+export const CorpQuestionAnswerType = {
+  yes_no: 'yes_no',
+  scale_1_5: 'scale_1_5',
+  multiple_choice: 'multiple_choice',
+  text: 'text',
+  percent: 'percent',
+} as const;
+
+export interface CorpQuestion {
+  id: number;
+  domainId: number;
+  order: number;
+  text: string;
+  description: string;
+  objective: string;
+  justification: string;
+  marketReference: string;
+  criticality: CorpQuestionCriticality;
+  /** Question weight 1–5 */
+  weight: number;
+  answerType: CorpQuestionAnswerType;
+  /** @nullable */
+  options: string[] | null;
+  required: boolean;
+  eliminatory: boolean;
+}
+
+export interface MaturityLevel {
+  id: number;
+  level: number;
+  name: string;
+  description: string;
+  characteristics: string[];
+}
+
+export interface CorpAnswer {
+  id: number;
+  assessmentId: number;
+  questionId: number;
+  /** @nullable */
+  boolValue: boolean | null;
+  /**
+     * @minimum 1
+     * @maximum 5
+     * @nullable
+     */
+  scaleValue: number | null;
+  /** @nullable */
+  choiceValue: string | null;
+  /** @nullable */
+  textValue: string | null;
+  /** @nullable */
+  percentValue: number | null;
+  /** @nullable */
+  notes: string | null;
+  updatedAt: string;
+}
+
+export interface CorpAnswerInput {
+  /** @nullable */
+  boolValue?: boolean | null;
+  /**
+     * @minimum 1
+     * @maximum 5
+     * @nullable
+     */
+  scaleValue?: number | null;
+  /** @nullable */
+  choiceValue?: string | null;
+  /** @nullable */
+  textValue?: string | null;
+  /**
+     * @minimum 0
+     * @maximum 100
+     * @nullable
+     */
+  percentValue?: number | null;
+  /** @nullable */
+  notes?: string | null;
 }
 
 export interface Evidence {
@@ -574,6 +697,10 @@ state?: string;
 
 export type ListQuestionsParams = {
 frameworkId?: number;
+};
+
+export type ListCorpQuestionsParams = {
+domainId?: number;
 };
 
 export type GetAssessmentSummaryParams = {

@@ -5,8 +5,10 @@
  * AI SecScore — AI Security Assessment Platform API
  * OpenAPI spec version: 0.1.0
  */
+import type { AssessmentInputType } from './assessmentInputType';
 
 export interface AssessmentInput {
+  type?: AssessmentInputType;
   /** @minLength 1 */
   name: string;
   /** @minLength 1 */

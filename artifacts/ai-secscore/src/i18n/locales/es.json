@@ -53,7 +53,12 @@
     "open": "Abrir Evaluación",
     "duplicate": "Duplicar",
     "duplicated": "Evaluación duplicada",
-    "duplicateError": "No se pudo duplicar la evaluación"
+    "duplicateError": "No se pudo duplicar la evaluación",
+    "type": "Tipo de evaluación",
+    "typeSecurity": "Seguridad de IA",
+    "typeSecurityDesc": "Evaluar un sistema de IA frente a marcos de seguridad",
+    "typeCorporate": "IA Corporativa",
+    "typeCorporateDesc": "Evaluar la madurez organizacional de IA en 34 dominios"
   },
   "assessment": {
     "back": "Volver a la Evaluación",
@@ -493,5 +498,36 @@
     "nextReview": "Próxima revisión",
     "days_one": "Cada {{count}} día",
     "days_other": "Cada {{count}} días"
+  },
+  "corporate": {
+    "badge": "IA Corporativa",
+    "answer": "Respuesta",
+    "required": "Obligatoria",
+    "eliminatory": "Eliminatoria",
+    "weight": "Peso",
+    "objective": "Objetivo",
+    "justification": "Justificación",
+    "marketReference": "Referencia de mercado",
+    "showDetails": "Ver detalles",
+    "hideDetails": "Ocultar detalles",
+    "selectOption": "Seleccione una opción",
+    "selectDomain": "Seleccionar dominio",
+    "textAnswer": "Escriba su respuesta",
+    "overallProgress": "Progreso general",
+    "maturityModel": "Modelo de madurez",
+    "noQuestions": "No se encontraron preguntas para este dominio.",
+    "criticality": {
+      "baixa": "Baja",
+      "media": "Media",
+      "alta": "Alta",
+      "critica": "Crítica"
+    },
+    "scale": {
+      "1": "1 — Inexistente",
+      "2": "2 — Inicial",
+      "3": "3 — Definido",
+      "4": "4 — Gestionado",
+      "5": "5 — Optimizado"
+    }
   }
 }

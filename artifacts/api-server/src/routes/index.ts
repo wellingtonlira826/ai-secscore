@@ -9,6 +9,7 @@ import storageRouter from "./storage";
 import remediationRouter from "./remediation";
 import collaboratorsRouter from "./collaborators";
 import complianceRouter from "./compliance";
+import corporateRouter from "./corporate";
 
 const router: IRouter = Router();
 
@@ -22,5 +23,6 @@ router.use(storageRouter);
 router.use(remediationRouter);
 router.use(collaboratorsRouter);
 router.use(complianceRouter);
+router.use(corporateRouter);
 
 export default router;

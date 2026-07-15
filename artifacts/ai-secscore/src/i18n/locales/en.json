@@ -53,7 +53,12 @@
     "open": "Open Assessment",
     "duplicate": "Duplicate",
     "duplicated": "Assessment duplicated",
-    "duplicateError": "Failed to duplicate assessment"
+    "duplicateError": "Failed to duplicate assessment",
+    "type": "Assessment Type",
+    "typeSecurity": "AI Security",
+    "typeSecurityDesc": "Evaluate an AI system against security frameworks",
+    "typeCorporate": "Corporate AI",
+    "typeCorporateDesc": "Assess organizational AI maturity across 34 domains"
   },
   "assessment": {
     "back": "Back to Assessment",
@@ -223,5 +228,36 @@
     "nextReview": "Next review",
     "days_one": "Every {{count}} day",
     "days_other": "Every {{count}} days"
+  },
+  "corporate": {
+    "badge": "Corporate AI",
+    "answer": "Answer",
+    "required": "Required",
+    "eliminatory": "Eliminatory",
+    "weight": "Weight",
+    "objective": "Objective",
+    "justification": "Justification",
+    "marketReference": "Market reference",
+    "showDetails": "Show details",
+    "hideDetails": "Hide details",
+    "selectOption": "Select an option",
+    "selectDomain": "Select domain",
+    "textAnswer": "Type your answer",
+    "overallProgress": "Overall progress",
+    "maturityModel": "Maturity Model",
+    "noQuestions": "No questions found for this domain.",
+    "criticality": {
+      "baixa": "Low",
+      "media": "Medium",
+      "alta": "High",
+      "critica": "Critical"
+    },
+    "scale": {
+      "1": "1 — Nonexistent",
+      "2": "2 — Initial",
+      "3": "3 — Defined",
+      "4": "4 — Managed",
+      "5": "5 — Optimized"
+    }
   }
 }
