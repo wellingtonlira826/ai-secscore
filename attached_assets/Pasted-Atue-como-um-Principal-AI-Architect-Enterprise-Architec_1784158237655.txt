@@ -1,0 +1,400 @@
+Atue como um Principal AI Architect, Enterprise Architect e consultor de IA Generativa com experiência em grandes instituições financeiras (bancos, seguradoras e fintechs).
+
+Sua missão é projetar um sistema completo de Assessment de IA Corporativa para avaliar o nível de maturidade, riscos, oportunidades e prontidão de uma organização para adoção de Inteligência Artificial Tradicional, IA Generativa e IA Agêntica.
+
+O sistema deve ser utilizado por consultorias e áreas de transformação digital durante workshops com clientes.
+
+O resultado deve ser equivalente a um produto comercial de consultoria.
+
+==================================================
+OBJETIVO
+==================================================
+
+Projetar uma plataforma de assessment capaz de:
+
+- avaliar maturidade de IA
+- identificar gaps
+- gerar score
+- classificar riscos
+- recomendar roadmap
+- recomendar ferramentas
+- sugerir quick wins
+- priorizar iniciativas
+- estimar ROI
+- gerar relatório executivo
+
+==================================================
+DOMÍNIOS DE AVALIAÇÃO
+==================================================
+
+O assessment deve contemplar no mínimo:
+
+1. Estratégia de IA
+2. Governança
+3. Dados
+4. Qualidade dos Dados
+5. Catálogo de Dados
+6. Segurança
+7. Privacidade (LGPD)
+8. IA Responsável
+9. Model Risk Management
+10. Compliance
+11. Arquitetura
+12. Cloud
+13. Infraestrutura
+14. Engenharia de Dados
+15. Engenharia de ML
+16. MLOps
+17. LLMOps
+18. AI Agents
+19. RAG
+20. Prompt Engineering
+21. Desenvolvimento de Software
+22. APIs
+23. Integrações
+24. Observabilidade
+25. FinOps
+26. Cultura Organizacional
+27. Pessoas
+28. Capacitação
+29. Casos de Uso
+30. ROI
+31. Gestão de Mudança
+32. Cyber Security
+33. Third-party Risk
+34. Ética em IA
+
+==================================================
+QUESTIONÁRIO
+==================================================
+
+Para cada domínio:
+
+Crie entre 15 e 25 perguntas.
+
+Cada pergunta deve conter:
+
+- pergunta
+- descrição
+- objetivo
+- tipo
+- escala
+- peso
+- criticidade
+- justificativa
+- referência de mercado
+
+Tipos de resposta:
+
+- Sim/Não
+- Escala 1-5
+- Múltipla escolha
+- Texto
+- Percentual
+
+==================================================
+MATURIDADE
+==================================================
+
+Criar modelo de maturidade de 5 níveis.
+
+Exemplo:
+
+Nível 1
+Inicial
+
+Nível 2
+Repetível
+
+Nível 3
+Definido
+
+Nível 4
+Gerenciado
+
+Nível 5
+Otimizado
+
+Definir claramente o que caracteriza cada nível para todos os domínios.
+
+==================================================
+SCORING
+==================================================
+
+Criar algoritmo para cálculo de score.
+
+O score deve considerar:
+
+- peso por domínio
+- peso por pergunta
+- perguntas obrigatórias
+- perguntas eliminatórias
+- criticidade
+
+Gerar:
+
+Score Geral
+
+Score por domínio
+
+Radar
+
+Heatmap
+
+Benchmark
+
+Índice de Risco
+
+Índice de Maturidade
+
+Índice de Preparação para IA Generativa
+
+Índice de Preparação para Agentes
+
+==================================================
+BENCHMARK
+==================================================
+
+Comparar o cliente com:
+
+Banco Digital
+
+Banco Tradicional
+
+Fintech
+
+Seguradora
+
+Cooperativa
+
+Empresa de Varejo
+
+Empresa Industrial
+
+Empresa Pública
+
+==================================================
+FRAMEWORKS
+==================================================
+
+Utilizar como referência:
+
+NIST AI RMF
+
+ISO 42001
+
+ISO 27001
+
+ISO 23894
+
+COBIT
+
+ITIL
+
+TOGAF
+
+DAMA-DMBOK
+
+Google Cloud AI Adoption Framework
+
+Microsoft AI Maturity Model
+
+AWS CAF
+
+OWASP Top 10 for LLM
+
+OWASP GenAI
+
+MITRE ATLAS
+
+MITRE ATT&CK
+
+EU AI Act
+
+LGPD
+
+Basel
+
+BACEN
+
+CMN
+
+FEBRABAN
+
+==================================================
+RECOMENDAÇÕES
+==================================================
+
+Ao final gerar automaticamente:
+
+Top 10 riscos
+
+Top 10 oportunidades
+
+Roadmap de 24 meses
+
+Quick Wins
+
+Projetos prioritários
+
+Ferramentas recomendadas
+
+Arquitetura sugerida
+
+Stack tecnológica
+
+Capacitações recomendadas
+
+==================================================
+FERRAMENTAS
+==================================================
+
+Relacionar ferramentas de mercado para cada domínio.
+
+Exemplos:
+
+Vertex AI
+
+Azure AI Foundry
+
+Amazon SageMaker
+
+Databricks
+
+Snowflake
+
+BigQuery
+
+OpenMetadata
+
+Collibra
+
+Microsoft Purview
+
+OneTrust
+
+Datadog
+
+Splunk
+
+Google SecOps
+
+Chronicle
+
+Feedzai
+
+SAS
+
+FICO
+
+UiPath
+
+ServiceNow
+
+Salesforce
+
+LangChain
+
+LlamaIndex
+
+CrewAI
+
+OpenAI
+
+Anthropic
+
+Gemini
+
+MCP
+
+==================================================
+ARQUITETURA
+==================================================
+
+Projetar arquitetura completa contendo:
+
+Frontend
+
+Backend
+
+Banco de Dados
+
+Autenticação
+
+APIs
+
+LLM
+
+RAG
+
+Vetorização
+
+Observabilidade
+
+Segurança
+
+Dashboard
+
+Analytics
+
+==================================================
+RELATÓRIOS
+==================================================
+
+Gerar automaticamente:
+
+Relatório Executivo
+
+Relatório Técnico
+
+Roadmap
+
+Plano de Ação
+
+Dashboard Executivo
+
+Dashboard Técnico
+
+Matriz SWOT
+
+Radar de Maturidade
+
+Heatmap
+
+Backlog priorizado
+
+==================================================
+ENTREGÁVEIS
+==================================================
+
+Apresente a resposta em formato estruturado contendo:
+
+1. Arquitetura da solução
+
+2. Modelo de dados
+
+3. Questionário completo
+
+4. Algoritmo de scoring
+
+5. Framework de maturidade
+
+6. Dashboards
+
+7. Modelo de banco de dados
+
+8. APIs REST
+
+9. Modelo de autenticação
+
+10. Modelo de IA utilizado
+
+11. Fluxo completo do usuário
+
+12. Roadmap de implementação
+
+13. Sugestões de tecnologias
+
+14. Estrutura para expansão futura
+
+A resposta deve ter nível de profundidade equivalente ao trabalho produzido por uma Big Four (Deloitte, PwC, EY ou KPMG) ou por consultorias como Accenture e McKinsey, pronta para servir como base de desenvolvimento de um produto SaaS empresarial.
