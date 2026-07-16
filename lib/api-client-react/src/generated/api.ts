@@ -41,6 +41,7 @@ import type {
   CorpDomain,
   CorpQuestion,
   CorporateBenchmark,
+  CorporateRecommendations,
   CorporateScore,
   DashboardSummary,
   ErrorEnvelope,
@@ -1425,6 +1426,83 @@ export function useGetCorporateBenchmark<TData = Awaited<ReturnType<typeof getCo
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
   const queryOptions = getGetCorporateBenchmarkQueryOptions(assessmentId,params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetCorporateRecommendationsUrl = (assessmentId: number,) => {
+
+
+
+
+  return `/api/assessments/${assessmentId}/corporate-recommendations`
+}
+
+/**
+ * @summary Rules-based consulting package (risks, opportunities, roadmap, SWOT, backlog)
+ */
+export const getCorporateRecommendations = async (assessmentId: number, options?: RequestInit): Promise<CorporateRecommendations> => {
+
+  return customFetch<CorporateRecommendations>(getGetCorporateRecommendationsUrl(assessmentId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetCorporateRecommendationsQueryKey = (assessmentId: number,) => {
+    return [
+    `/api/assessments/${assessmentId}/corporate-recommendations`
+    ] as const;
+    }
+
+
+export const getGetCorporateRecommendationsQueryOptions = <TData = Awaited<ReturnType<typeof getCorporateRecommendations>>, TError = ErrorType<ErrorEnvelope>>(assessmentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getCorporateRecommendations>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetCorporateRecommendationsQueryKey(assessmentId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getCorporateRecommendations>>> = ({ signal }) => getCorporateRecommendations(assessmentId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: assessmentId !== null && assessmentId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getCorporateRecommendations>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetCorporateRecommendationsQueryResult = NonNullable<Awaited<ReturnType<typeof getCorporateRecommendations>>>
+export type GetCorporateRecommendationsQueryError = ErrorType<ErrorEnvelope>
+
+
+/**
+ * @summary Rules-based consulting package (risks, opportunities, roadmap, SWOT, backlog)
+ */
+
+export function useGetCorporateRecommendations<TData = Awaited<ReturnType<typeof getCorporateRecommendations>>, TError = ErrorType<ErrorEnvelope>>(
+ assessmentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getCorporateRecommendations>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetCorporateRecommendationsQueryOptions(assessmentId,options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

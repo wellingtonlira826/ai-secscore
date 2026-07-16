@@ -23,7 +23,7 @@ import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
   Tooltip as RechartsTooltip,
 } from "recharts";
-import { ChevronLeft, AlertTriangle, ShieldAlert, Gauge, Bot, Sparkles, TrendingUp, TrendingDown, Minus, Download, Loader2 } from "lucide-react";
+import { ChevronLeft, AlertTriangle, ShieldAlert, Gauge, Bot, Sparkles, TrendingUp, TrendingDown, Minus, Download, Loader2, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 
@@ -230,7 +230,7 @@ export default function CorporateResults() {
             </span>
           </Link>
         </div>
-        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-3">
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('corpResults.title')}</h1>
@@ -238,10 +238,17 @@ export default function CorporateResults() {
             </div>
             <p className="text-muted-foreground mt-1 text-sm">{assessment.name} • {assessment.systemName}</p>
           </div>
-          <Button size="sm" onClick={handleExportPdf} disabled={exporting} className="gap-1.5 shrink-0" data-testid="button-export-pdf">
-            {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-            <span>{t('results.exportPdf')}</span>
-          </Button>
+          <div className="flex flex-wrap gap-2 shrink-0">
+            <Link href={`/assessments/${id}/recommendations`}>
+              <Button variant="outline" size="sm" className="gap-1.5" data-testid="button-open-recommendations">
+                <Lightbulb className="w-4 h-4" /> {t('corpRecs.openRecs')}
+              </Button>
+            </Link>
+            <Button size="sm" onClick={handleExportPdf} disabled={exporting} className="gap-1.5" data-testid="button-export-pdf">
+              {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+              <span>{t('results.exportPdf')}</span>
+            </Button>
+          </div>
         </div>
       </div>
 

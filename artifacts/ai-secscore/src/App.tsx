@@ -15,6 +15,7 @@ const Assessments = lazy(() => import("@/pages/Assessments"));
 const AssessmentDetail = lazy(() => import("@/pages/AssessmentDetail"));
 const ResultsDashboard = lazy(() => import("@/pages/ResultsDashboard"));
 const CorporateResults = lazy(() => import("@/pages/CorporateResults"));
+const CorporateRecommendations = lazy(() => import("@/pages/CorporateRecommendations"));
 const Compliance = lazy(() => import("@/pages/Compliance"));
 const CompareAssessments = lazy(() => import("@/pages/CompareAssessments"));
 const History = lazy(() => import("@/pages/History"));
@@ -52,6 +53,7 @@ function Router() {
           <Route path="/assessments/:id" component={AssessmentDetail} />
           <Route path="/assessments/:id/results" component={ResultsDashboard} />
           <Route path="/assessments/:id/corporate-results" component={CorporateResults} />
+          <Route path="/assessments/:id/recommendations" component={CorporateRecommendations} />
           <Route path="/assessments/:id/compliance" component={Compliance} />
           <Route path="/history" component={History} />
           <Route path="/reports" component={Reports} />

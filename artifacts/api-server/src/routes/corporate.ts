@@ -25,10 +25,13 @@ import {
   GetCorporateBenchmarkParams,
   GetCorporateBenchmarkQueryParams,
   GetCorporateBenchmarkResponse,
+  GetCorporateRecommendationsParams,
+  GetCorporateRecommendationsResponse,
 } from "@workspace/api-zod";
 import { getAssessmentAccess, canEdit } from "../lib/access";
 import { scoreCorporateAssessment } from "../lib/corporateScoring";
 import { loadCorporateScoringContext } from "../lib/corporateScoringContext";
+import { buildCorporateRecommendations } from "../lib/corporateRecommendations/engine";
 
 const router: IRouter = Router();
 
@@ -245,6 +248,43 @@ router.get(
         domains,
       }),
     );
+  },
+);
+
+router.get(
+  "/assessments/:assessmentId/corporate-recommendations",
+  async (req, res): Promise<void> => {
+    if (!req.isAuthenticated()) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const params = GetCorporateRecommendationsParams.safeParse(req.params);
+    if (!params.success) {
+      res.status(400).json({ error: params.error.message });
+      return;
+    }
+
+    const access = await getAssessmentAccess(
+      params.data.assessmentId,
+      req.user.id,
+      req.user.email,
+    );
+    if (!access) {
+      res.status(404).json({ error: "Assessment not found" });
+      return;
+    }
+
+    const ctx = await loadCorporateScoringContext(params.data.assessmentId);
+    const score = scoreCorporateAssessment(
+      params.data.assessmentId,
+      ctx.domains,
+      ctx.questions,
+      ctx.answers,
+    );
+    const result = buildCorporateRecommendations(score);
+
+    res.json(GetCorporateRecommendationsResponse.parse(result));
   },
 );
 

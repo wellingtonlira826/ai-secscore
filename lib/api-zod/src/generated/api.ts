@@ -378,6 +378,120 @@ export const GetCorporateBenchmarkResponse = zod.object({
 
 
 /**
+ * @summary Rules-based consulting package (risks, opportunities, roadmap, SWOT, backlog)
+ */
+export const GetCorporateRecommendationsParams = zod.object({
+  "assessmentId": zod.coerce.number()
+})
+
+export const GetCorporateRecommendationsResponse = zod.object({
+  "assessmentId": zod.number(),
+  "generatedForScore": zod.number().nullable(),
+  "topRisks": zod.array(zod.object({
+  "rank": zod.number(),
+  "domainId": zod.number(),
+  "domainSlug": zod.string(),
+  "domainName": zod.string(),
+  "pillar": zod.string(),
+  "title": zod.string(),
+  "description": zod.string(),
+  "severity": zod.enum(['critical', 'high', 'medium']),
+  "domainScore": zod.number().nullable(),
+  "maturityLevel": zod.number().nullable(),
+  "cappedByEliminatory": zod.boolean()
+})),
+  "topOpportunities": zod.array(zod.object({
+  "rank": zod.number(),
+  "domainId": zod.number(),
+  "domainSlug": zod.string(),
+  "domainName": zod.string(),
+  "pillar": zod.string(),
+  "title": zod.string(),
+  "description": zod.string(),
+  "domainScore": zod.number().nullable()
+})),
+  "quickWins": zod.array(zod.object({
+  "domainId": zod.number(),
+  "domainSlug": zod.string(),
+  "domainName": zod.string(),
+  "title": zod.string(),
+  "impact": zod.enum(['high', 'medium', 'low']),
+  "effort": zod.enum(['high', 'medium', 'low']),
+  "domainScore": zod.number().nullable()
+})),
+  "priorityProjects": zod.array(zod.object({
+  "domainId": zod.number(),
+  "domainSlug": zod.string(),
+  "domainName": zod.string(),
+  "pillar": zod.string(),
+  "title": zod.string(),
+  "description": zod.string(),
+  "impact": zod.enum(['high', 'medium', 'low']),
+  "effort": zod.enum(['high', 'medium', 'low']),
+  "horizon": zod.enum(['0-6', '6-12', '12-24']),
+  "domainScore": zod.number().nullable()
+})),
+  "tools": zod.array(zod.object({
+  "domainId": zod.number(),
+  "domainSlug": zod.string(),
+  "domainName": zod.string(),
+  "pillar": zod.string(),
+  "tools": zod.array(zod.string()),
+  "domainScore": zod.number().nullable()
+})),
+  "trainings": zod.array(zod.object({
+  "domainId": zod.number(),
+  "domainSlug": zod.string(),
+  "domainName": zod.string(),
+  "title": zod.string(),
+  "audience": zod.string(),
+  "domainScore": zod.number().nullable()
+})),
+  "roadmap": zod.array(zod.object({
+  "title": zod.string(),
+  "domainId": zod.number(),
+  "domainSlug": zod.string(),
+  "domainName": zod.string(),
+  "pillar": zod.string(),
+  "horizon": zod.enum(['0-6', '6-12', '12-24']),
+  "type": zod.enum(['quick_win', 'project']),
+  "impact": zod.enum(['high', 'medium', 'low']),
+  "effort": zod.enum(['high', 'medium', 'low'])
+})),
+  "swot": zod.object({
+  "strengths": zod.array(zod.object({
+  "domainName": zod.string(),
+  "text": zod.string()
+})),
+  "weaknesses": zod.array(zod.object({
+  "domainName": zod.string(),
+  "text": zod.string()
+})),
+  "opportunities": zod.array(zod.object({
+  "domainName": zod.string(),
+  "text": zod.string()
+})),
+  "threats": zod.array(zod.object({
+  "domainName": zod.string(),
+  "text": zod.string()
+}))
+}),
+  "backlog": zod.array(zod.object({
+  "rank": zod.number(),
+  "title": zod.string(),
+  "type": zod.enum(['quick_win', 'project', 'training']),
+  "domainName": zod.string(),
+  "pillar": zod.string(),
+  "impact": zod.enum(['high', 'medium', 'low']),
+  "effort": zod.enum(['high', 'medium', 'low']),
+  "horizon": zod.enum(['0-6', '6-12', '12-24']),
+  "priorityScore": zod.number(),
+  "domainScore": zod.number().nullable()
+}))
+})
+
+
+/**
  * @summary List all assessments for the authenticated user
  */
 export const ListAssessmentsResponseItem = zod.object({

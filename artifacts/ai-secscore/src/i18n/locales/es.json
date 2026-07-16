@@ -640,5 +640,90 @@
     "eliminatoryFailures": "Alertas Eliminatorias",
     "missingRequired": "Preguntas Obligatorias Pendientes",
     "cappedNote": "* Madurez limitada al nivel 2 por una pregunta eliminatoria"
+  },
+  "corpRecs": {
+    "title": "Recomendaciones e Informe Ejecutivo",
+    "subtitle": "Paquete de consultoría basado en reglas, generado a partir de sus puntuaciones",
+    "tabs": {
+      "recommendations": "Recomendaciones",
+      "roadmap": "Hoja de ruta",
+      "swot": "FODA",
+      "backlog": "Backlog"
+    },
+    "exportCsv": "Exportar CSV",
+    "printExecutive": "Informe ejecutivo (PDF)",
+    "printTechnical": "Informe técnico (PDF)",
+    "openRecs": "Recomendaciones e informe",
+    "sections": {
+      "risks": "Top 10 riesgos",
+      "risksDesc": "Dominios de mayor exposición, ordenados por brecha ponderada",
+      "opportunities": "Top 10 oportunidades",
+      "opportunitiesDesc": "Dónde las mejoras de madurez generan más valor",
+      "quickWins": "Victorias rápidas",
+      "quickWinsDesc": "Acciones de alto impacto y bajo esfuerzo para empezar ya",
+      "projects": "Proyectos prioritarios",
+      "projectsDesc": "Iniciativas estructurales para las mayores brechas",
+      "trainings": "Capacitaciones recomendadas",
+      "trainingsDesc": "Desarrollo de capacidades para dominios con brechas",
+      "tools": "Catálogo de herramientas",
+      "toolsDesc": "Herramientas de mercado recomendadas por dominio"
+    },
+    "severity": {
+      "critical": "Crítico",
+      "high": "Alto",
+      "medium": "Medio"
+    },
+    "impact": {
+      "high": "Impacto alto",
+      "medium": "Impacto medio",
+      "low": "Impacto bajo"
+    },
+    "effort": {
+      "high": "Esfuerzo alto",
+      "medium": "Esfuerzo medio",
+      "low": "Esfuerzo bajo"
+    },
+    "horizon": {
+      "0-6": "0–6 meses",
+      "6-12": "6–12 meses",
+      "12-24": "12–24 meses"
+    },
+    "types": {
+      "quick_win": "Victoria rápida",
+      "project": "Proyecto",
+      "training": "Capacitación"
+    },
+    "swotQuad": {
+      "strengths": "Fortalezas",
+      "weaknesses": "Debilidades",
+      "opportunities": "Oportunidades",
+      "threats": "Amenazas"
+    },
+    "backlogCols": {
+      "rank": "#",
+      "title": "Iniciativa",
+      "type": "Tipo",
+      "domain": "Dominio",
+      "pillar": "Pilar",
+      "impact": "Impacto",
+      "effort": "Esfuerzo",
+      "horizon": "Horizonte",
+      "priority": "Prioridad",
+      "score": "Puntuación del dominio"
+    },
+    "audience": "Audiencia",
+    "domainScore": "Puntuación del dominio",
+    "empty": "Responda el cuestionario para generar recomendaciones.",
+    "noGaps": "No se encontraron brechas significativas — siga monitoreando su madurez.",
+    "roadmapTitle": "Hoja de ruta de 24 meses",
+    "roadmapDesc": "Iniciativas distribuidas en tres horizontes según criticidad",
+    "reportExecutive": "Informe Ejecutivo — Madurez de IA",
+    "reportTechnical": "Informe Técnico — Madurez de IA",
+    "generatedOn": "Generado el {{date}}",
+    "overallScore": "Puntuación general",
+    "swotTitle": "Matriz FODA",
+    "swotDesc": "Panorama estratégico derivado de las puntuaciones por dominio",
+    "backlogTitle": "Backlog priorizado",
+    "backlogDesc": "Todas las iniciativas recomendadas ordenadas por prioridad"
   }
 }

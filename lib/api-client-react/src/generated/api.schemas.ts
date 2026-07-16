@@ -422,6 +422,185 @@ export interface CompletionBlocked {
   missingRequired: CorpQuestionFlag[];
 }
 
+export type RecImpact = typeof RecImpact[keyof typeof RecImpact];
+
+
+export const RecImpact = {
+  high: 'high',
+  medium: 'medium',
+  low: 'low',
+} as const;
+
+export type RecEffort = typeof RecEffort[keyof typeof RecEffort];
+
+
+export const RecEffort = {
+  high: 'high',
+  medium: 'medium',
+  low: 'low',
+} as const;
+
+export type RecHorizon = typeof RecHorizon[keyof typeof RecHorizon];
+
+
+export const RecHorizon = {
+  '0-6': '0-6',
+  '6-12': '6-12',
+  '12-24': '12-24',
+} as const;
+
+export type RecommendedRiskSeverity = typeof RecommendedRiskSeverity[keyof typeof RecommendedRiskSeverity];
+
+
+export const RecommendedRiskSeverity = {
+  critical: 'critical',
+  high: 'high',
+  medium: 'medium',
+} as const;
+
+export interface RecommendedRisk {
+  rank: number;
+  domainId: number;
+  domainSlug: string;
+  domainName: string;
+  pillar: string;
+  title: string;
+  description: string;
+  severity: RecommendedRiskSeverity;
+  /** @nullable */
+  domainScore: number | null;
+  /** @nullable */
+  maturityLevel: number | null;
+  cappedByEliminatory: boolean;
+}
+
+export interface RecommendedOpportunity {
+  rank: number;
+  domainId: number;
+  domainSlug: string;
+  domainName: string;
+  pillar: string;
+  title: string;
+  description: string;
+  /** @nullable */
+  domainScore: number | null;
+}
+
+export interface RecQuickWin {
+  domainId: number;
+  domainSlug: string;
+  domainName: string;
+  title: string;
+  impact: RecImpact;
+  effort: RecEffort;
+  /** @nullable */
+  domainScore: number | null;
+}
+
+export interface RecPriorityProject {
+  domainId: number;
+  domainSlug: string;
+  domainName: string;
+  pillar: string;
+  title: string;
+  description: string;
+  impact: RecImpact;
+  effort: RecEffort;
+  horizon: RecHorizon;
+  /** @nullable */
+  domainScore: number | null;
+}
+
+export interface RecToolRecommendation {
+  domainId: number;
+  domainSlug: string;
+  domainName: string;
+  pillar: string;
+  tools: string[];
+  /** @nullable */
+  domainScore: number | null;
+}
+
+export interface RecTraining {
+  domainId: number;
+  domainSlug: string;
+  domainName: string;
+  title: string;
+  audience: string;
+  /** @nullable */
+  domainScore: number | null;
+}
+
+export type RecRoadmapInitiativeType = typeof RecRoadmapInitiativeType[keyof typeof RecRoadmapInitiativeType];
+
+
+export const RecRoadmapInitiativeType = {
+  quick_win: 'quick_win',
+  project: 'project',
+} as const;
+
+export interface RecRoadmapInitiative {
+  title: string;
+  domainId: number;
+  domainSlug: string;
+  domainName: string;
+  pillar: string;
+  horizon: RecHorizon;
+  type: RecRoadmapInitiativeType;
+  impact: RecImpact;
+  effort: RecEffort;
+}
+
+export interface RecSwotItem {
+  domainName: string;
+  text: string;
+}
+
+export interface RecSwot {
+  strengths: RecSwotItem[];
+  weaknesses: RecSwotItem[];
+  opportunities: RecSwotItem[];
+  threats: RecSwotItem[];
+}
+
+export type RecBacklogItemType = typeof RecBacklogItemType[keyof typeof RecBacklogItemType];
+
+
+export const RecBacklogItemType = {
+  quick_win: 'quick_win',
+  project: 'project',
+  training: 'training',
+} as const;
+
+export interface RecBacklogItem {
+  rank: number;
+  title: string;
+  type: RecBacklogItemType;
+  domainName: string;
+  pillar: string;
+  impact: RecImpact;
+  effort: RecEffort;
+  horizon: RecHorizon;
+  priorityScore: number;
+  /** @nullable */
+  domainScore: number | null;
+}
+
+export interface CorporateRecommendations {
+  assessmentId: number;
+  /** @nullable */
+  generatedForScore: number | null;
+  topRisks: RecommendedRisk[];
+  topOpportunities: RecommendedOpportunity[];
+  quickWins: RecQuickWin[];
+  priorityProjects: RecPriorityProject[];
+  tools: RecToolRecommendation[];
+  trainings: RecTraining[];
+  roadmap: RecRoadmapInitiative[];
+  swot: RecSwot;
+  backlog: RecBacklogItem[];
+}
+
 export interface Evidence {
   id: number;
   assessmentId: number;

@@ -370,5 +370,90 @@
     "eliminatoryFailures": "Eliminatory Alerts",
     "missingRequired": "Pending Required Questions",
     "cappedNote": "* Maturity capped at level 2 due to an eliminatory question"
+  },
+  "corpRecs": {
+    "title": "Recommendations & Executive Report",
+    "subtitle": "Rules-based consulting package generated from your assessment scores",
+    "tabs": {
+      "recommendations": "Recommendations",
+      "roadmap": "Roadmap",
+      "swot": "SWOT",
+      "backlog": "Backlog"
+    },
+    "exportCsv": "Export CSV",
+    "printExecutive": "Executive report (PDF)",
+    "printTechnical": "Technical report (PDF)",
+    "openRecs": "Recommendations & report",
+    "sections": {
+      "risks": "Top 10 risks",
+      "risksDesc": "Highest-exposure domains, ranked by weighted gap",
+      "opportunities": "Top 10 opportunities",
+      "opportunitiesDesc": "Where maturity gains create the most value",
+      "quickWins": "Quick wins",
+      "quickWinsDesc": "High-impact, low-effort actions to start now",
+      "projects": "Priority projects",
+      "projectsDesc": "Structural initiatives for the biggest gaps",
+      "trainings": "Recommended trainings",
+      "trainingsDesc": "Capability building for gap domains",
+      "tools": "Tools catalog",
+      "toolsDesc": "Market tools recommended per gap domain"
+    },
+    "severity": {
+      "critical": "Critical",
+      "high": "High",
+      "medium": "Medium"
+    },
+    "impact": {
+      "high": "High impact",
+      "medium": "Medium impact",
+      "low": "Low impact"
+    },
+    "effort": {
+      "high": "High effort",
+      "medium": "Medium effort",
+      "low": "Low effort"
+    },
+    "horizon": {
+      "0-6": "0–6 months",
+      "6-12": "6–12 months",
+      "12-24": "12–24 months"
+    },
+    "types": {
+      "quick_win": "Quick win",
+      "project": "Project",
+      "training": "Training"
+    },
+    "swotQuad": {
+      "strengths": "Strengths",
+      "weaknesses": "Weaknesses",
+      "opportunities": "Opportunities",
+      "threats": "Threats"
+    },
+    "backlogCols": {
+      "rank": "#",
+      "title": "Initiative",
+      "type": "Type",
+      "domain": "Domain",
+      "pillar": "Pillar",
+      "impact": "Impact",
+      "effort": "Effort",
+      "horizon": "Horizon",
+      "priority": "Priority",
+      "score": "Domain score"
+    },
+    "audience": "Audience",
+    "domainScore": "Domain score",
+    "empty": "Answer the questionnaire to generate recommendations.",
+    "noGaps": "No significant gaps found — keep monitoring your maturity.",
+    "roadmapTitle": "24-month roadmap",
+    "roadmapDesc": "Initiatives distributed across three horizons by criticality",
+    "reportExecutive": "Executive Report — AI Maturity",
+    "reportTechnical": "Technical Report — AI Maturity",
+    "generatedOn": "Generated on {{date}}",
+    "overallScore": "Overall score",
+    "swotTitle": "SWOT matrix",
+    "swotDesc": "Strategic snapshot derived from your domain scores",
+    "backlogTitle": "Prioritized backlog",
+    "backlogDesc": "All recommended initiatives ranked by priority score"
   }
 }

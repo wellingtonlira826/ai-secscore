@@ -640,5 +640,90 @@
     "eliminatoryFailures": "Alertas Eliminatórios",
     "missingRequired": "Questões Obrigatórias Pendentes",
     "cappedNote": "* Maturidade limitada ao nível 2 por questão eliminatória"
+  },
+  "corpRecs": {
+    "title": "Recomendações e Relatório Executivo",
+    "subtitle": "Pacote de consultoria baseado em regras, gerado a partir das suas pontuações",
+    "tabs": {
+      "recommendations": "Recomendações",
+      "roadmap": "Roadmap",
+      "swot": "SWOT",
+      "backlog": "Backlog"
+    },
+    "exportCsv": "Exportar CSV",
+    "printExecutive": "Relatório executivo (PDF)",
+    "printTechnical": "Relatório técnico (PDF)",
+    "openRecs": "Recomendações e relatório",
+    "sections": {
+      "risks": "Top 10 riscos",
+      "risksDesc": "Domínios de maior exposição, ordenados por gap ponderado",
+      "opportunities": "Top 10 oportunidades",
+      "opportunitiesDesc": "Onde ganhos de maturidade geram mais valor",
+      "quickWins": "Quick wins",
+      "quickWinsDesc": "Ações de alto impacto e baixo esforço para começar agora",
+      "projects": "Projetos prioritários",
+      "projectsDesc": "Iniciativas estruturantes para os maiores gaps",
+      "trainings": "Treinamentos recomendados",
+      "trainingsDesc": "Capacitação para os domínios com gaps",
+      "tools": "Catálogo de ferramentas",
+      "toolsDesc": "Ferramentas de mercado recomendadas por domínio"
+    },
+    "severity": {
+      "critical": "Crítico",
+      "high": "Alto",
+      "medium": "Médio"
+    },
+    "impact": {
+      "high": "Impacto alto",
+      "medium": "Impacto médio",
+      "low": "Impacto baixo"
+    },
+    "effort": {
+      "high": "Esforço alto",
+      "medium": "Esforço médio",
+      "low": "Esforço baixo"
+    },
+    "horizon": {
+      "0-6": "0–6 meses",
+      "6-12": "6–12 meses",
+      "12-24": "12–24 meses"
+    },
+    "types": {
+      "quick_win": "Quick win",
+      "project": "Projeto",
+      "training": "Treinamento"
+    },
+    "swotQuad": {
+      "strengths": "Forças",
+      "weaknesses": "Fraquezas",
+      "opportunities": "Oportunidades",
+      "threats": "Ameaças"
+    },
+    "backlogCols": {
+      "rank": "#",
+      "title": "Iniciativa",
+      "type": "Tipo",
+      "domain": "Domínio",
+      "pillar": "Pilar",
+      "impact": "Impacto",
+      "effort": "Esforço",
+      "horizon": "Horizonte",
+      "priority": "Prioridade",
+      "score": "Score do domínio"
+    },
+    "audience": "Público",
+    "domainScore": "Score do domínio",
+    "empty": "Responda o questionário para gerar as recomendações.",
+    "noGaps": "Nenhum gap significativo encontrado — continue monitorando sua maturidade.",
+    "roadmapTitle": "Roadmap de 24 meses",
+    "roadmapDesc": "Iniciativas distribuídas em três horizontes conforme a criticidade",
+    "reportExecutive": "Relatório Executivo — Maturidade em IA",
+    "reportTechnical": "Relatório Técnico — Maturidade em IA",
+    "generatedOn": "Gerado em {{date}}",
+    "overallScore": "Pontuação geral",
+    "swotTitle": "Matriz SWOT",
+    "swotDesc": "Retrato estratégico derivado das pontuações por domínio",
+    "backlogTitle": "Backlog priorizado",
+    "backlogDesc": "Todas as iniciativas recomendadas ordenadas por prioridade"
   }
 }

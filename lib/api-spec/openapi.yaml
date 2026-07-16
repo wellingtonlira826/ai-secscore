@@ -422,6 +422,37 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorEnvelope"
 
+  /assessments/{assessmentId}/corporate-recommendations:
+    get:
+      tags: [Corporate]
+      operationId: getCorporateRecommendations
+      summary: Rules-based consulting package (risks, opportunities, roadmap, SWOT, backlog)
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Corporate recommendations package
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorporateRecommendations"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Assessment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
   # ── Assessments ──────────────────────────────────────────────────────────────
 
   /assessments:
@@ -1978,6 +2009,270 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/CorpQuestionFlag"
+
+    RecImpact:
+      type: string
+      enum: [high, medium, low]
+
+    RecEffort:
+      type: string
+      enum: [high, medium, low]
+
+    RecHorizon:
+      type: string
+      enum: ["0-6", "6-12", "12-24"]
+
+    RecommendedRisk:
+      type: object
+      required: [rank, domainId, domainSlug, domainName, pillar, title, description, severity, domainScore, maturityLevel, cappedByEliminatory]
+      properties:
+        rank:
+          type: integer
+        domainId:
+          type: integer
+        domainSlug:
+          type: string
+        domainName:
+          type: string
+        pillar:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        severity:
+          type: string
+          enum: [critical, high, medium]
+        domainScore:
+          type: ["number", "null"]
+        maturityLevel:
+          type: ["integer", "null"]
+        cappedByEliminatory:
+          type: boolean
+
+    RecommendedOpportunity:
+      type: object
+      required: [rank, domainId, domainSlug, domainName, pillar, title, description, domainScore]
+      properties:
+        rank:
+          type: integer
+        domainId:
+          type: integer
+        domainSlug:
+          type: string
+        domainName:
+          type: string
+        pillar:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        domainScore:
+          type: ["number", "null"]
+
+    RecQuickWin:
+      type: object
+      required: [domainId, domainSlug, domainName, title, impact, effort, domainScore]
+      properties:
+        domainId:
+          type: integer
+        domainSlug:
+          type: string
+        domainName:
+          type: string
+        title:
+          type: string
+        impact:
+          $ref: "#/components/schemas/RecImpact"
+        effort:
+          $ref: "#/components/schemas/RecEffort"
+        domainScore:
+          type: ["number", "null"]
+
+    RecPriorityProject:
+      type: object
+      required: [domainId, domainSlug, domainName, pillar, title, description, impact, effort, horizon, domainScore]
+      properties:
+        domainId:
+          type: integer
+        domainSlug:
+          type: string
+        domainName:
+          type: string
+        pillar:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        impact:
+          $ref: "#/components/schemas/RecImpact"
+        effort:
+          $ref: "#/components/schemas/RecEffort"
+        horizon:
+          $ref: "#/components/schemas/RecHorizon"
+        domainScore:
+          type: ["number", "null"]
+
+    RecToolRecommendation:
+      type: object
+      required: [domainId, domainSlug, domainName, pillar, tools, domainScore]
+      properties:
+        domainId:
+          type: integer
+        domainSlug:
+          type: string
+        domainName:
+          type: string
+        pillar:
+          type: string
+        tools:
+          type: array
+          items:
+            type: string
+        domainScore:
+          type: ["number", "null"]
+
+    RecTraining:
+      type: object
+      required: [domainId, domainSlug, domainName, title, audience, domainScore]
+      properties:
+        domainId:
+          type: integer
+        domainSlug:
+          type: string
+        domainName:
+          type: string
+        title:
+          type: string
+        audience:
+          type: string
+        domainScore:
+          type: ["number", "null"]
+
+    RecRoadmapInitiative:
+      type: object
+      required: [title, domainId, domainSlug, domainName, pillar, horizon, type, impact, effort]
+      properties:
+        title:
+          type: string
+        domainId:
+          type: integer
+        domainSlug:
+          type: string
+        domainName:
+          type: string
+        pillar:
+          type: string
+        horizon:
+          $ref: "#/components/schemas/RecHorizon"
+        type:
+          type: string
+          enum: [quick_win, project]
+        impact:
+          $ref: "#/components/schemas/RecImpact"
+        effort:
+          $ref: "#/components/schemas/RecEffort"
+
+    RecSwotItem:
+      type: object
+      required: [domainName, text]
+      properties:
+        domainName:
+          type: string
+        text:
+          type: string
+
+    RecSwot:
+      type: object
+      required: [strengths, weaknesses, opportunities, threats]
+      properties:
+        strengths:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecSwotItem"
+        weaknesses:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecSwotItem"
+        opportunities:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecSwotItem"
+        threats:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecSwotItem"
+
+    RecBacklogItem:
+      type: object
+      required: [rank, title, type, domainName, pillar, impact, effort, horizon, priorityScore, domainScore]
+      properties:
+        rank:
+          type: integer
+        title:
+          type: string
+        type:
+          type: string
+          enum: [quick_win, project, training]
+        domainName:
+          type: string
+        pillar:
+          type: string
+        impact:
+          $ref: "#/components/schemas/RecImpact"
+        effort:
+          $ref: "#/components/schemas/RecEffort"
+        horizon:
+          $ref: "#/components/schemas/RecHorizon"
+        priorityScore:
+          type: number
+        domainScore:
+          type: ["number", "null"]
+
+    CorporateRecommendations:
+      type: object
+      required: [assessmentId, generatedForScore, topRisks, topOpportunities, quickWins, priorityProjects, tools, trainings, roadmap, swot, backlog]
+      properties:
+        assessmentId:
+          type: integer
+        generatedForScore:
+          type: ["number", "null"]
+        topRisks:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecommendedRisk"
+        topOpportunities:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecommendedOpportunity"
+        quickWins:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecQuickWin"
+        priorityProjects:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecPriorityProject"
+        tools:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecToolRecommendation"
+        trainings:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecTraining"
+        roadmap:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecRoadmapInitiative"
+        swot:
+          $ref: "#/components/schemas/RecSwot"
+        backlog:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecBacklogItem"
 
     # ── Evidence schemas ──────────────────────────────────────────────────────
     Evidence:
