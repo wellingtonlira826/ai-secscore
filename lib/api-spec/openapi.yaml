@@ -2232,7 +2232,7 @@ components:
 
     DashboardSummary:
       type: object
-      required: [totalAssessments, inProgressCount, completedCount, avgScore, recentAssessments, topFrameworkScores]
+      required: [totalAssessments, inProgressCount, completedCount, avgScore, securityCount, corporateCount, corporateSummary, recentAssessments, topFrameworkScores]
       properties:
         totalAssessments:
           type: integer
@@ -2242,6 +2242,12 @@ components:
           type: integer
         avgScore:
           type: ["number", "null"]
+        securityCount:
+          type: integer
+        corporateCount:
+          type: integer
+        corporateSummary:
+          $ref: "#/components/schemas/CorporateDashboardSummary"
         recentAssessments:
           type: array
           items:
@@ -2256,6 +2262,28 @@ components:
                 type: string
               avgScore:
                 type: number
+
+    CorporateDashboardSummary:
+      type: object
+      required: [assessedCount, avgOverallScore, avgMaturityLevel, indices]
+      properties:
+        assessedCount:
+          type: integer
+        avgOverallScore:
+          type: ["number", "null"]
+        avgMaturityLevel:
+          type: ["integer", "null"]
+        indices:
+          type: array
+          items:
+            type: object
+            required: [key, avgScore]
+            properties:
+              key:
+                type: string
+                enum: [maturity, risk, genai_readiness, agent_readiness]
+              avgScore:
+                type: ["number", "null"]
 
     # ── Remediation schemas ───────────────────────────────────────────────────
     RemediationItem:

@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useParams, useSearch, Link } from "wouter";
+import { generateAssessmentPdf } from "@/lib/pdfReport";
+import { useToast } from "@/hooks/use-toast";
 import {
   useGetAssessment, getGetAssessmentQueryKey,
   useGetCorporateScore, getGetCorporateScoreQueryKey,
@@ -21,7 +23,7 @@ import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
   Tooltip as RechartsTooltip,
 } from "recharts";
-import { ChevronLeft, AlertTriangle, ShieldAlert, Gauge, Bot, Sparkles, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { ChevronLeft, AlertTriangle, ShieldAlert, Gauge, Bot, Sparkles, TrendingUp, TrendingDown, Minus, Download, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 
@@ -142,13 +144,13 @@ function DomainTile({ domain }: { domain: CorpDomainScore }) {
 }
 
 export default function CorporateResults() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const params = useParams();
   const search = useSearch();
   const id = parseInt(params.id || "0");
   const initialTab = new URLSearchParams(search).get("tab") === "benchmark" ? "benchmark" : "overview";
-  const autoPrint = new URLSearchParams(search).get("print") === "1";
-  const printedRef = useRef(false);
+  const { toast } = useToast();
+  const [exporting, setExporting] = useState(false);
   const [profileSlug, setProfileSlug] = useState<string>("");
 
   const { data: assessment, isLoading: loadingAsses } = useGetAssessment(id, {
@@ -169,17 +171,17 @@ export default function CorporateResults() {
     },
   });
 
-  const dataReady = !!(assessment && score);
-
-  useEffect(() => {
-    if (!autoPrint || !dataReady || printedRef.current) return undefined;
-    printedRef.current = true;
-    const timer = setTimeout(() => {
-      window.history.replaceState(null, "", window.location.pathname);
-      window.print();
-    }, 600);
-    return () => clearTimeout(timer);
-  }, [autoPrint, dataReady]);
+  const handleExportPdf = async () => {
+    if (!assessment) return;
+    setExporting(true);
+    try {
+      await generateAssessmentPdf(assessment, t, i18n.language);
+    } catch {
+      toast({ title: t("common.error"), variant: "destructive" });
+    } finally {
+      setExporting(false);
+    }
+  };
 
   if (loadingAsses || loadingScore) {
     return (
@@ -228,12 +230,18 @@ export default function CorporateResults() {
             </span>
           </Link>
         </div>
-        <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('corpResults.title')}</h1>
-            <Badge variant="secondary">{t('corporate.badge')}</Badge>
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('corpResults.title')}</h1>
+              <Badge variant="secondary">{t('corporate.badge')}</Badge>
+            </div>
+            <p className="text-muted-foreground mt-1 text-sm">{assessment.name} • {assessment.systemName}</p>
           </div>
-          <p className="text-muted-foreground mt-1 text-sm">{assessment.name} • {assessment.systemName}</p>
+          <Button size="sm" onClick={handleExportPdf} disabled={exporting} className="gap-1.5 shrink-0" data-testid="button-export-pdf">
+            {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+            <span>{t('results.exportPdf')}</span>
+          </Button>
         </div>
       </div>
 

@@ -1,5 +1,7 @@
-import { useEffect, useRef } from "react";
-import { useParams, useSearch, Link } from "wouter";
+import { useState } from "react";
+import { useParams, Link } from "wouter";
+import { generateAssessmentPdf } from "@/lib/pdfReport";
+import { useToast } from "@/hooks/use-toast";
 import { 
   useGetAssessment, getGetAssessmentQueryKey,
   useGetAssessmentScore, getGetAssessmentScoreQueryKey,
@@ -14,7 +16,7 @@ import { Progress } from "@/components/ui/progress";
 import { 
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip as RechartsTooltip 
 } from "recharts";
-import { Download, ChevronLeft, AlertTriangle, ShieldCheck, DownloadCloud, Layers } from "lucide-react";
+import { Download, ChevronLeft, AlertTriangle, ShieldCheck, DownloadCloud, Layers, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { RemediationPlan } from "@/components/features/RemediationPlan";
@@ -38,10 +40,9 @@ export default function ResultsDashboard() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language as "en" | "es" | "pt-BR";
   const params = useParams();
-  const search = useSearch();
   const id = parseInt(params.id || "0");
-  const autoPrint = new URLSearchParams(search).get("print") === "1";
-  const printedRef = useRef(false);
+  const { toast } = useToast();
+  const [exporting, setExporting] = useState(false);
 
   const { data: assessment, isLoading: loadingAsses } = useGetAssessment(id, { query: { enabled: !!id, queryKey: getGetAssessmentQueryKey(id) } });
   const { data: score, isLoading: loadingScore } = useGetAssessmentScore(id, { query: { enabled: !!id, queryKey: getGetAssessmentScoreQueryKey(id) } });
@@ -49,20 +50,16 @@ export default function ResultsDashboard() {
   const summaryLangParam = { lang } as any;
   const { data: summary, isLoading: loadingSumm } = useGetAssessmentSummary(id, summaryLangParam, { query: { enabled: !!id, queryKey: [...getGetAssessmentSummaryQueryKey(id), lang] } });
 
-  const dataReady = !!(assessment && score && gaps && summary);
-
-  useEffect(() => {
-    if (!autoPrint || !dataReady || printedRef.current) return undefined;
-    printedRef.current = true;
-    const timer = setTimeout(() => {
-      window.history.replaceState(null, "", window.location.pathname);
-      window.print();
-    }, 600);
-    return () => clearTimeout(timer);
-  }, [autoPrint, dataReady]);
-
-  const handlePrint = () => {
-    window.print();
+  const handleExportPdf = async () => {
+    if (!assessment) return;
+    setExporting(true);
+    try {
+      await generateAssessmentPdf(assessment, t, lang);
+    } catch {
+      toast({ title: t("common.error"), variant: "destructive" });
+    } finally {
+      setExporting(false);
+    }
   };
 
   const handleExportJson = () => {
@@ -128,8 +125,8 @@ export default function ResultsDashboard() {
               <span className="hidden sm:inline">{t('results.exportJson')}</span>
               <span className="sm:hidden">JSON</span>
             </Button>
-            <Button size="sm" onClick={handlePrint} className="gap-1.5">
-              <Download className="w-4 h-4" />
+            <Button size="sm" onClick={handleExportPdf} disabled={exporting} className="gap-1.5" data-testid="button-export-pdf">
+              {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
               <span className="hidden sm:inline">{t('results.exportPdf')}</span>
               <span className="sm:hidden">PDF</span>
             </Button>

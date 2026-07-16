@@ -43,7 +43,18 @@
     "reviewsDueDesc": "Estas avaliações precisam ser reavaliadas",
     "review": "Revisar",
     "overdueDays_one": "{{count}} dia atrasado",
-    "overdueDays_other": "{{count}} dias atrasados"
+    "overdueDays_other": "{{count}} dias atrasados",
+    "securityAssessments": "Avaliações de Segurança",
+    "securityAssessmentsDesc": "Avaliações de segurança de sistemas IA/LLM",
+    "corporateAssessments": "Avaliações Corporativas",
+    "corporateAssessmentsDesc": "Avaliações de maturidade corporativa em IA",
+    "corpMaturity": "Maturidade Corporativa Média",
+    "corpMaturityDesc": "Ainda não há avaliações corporativas pontuadas",
+    "corpMaturityLevel": "Nível médio de maturidade {{level}}",
+    "corpAssessed": "Corporativas Pontuadas",
+    "corpAssessedDesc": "Avaliações corporativas com pontuação",
+    "corpIndicesTitle": "Índices Corporativos de IA",
+    "corpIndicesDesc": "Médias das suas avaliações de maturidade corporativa"
   },
   "assessments": {
     "title": "Avaliações",
@@ -596,5 +607,38 @@
       "above": "Acima do benchmark",
       "below": "Abaixo do benchmark"
     }
+  },
+  "pdf": {
+    "securityReport": "Relatório de Avaliação de Segurança de IA",
+    "corporateReport": "Relatório de Maturidade Corporativa em IA",
+    "generatedAt": "Gerado em {{date}}",
+    "system": "Sistema",
+    "page": "Página {{page}} de {{total}}",
+    "overallScore": "Pontuação Geral",
+    "grade": "Nota",
+    "riskLevel": "Nível de Risco",
+    "maturityLevel": "Nível de Maturidade",
+    "completion": "Conclusão",
+    "answered": "Respondidas",
+    "frameworkBreakdown": "Detalhamento por Framework",
+    "framework": "Framework",
+    "score": "Pontuação",
+    "executiveSummary": "Resumo Executivo",
+    "strengths": "Pontos Fortes",
+    "weaknesses": "Pontos Fracos",
+    "recommendations": "Recomendações",
+    "topGaps": "Principais Lacunas",
+    "question": "Questão",
+    "remediation": "Remediação",
+    "indices": "Índices",
+    "index": "Índice",
+    "pillars": "Pilares",
+    "pillar": "Pilar",
+    "domains": "Domínios",
+    "domain": "Domínio",
+    "level": "Nível",
+    "eliminatoryFailures": "Alertas Eliminatórios",
+    "missingRequired": "Questões Obrigatórias Pendentes",
+    "cappedNote": "* Maturidade limitada ao nível 2 por questão eliminatória"
   }
 }

@@ -605,12 +605,40 @@ export type DashboardSummaryTopFrameworkScoresItem = {
   avgScore: number;
 };
 
+export type CorporateDashboardSummaryIndicesItemKey = typeof CorporateDashboardSummaryIndicesItemKey[keyof typeof CorporateDashboardSummaryIndicesItemKey];
+
+
+export const CorporateDashboardSummaryIndicesItemKey = {
+  maturity: 'maturity',
+  risk: 'risk',
+  genai_readiness: 'genai_readiness',
+  agent_readiness: 'agent_readiness',
+} as const;
+
+export type CorporateDashboardSummaryIndicesItem = {
+  key: CorporateDashboardSummaryIndicesItemKey;
+  /** @nullable */
+  avgScore: number | null;
+};
+
+export interface CorporateDashboardSummary {
+  assessedCount: number;
+  /** @nullable */
+  avgOverallScore: number | null;
+  /** @nullable */
+  avgMaturityLevel: number | null;
+  indices: CorporateDashboardSummaryIndicesItem[];
+}
+
 export interface DashboardSummary {
   totalAssessments: number;
   inProgressCount: number;
   completedCount: number;
   /** @nullable */
   avgScore: number | null;
+  securityCount: number;
+  corporateCount: number;
+  corporateSummary: CorporateDashboardSummary;
   recentAssessments: Assessment[];
   topFrameworkScores: DashboardSummaryTopFrameworkScoresItem[];
 }

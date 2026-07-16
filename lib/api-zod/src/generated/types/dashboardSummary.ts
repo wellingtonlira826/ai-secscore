@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { Assessment } from './assessment';
+import type { CorporateDashboardSummary } from './corporateDashboardSummary';
 import type { DashboardSummaryTopFrameworkScoresItem } from './dashboardSummaryTopFrameworkScoresItem';
 
 export interface DashboardSummary {
@@ -14,6 +15,9 @@ export interface DashboardSummary {
   completedCount: number;
   /** @nullable */
   avgScore: number | null;
+  securityCount: number;
+  corporateCount: number;
+  corporateSummary: CorporateDashboardSummary;
   recentAssessments: Assessment[];
   topFrameworkScores: DashboardSummaryTopFrameworkScoresItem[];
 }

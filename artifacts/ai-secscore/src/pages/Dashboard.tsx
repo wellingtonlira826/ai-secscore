@@ -12,7 +12,7 @@ import {
   Tooltip as RechartsTooltip, 
   ResponsiveContainer 
 } from "recharts";
-import { ShieldAlert, Activity, CheckCircle2, ListTodo, AlertTriangle, Clock, CalendarClock } from "lucide-react";
+import { ShieldAlert, Activity, CheckCircle2, ListTodo, AlertTriangle, Clock, CalendarClock, ShieldCheck, Building2, Gauge, Bot, Sparkles, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "react-i18next";
 
@@ -83,11 +83,27 @@ export default function Dashboard() {
       (a, b) => new Date(a.nextReviewAt!).getTime() - new Date(b.nextReviewAt!).getTime()
     );
 
+  const cs = dashboard.corporateSummary;
+  const INDEX_ICONS: Record<string, typeof Gauge> = {
+    maturity: Gauge,
+    risk: ShieldAlert,
+    genai_readiness: Sparkles,
+    agent_readiness: Bot,
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('dashboard.title')}</h1>
-        <p className="text-muted-foreground mt-1">{t('dashboard.subtitle')}</p>
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('dashboard.title')}</h1>
+          <p className="text-muted-foreground mt-1">{t('dashboard.subtitle')}</p>
+        </div>
+        <Link href="/reports">
+          <Button variant="outline" size="sm" className="gap-1.5 shrink-0" data-testid="button-dashboard-reports">
+            <FileText className="w-4 h-4" />
+            {t('nav.reports')}
+          </Button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -116,6 +132,68 @@ export default function Dashboard() {
           description={t('dashboard.avgScoreDesc')}
         />
       </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard
+          title={t('dashboard.securityAssessments')}
+          value={dashboard.securityCount}
+          icon={ShieldCheck}
+          description={t('dashboard.securityAssessmentsDesc')}
+        />
+        <StatCard
+          title={t('dashboard.corporateAssessments')}
+          value={dashboard.corporateCount}
+          icon={Building2}
+          description={t('dashboard.corporateAssessmentsDesc')}
+        />
+        <StatCard
+          title={t('dashboard.corpMaturity')}
+          value={cs.avgOverallScore !== null ? Math.round(cs.avgOverallScore) : "N/A"}
+          icon={Gauge}
+          description={
+            cs.avgMaturityLevel !== null
+              ? t('dashboard.corpMaturityLevel', { level: cs.avgMaturityLevel })
+              : t('dashboard.corpMaturityDesc')
+          }
+        />
+        <StatCard
+          title={t('dashboard.corpAssessed')}
+          value={cs.assessedCount}
+          icon={CheckCircle2}
+          description={t('dashboard.corpAssessedDesc')}
+        />
+      </div>
+
+      {cs.assessedCount > 0 && (
+        <Card data-testid="card-corp-indices">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Building2 className="w-5 h-5 text-primary" />
+              {t('dashboard.corpIndicesTitle')}
+            </CardTitle>
+            <CardDescription>{t('dashboard.corpIndicesDesc')}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {cs.indices.map((idx) => {
+                const Icon = INDEX_ICONS[idx.key] ?? Gauge;
+                return (
+                  <div key={idx.key} className="p-4 rounded-lg border border-border bg-card">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Icon className="w-4 h-4" />
+                      <span className="truncate">{t(`corpResults.indices.${idx.key}.name`)}</span>
+                    </div>
+                    <div className="text-2xl font-bold mt-2">
+                      {idx.avgScore !== null ? Math.round(idx.avgScore) : "—"}
+                      <span className="text-sm text-muted-foreground font-normal">/100</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {staleAssessments.length > 0 && (
         <Card className="border-amber-500/40 bg-amber-500/5">
@@ -239,6 +317,9 @@ export default function Dashboard() {
                         <div className="text-sm text-muted-foreground">{assessment.systemName}</div>
                       </div>
                       <div className="flex items-center gap-3">
+                        <Badge variant="outline" className="hidden sm:inline-flex">
+                          {assessment.type === 'corporate' ? t('reports.typeCorporate') : t('reports.typeSecurity')}
+                        </Badge>
                         <Badge variant={assessment.status === 'completed' ? 'default' : 'secondary'}>
                           {assessment.status === 'completed' ? t('assessments.status.completed') : t('assessments.status.in_progress')}
                         </Badge>

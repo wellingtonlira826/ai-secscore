@@ -43,7 +43,18 @@
     "reviewsDueDesc": "These assessments are due for reassessment",
     "review": "Review",
     "overdueDays_one": "{{count}} day overdue",
-    "overdueDays_other": "{{count}} days overdue"
+    "overdueDays_other": "{{count}} days overdue",
+    "securityAssessments": "Security Assessments",
+    "securityAssessmentsDesc": "AI/LLM system security evaluations",
+    "corporateAssessments": "Corporate Assessments",
+    "corporateAssessmentsDesc": "Corporate AI maturity evaluations",
+    "corpMaturity": "Avg. Corporate Maturity",
+    "corpMaturityDesc": "No scored corporate assessments yet",
+    "corpMaturityLevel": "Average maturity level {{level}}",
+    "corpAssessed": "Corporate Scored",
+    "corpAssessedDesc": "Corporate assessments with scores",
+    "corpIndicesTitle": "Corporate AI Indices",
+    "corpIndicesDesc": "Average scores across your corporate maturity assessments"
   },
   "assessments": {
     "title": "Assessments",
@@ -326,5 +337,38 @@
       "above": "Above benchmark",
       "below": "Below benchmark"
     }
+  },
+  "pdf": {
+    "securityReport": "AI Security Assessment Report",
+    "corporateReport": "Corporate AI Maturity Report",
+    "generatedAt": "Generated on {{date}}",
+    "system": "System",
+    "page": "Page {{page}} of {{total}}",
+    "overallScore": "Overall Score",
+    "grade": "Grade",
+    "riskLevel": "Risk Level",
+    "maturityLevel": "Maturity Level",
+    "completion": "Completion",
+    "answered": "Answered",
+    "frameworkBreakdown": "Framework Breakdown",
+    "framework": "Framework",
+    "score": "Score",
+    "executiveSummary": "Executive Summary",
+    "strengths": "Strengths",
+    "weaknesses": "Weaknesses",
+    "recommendations": "Recommendations",
+    "topGaps": "Top Gaps",
+    "question": "Question",
+    "remediation": "Remediation",
+    "indices": "Indices",
+    "index": "Index",
+    "pillars": "Pillars",
+    "pillar": "Pillar",
+    "domains": "Domains",
+    "domain": "Domain",
+    "level": "Level",
+    "eliminatoryFailures": "Eliminatory Alerts",
+    "missingRequired": "Pending Required Questions",
+    "cappedNote": "* Maturity capped at level 2 due to an eliminatory question"
   }
 }

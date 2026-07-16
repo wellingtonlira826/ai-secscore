@@ -849,6 +849,17 @@ export const GetDashboardResponse = zod.object({
   "inProgressCount": zod.number(),
   "completedCount": zod.number(),
   "avgScore": zod.number().nullable(),
+  "securityCount": zod.number(),
+  "corporateCount": zod.number(),
+  "corporateSummary": zod.object({
+  "assessedCount": zod.number(),
+  "avgOverallScore": zod.number().nullable(),
+  "avgMaturityLevel": zod.number().nullable(),
+  "indices": zod.array(zod.object({
+  "key": zod.enum(['maturity', 'risk', 'genai_readiness', 'agent_readiness']),
+  "avgScore": zod.number().nullable()
+}))
+}),
   "recentAssessments": zod.array(zod.object({
   "id": zod.number(),
   "userId": zod.string(),

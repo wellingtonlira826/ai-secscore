@@ -6,9 +6,17 @@ import {
   questionsTable,
   frameworksTable,
   userFrameworkWeightsTable,
+  corpDomainsTable,
+  corpQuestionsTable,
+  corpAnswersTable,
 } from "@workspace/db";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, inArray } from "drizzle-orm";
 import { GetDashboardResponse } from "@workspace/api-zod";
+import {
+  scoreCorporateAssessment,
+  CORP_INDEX_KEYS,
+  type CorpIndexKey,
+} from "../lib/corporateScoring";
 
 const router: IRouter = Router();
 
@@ -118,11 +126,91 @@ router.get("/dashboard", async (req, res): Promise<void> => {
     })
   );
 
+  // Corporate stats (new platform scope)
+  const securityCount = allAssessments.filter((a) => a.type !== "corporate").length;
+  const corporateAssessments = allAssessments.filter((a) => a.type === "corporate");
+  const corporateCount = corporateAssessments.length;
+
+  let corporateSummary = {
+    assessedCount: 0,
+    avgOverallScore: null as number | null,
+    avgMaturityLevel: null as number | null,
+    indices: CORP_INDEX_KEYS.map((key) => ({ key, avgScore: null as number | null })),
+  };
+
+  if (corporateCount > 0) {
+    const [corpDomains, corpQuestions, corpAnswers] = await Promise.all([
+      db.select().from(corpDomainsTable),
+      db.select().from(corpQuestionsTable),
+      db
+        .select()
+        .from(corpAnswersTable)
+        .where(
+          inArray(
+            corpAnswersTable.assessmentId,
+            corporateAssessments.map((a) => a.id)
+          )
+        ),
+    ]);
+
+    const answersByAssessment = new Map<number, typeof corpAnswers>();
+    for (const ans of corpAnswers) {
+      const list = answersByAssessment.get(ans.assessmentId);
+      if (list) list.push(ans);
+      else answersByAssessment.set(ans.assessmentId, [ans]);
+    }
+
+    let scoreSum = 0;
+    let levelSum = 0;
+    let assessedCount = 0;
+    const indexSums = new Map<CorpIndexKey, { sum: number; count: number }>(
+      CORP_INDEX_KEYS.map((k) => [k, { sum: 0, count: 0 }])
+    );
+
+    for (const a of corporateAssessments) {
+      const answers = answersByAssessment.get(a.id) ?? [];
+      if (answers.length === 0) continue;
+      const score = scoreCorporateAssessment(a.id, corpDomains, corpQuestions, answers);
+      if (score.overallScore == null) continue;
+      assessedCount++;
+      scoreSum += score.overallScore;
+      levelSum += score.maturityLevel ?? 0;
+      for (const idx of score.indices) {
+        if (idx.score == null) continue;
+        const acc = indexSums.get(idx.key as CorpIndexKey);
+        if (acc) {
+          acc.sum += idx.score;
+          acc.count++;
+        }
+      }
+    }
+
+    if (assessedCount > 0) {
+      corporateSummary = {
+        assessedCount,
+        avgOverallScore: Math.round((scoreSum / assessedCount) * 10) / 10,
+        avgMaturityLevel: Math.round(levelSum / assessedCount),
+        indices: CORP_INDEX_KEYS.map((key) => {
+          const acc = indexSums.get(key)!;
+          return {
+            key,
+            avgScore: acc.count > 0 ? Math.round((acc.sum / acc.count) * 10) / 10 : null,
+          };
+        }),
+      };
+    } else {
+      corporateSummary = { ...corporateSummary, assessedCount: 0 };
+    }
+  }
+
   const result = {
     totalAssessments,
     inProgressCount,
     completedCount,
     avgScore,
+    securityCount,
+    corporateCount,
+    corporateSummary,
     recentAssessments,
     topFrameworkScores,
   };

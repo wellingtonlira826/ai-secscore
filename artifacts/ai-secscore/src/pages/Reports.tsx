@@ -1,16 +1,32 @@
+import { useState } from "react";
 import { Link } from "wouter";
-import { useListAssessments } from "@workspace/api-client-react";
+import { useListAssessments, type Assessment } from "@workspace/api-client-react";
 import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
-import { FileText, Download, ExternalLink } from "lucide-react";
+import { FileText, Download, ExternalLink, Loader2 } from "lucide-react";
+import { generateAssessmentPdf } from "@/lib/pdfReport";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Reports() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { toast } = useToast();
   const { data: assessments, isLoading } = useListAssessments();
+  const [generatingId, setGeneratingId] = useState<number | null>(null);
+
+  const handlePdf = async (assessment: Assessment) => {
+    setGeneratingId(assessment.id);
+    try {
+      await generateAssessmentPdf(assessment, t, i18n.language);
+    } catch {
+      toast({ title: t("common.error"), variant: "destructive" });
+    } finally {
+      setGeneratingId(null);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -67,12 +83,19 @@ export default function Reports() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <Link href={`${resultsPath(assessment)}?print=1`}>
-                    <Button size="sm" data-testid={`button-report-pdf-${assessment.id}`}>
+                  <Button
+                    size="sm"
+                    onClick={() => handlePdf(assessment)}
+                    disabled={generatingId !== null}
+                    data-testid={`button-report-pdf-${assessment.id}`}
+                  >
+                    {generatingId === assessment.id ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
                       <Download className="w-4 h-4 mr-2" />
-                      {t("reports.generatePdf")}
-                    </Button>
-                  </Link>
+                    )}
+                    {t("reports.generatePdf")}
+                  </Button>
                   <Link href={resultsPath(assessment)}>
                     <Button size="sm" variant="outline" data-testid={`button-report-view-${assessment.id}`}>
                       <ExternalLink className="w-4 h-4 mr-2" />
