@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useSearch, Link } from "wouter";
 import {
   useGetAssessment, getGetAssessmentQueryKey,
@@ -147,6 +147,8 @@ export default function CorporateResults() {
   const search = useSearch();
   const id = parseInt(params.id || "0");
   const initialTab = new URLSearchParams(search).get("tab") === "benchmark" ? "benchmark" : "overview";
+  const autoPrint = new URLSearchParams(search).get("print") === "1";
+  const printedRef = useRef(false);
   const [profileSlug, setProfileSlug] = useState<string>("");
 
   const { data: assessment, isLoading: loadingAsses } = useGetAssessment(id, {
@@ -166,6 +168,18 @@ export default function CorporateResults() {
       queryKey: getGetCorporateBenchmarkQueryKey(id, benchmarkParams),
     },
   });
+
+  const dataReady = !!(assessment && score);
+
+  useEffect(() => {
+    if (!autoPrint || !dataReady || printedRef.current) return undefined;
+    printedRef.current = true;
+    const timer = setTimeout(() => {
+      window.history.replaceState(null, "", window.location.pathname);
+      window.print();
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [autoPrint, dataReady]);
 
   if (loadingAsses || loadingScore) {
     return (

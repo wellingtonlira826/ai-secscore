@@ -8,6 +8,7 @@ import {
   ClipboardList,
   GitCompare,
   LineChart,
+  FileText,
   Settings,
   LogOut,
   Sun,
@@ -36,6 +37,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
     { href: "/assessments", label: t("nav.assessments"), icon: ClipboardList },
     { href: "/assessments/compare", label: t("nav.compare"), icon: GitCompare },
     { href: "/history", label: t("nav.history"), icon: LineChart },
+    { href: "/reports", label: t("nav.reports"), icon: FileText },
     { href: "/settings", label: t("nav.settings"), icon: Settings },
   ];
 
@@ -47,6 +49,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         {onClose && (
           <button
             onClick={onClose}
+            aria-label={t("common.close")}
             className="ml-auto p-1.5 rounded-md text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors md:hidden"
           >
             <X className="w-5 h-5" />
@@ -196,7 +199,7 @@ export function Sidebar() {
 
       {/* Mobile drawer */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="p-0 w-72 border-r border-sidebar-border" aria-describedby={undefined}>
+        <SheetContent side="left" className="p-0 w-72 border-r border-sidebar-border" aria-describedby={undefined} hideClose>
           <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
           <SidebarContent onClose={() => setMobileOpen(false)} />
         </SheetContent>

@@ -1,4 +1,5 @@
-import { useParams, Link } from "wouter";
+import { useEffect, useRef } from "react";
+import { useParams, useSearch, Link } from "wouter";
 import { 
   useGetAssessment, getGetAssessmentQueryKey,
   useGetAssessmentScore, getGetAssessmentScoreQueryKey,
@@ -37,13 +38,28 @@ export default function ResultsDashboard() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language as "en" | "es" | "pt-BR";
   const params = useParams();
+  const search = useSearch();
   const id = parseInt(params.id || "0");
+  const autoPrint = new URLSearchParams(search).get("print") === "1";
+  const printedRef = useRef(false);
 
   const { data: assessment, isLoading: loadingAsses } = useGetAssessment(id, { query: { enabled: !!id, queryKey: getGetAssessmentQueryKey(id) } });
   const { data: score, isLoading: loadingScore } = useGetAssessmentScore(id, { query: { enabled: !!id, queryKey: getGetAssessmentScoreQueryKey(id) } });
   const { data: gaps, isLoading: loadingGaps } = useGetAssessmentGaps(id, { query: { enabled: !!id, queryKey: getGetAssessmentGapsQueryKey(id) } });
   const summaryLangParam = { lang } as any;
   const { data: summary, isLoading: loadingSumm } = useGetAssessmentSummary(id, summaryLangParam, { query: { enabled: !!id, queryKey: [...getGetAssessmentSummaryQueryKey(id), lang] } });
+
+  const dataReady = !!(assessment && score && gaps && summary);
+
+  useEffect(() => {
+    if (!autoPrint || !dataReady || printedRef.current) return undefined;
+    printedRef.current = true;
+    const timer = setTimeout(() => {
+      window.history.replaceState(null, "", window.location.pathname);
+      window.print();
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [autoPrint, dataReady]);
 
   const handlePrint = () => {
     window.print();

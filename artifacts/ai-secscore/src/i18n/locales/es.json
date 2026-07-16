@@ -4,7 +4,18 @@
     "assessments": "Evaluaciones",
     "compare": "Comparar",
     "settings": "Ajustes",
-    "history": "Historial"
+    "history": "Historial",
+    "reports": "Informes"
+  },
+  "reports": {
+    "title": "Informes",
+    "subtitle": "Genera informes en PDF y abre los resultados de tus evaluaciones en un solo lugar.",
+    "empty": "Aún no hay evaluaciones",
+    "emptyDesc": "Crea una evaluación para generar informes.",
+    "generatePdf": "Informe PDF",
+    "viewResults": "Ver resultados",
+    "typeSecurity": "Seguridad de IA",
+    "typeCorporate": "IA Corporativa"
   },
   "dashboard": {
     "title": "Centro de Comando de Seguridad",
@@ -176,7 +187,8 @@
       "C": "C",
       "D": "D",
       "F": "F"
-    }
+    },
+    "close": "Cerrar"
   },
   "questions": {
     "1": {

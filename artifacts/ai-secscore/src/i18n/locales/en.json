@@ -4,7 +4,18 @@
     "assessments": "Assessments",
     "compare": "Compare",
     "settings": "Settings",
-    "history": "History"
+    "history": "History",
+    "reports": "Reports"
+  },
+  "reports": {
+    "title": "Reports",
+    "subtitle": "Generate PDF reports and open the results of your assessments in one place.",
+    "empty": "No assessments yet",
+    "emptyDesc": "Create an assessment to generate reports.",
+    "generatePdf": "PDF Report",
+    "viewResults": "View Results",
+    "typeSecurity": "AI Security",
+    "typeCorporate": "Corporate AI"
   },
   "dashboard": {
     "title": "Security Command Center",
@@ -176,7 +187,8 @@
       "C": "C",
       "D": "D",
       "F": "F"
-    }
+    },
+    "close": "Close"
   },
   "remediation": {
     "title": "Remediation Plan",

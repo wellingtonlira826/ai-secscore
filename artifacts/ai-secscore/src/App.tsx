@@ -18,6 +18,7 @@ const CorporateResults = lazy(() => import("@/pages/CorporateResults"));
 const Compliance = lazy(() => import("@/pages/Compliance"));
 const CompareAssessments = lazy(() => import("@/pages/CompareAssessments"));
 const History = lazy(() => import("@/pages/History"));
+const Reports = lazy(() => import("@/pages/Reports"));
 const Settings = lazy(() => import("@/pages/Settings"));
 
 const queryClient = new QueryClient();
@@ -53,6 +54,7 @@ function Router() {
           <Route path="/assessments/:id/corporate-results" component={CorporateResults} />
           <Route path="/assessments/:id/compliance" component={Compliance} />
           <Route path="/history" component={History} />
+          <Route path="/reports" component={Reports} />
           <Route path="/settings" component={Settings} />
             <Route component={NotFound} />
           </Switch>
