@@ -33,11 +33,15 @@ import type {
   Collaborator,
   CollaboratorInput,
   CompareAssessmentsParams,
+  CompletionBlocked,
   ComplianceView,
   CorpAnswer,
   CorpAnswerInput,
+  CorpBenchmarkProfile,
   CorpDomain,
   CorpQuestion,
+  CorporateBenchmark,
+  CorporateScore,
   DashboardSummary,
   ErrorEnvelope,
   Evidence,
@@ -49,6 +53,7 @@ import type {
   FrameworkWithQuestions,
   GapItem,
   GetAssessmentSummaryParams,
+  GetCorporateBenchmarkParams,
   HandleBrowserLoginCallbackParams,
   HealthStatus,
   ListCorpQuestionsParams,
@@ -1189,6 +1194,249 @@ export const useUpsertCorpAnswer = <TError = ErrorType<ErrorEnvelope>,
       return useMutation(getUpsertCorpAnswerMutationOptions(options));
     }
 
+export const getListCorpBenchmarkProfilesUrl = () => {
+
+
+
+
+  return `/api/corporate/benchmark-profiles`
+}
+
+/**
+ * @summary List the curated benchmark organization profiles
+ */
+export const listCorpBenchmarkProfiles = async ( options?: RequestInit): Promise<CorpBenchmarkProfile[]> => {
+
+  return customFetch<CorpBenchmarkProfile[]>(getListCorpBenchmarkProfilesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListCorpBenchmarkProfilesQueryKey = () => {
+    return [
+    `/api/corporate/benchmark-profiles`
+    ] as const;
+    }
+
+
+export const getListCorpBenchmarkProfilesQueryOptions = <TData = Awaited<ReturnType<typeof listCorpBenchmarkProfiles>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listCorpBenchmarkProfiles>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListCorpBenchmarkProfilesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listCorpBenchmarkProfiles>>> = ({ signal }) => listCorpBenchmarkProfiles({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listCorpBenchmarkProfiles>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListCorpBenchmarkProfilesQueryResult = NonNullable<Awaited<ReturnType<typeof listCorpBenchmarkProfiles>>>
+export type ListCorpBenchmarkProfilesQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List the curated benchmark organization profiles
+ */
+
+export function useListCorpBenchmarkProfiles<TData = Awaited<ReturnType<typeof listCorpBenchmarkProfiles>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listCorpBenchmarkProfiles>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListCorpBenchmarkProfilesQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetCorporateScoreUrl = (assessmentId: number,) => {
+
+
+
+
+  return `/api/assessments/${assessmentId}/corporate-score`
+}
+
+/**
+ * @summary Compute the corporate maturity score, indices and completion state
+ */
+export const getCorporateScore = async (assessmentId: number, options?: RequestInit): Promise<CorporateScore> => {
+
+  return customFetch<CorporateScore>(getGetCorporateScoreUrl(assessmentId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetCorporateScoreQueryKey = (assessmentId: number,) => {
+    return [
+    `/api/assessments/${assessmentId}/corporate-score`
+    ] as const;
+    }
+
+
+export const getGetCorporateScoreQueryOptions = <TData = Awaited<ReturnType<typeof getCorporateScore>>, TError = ErrorType<ErrorEnvelope>>(assessmentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getCorporateScore>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetCorporateScoreQueryKey(assessmentId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getCorporateScore>>> = ({ signal }) => getCorporateScore(assessmentId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: assessmentId !== null && assessmentId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getCorporateScore>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetCorporateScoreQueryResult = NonNullable<Awaited<ReturnType<typeof getCorporateScore>>>
+export type GetCorporateScoreQueryError = ErrorType<ErrorEnvelope>
+
+
+/**
+ * @summary Compute the corporate maturity score, indices and completion state
+ */
+
+export function useGetCorporateScore<TData = Awaited<ReturnType<typeof getCorporateScore>>, TError = ErrorType<ErrorEnvelope>>(
+ assessmentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getCorporateScore>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetCorporateScoreQueryOptions(assessmentId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetCorporateBenchmarkUrl = (assessmentId: number,
+    params: GetCorporateBenchmarkParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/assessments/${assessmentId}/corporate-benchmark?${stringifiedParams}` : `/api/assessments/${assessmentId}/corporate-benchmark`
+}
+
+/**
+ * @summary Compare an assessment's domain scores against a benchmark profile
+ */
+export const getCorporateBenchmark = async (assessmentId: number,
+    params: GetCorporateBenchmarkParams, options?: RequestInit): Promise<CorporateBenchmark> => {
+
+  return customFetch<CorporateBenchmark>(getGetCorporateBenchmarkUrl(assessmentId,params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetCorporateBenchmarkQueryKey = (assessmentId: number,
+    params?: GetCorporateBenchmarkParams,) => {
+    return [
+    `/api/assessments/${assessmentId}/corporate-benchmark`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetCorporateBenchmarkQueryOptions = <TData = Awaited<ReturnType<typeof getCorporateBenchmark>>, TError = ErrorType<ErrorEnvelope>>(assessmentId: number,
+    params: GetCorporateBenchmarkParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getCorporateBenchmark>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetCorporateBenchmarkQueryKey(assessmentId,params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getCorporateBenchmark>>> = ({ signal }) => getCorporateBenchmark(assessmentId,params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: assessmentId !== null && assessmentId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getCorporateBenchmark>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetCorporateBenchmarkQueryResult = NonNullable<Awaited<ReturnType<typeof getCorporateBenchmark>>>
+export type GetCorporateBenchmarkQueryError = ErrorType<ErrorEnvelope>
+
+
+/**
+ * @summary Compare an assessment's domain scores against a benchmark profile
+ */
+
+export function useGetCorporateBenchmark<TData = Awaited<ReturnType<typeof getCorporateBenchmark>>, TError = ErrorType<ErrorEnvelope>>(
+ assessmentId: number,
+    params: GetCorporateBenchmarkParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getCorporateBenchmark>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetCorporateBenchmarkQueryOptions(assessmentId,params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
 export const getListAssessmentsUrl = () => {
 
 
@@ -1439,7 +1687,7 @@ export const updateAssessment = async (assessmentId: number,
 
 
 
-export const getUpdateAssessmentMutationOptions = <TError = ErrorType<ErrorEnvelope>,
+export const getUpdateAssessmentMutationOptions = <TError = ErrorType<ErrorEnvelope | CompletionBlocked>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAssessment>>, TError,{assessmentId: number;data: BodyType<AssessmentUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateAssessment>>, TError,{assessmentId: number;data: BodyType<AssessmentUpdate>}, TContext> => {
 
@@ -1468,12 +1716,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type UpdateAssessmentMutationResult = NonNullable<Awaited<ReturnType<typeof updateAssessment>>>
     export type UpdateAssessmentMutationBody = BodyType<AssessmentUpdate>
-    export type UpdateAssessmentMutationError = ErrorType<ErrorEnvelope>
+    export type UpdateAssessmentMutationError = ErrorType<ErrorEnvelope | CompletionBlocked>
 
     /**
  * @summary Update an assessment
  */
-export const useUpdateAssessment = <TError = ErrorType<ErrorEnvelope>,
+export const useUpdateAssessment = <TError = ErrorType<ErrorEnvelope | CompletionBlocked>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAssessment>>, TError,{assessmentId: number;data: BodyType<AssessmentUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
  ): UseMutationResult<
         Awaited<ReturnType<typeof updateAssessment>>,

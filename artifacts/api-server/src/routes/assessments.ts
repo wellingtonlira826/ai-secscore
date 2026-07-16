@@ -36,6 +36,8 @@ import {
   DuplicateAssessmentResponse,
 } from "@workspace/api-zod";
 import { getAssessmentAccess, canEdit } from "../lib/access";
+import { scoreCorporateAssessment } from "../lib/corporateScoring";
+import { loadCorporateScoringContext } from "../lib/corporateScoringContext";
 
 const router: IRouter = Router();
 
@@ -425,6 +427,30 @@ router.patch("/assessments/:assessmentId", async (req, res): Promise<void> => {
   if (!canEdit(access.role)) {
     res.status(403).json({ error: "Forbidden: read-only access" });
     return;
+  }
+
+  // Corporate assessments cannot be completed while required questions are
+  // unanswered (threat-model: server is the source of truth, not UI gating).
+  if (
+    body.data.status === "completed" &&
+    access.assessment.type === "corporate" &&
+    access.assessment.status !== "completed"
+  ) {
+    const ctx = await loadCorporateScoringContext(params.data.assessmentId);
+    const score = scoreCorporateAssessment(
+      params.data.assessmentId,
+      ctx.domains,
+      ctx.questions,
+      ctx.answers,
+    );
+    if (!score.canComplete) {
+      res.status(409).json({
+        error: `Cannot complete: ${score.missingRequired.length} required question(s) unanswered`,
+        code: "required_questions_missing",
+        missingRequired: score.missingRequired,
+      });
+      return;
+    }
   }
 
   const updateData: Record<string, unknown> = {};

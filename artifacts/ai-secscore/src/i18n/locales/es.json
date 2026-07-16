@@ -528,6 +528,61 @@
       "3": "3 — Definido",
       "4": "4 — Gestionado",
       "5": "5 — Optimizado"
+    },
+    "completeBlockedTitle": "No se puede completar la evaluación",
+    "completeBlocked_one": "{{count}} pregunta obligatoria sigue sin responder.",
+    "completeBlocked_other": "{{count}} preguntas obligatorias siguen sin responder."
+  },
+  "corpResults": {
+    "title": "Resultados",
+    "overallScore": "Puntuación general",
+    "level": "Nivel {{level}}",
+    "answeredOf": "{{answered}} de {{total}} respondidas",
+    "completion": "Progreso",
+    "noAnswers": "Responda las preguntas para ver sus puntuaciones.",
+    "missingRequiredTitle": "Preguntas obligatorias pendientes",
+    "missingRequired_one": "{{count}} pregunta obligatoria sin responder. La evaluación no puede completarse hasta responder todas las preguntas obligatorias.",
+    "missingRequired_other": "{{count}} preguntas obligatorias sin responder. La evaluación no puede completarse hasta responder todas las preguntas obligatorias.",
+    "eliminatoryTitle": "Controles eliminatorios reprobados",
+    "eliminatoryDesc": "Reprobar una pregunta eliminatoria limita la madurez del dominio al nivel 2.",
+    "capped": "Limitado por pregunta eliminatoria",
+    "radarTitle": "Madurez por pilar",
+    "radarDesc": "Puntuación promedio por pilar (0–100)",
+    "heatmapTitle": "Mapa de calor de dominios",
+    "heatmapDesc": "Todos los dominios coloreados por nivel de madurez",
+    "tabs": {
+      "overview": "Resumen",
+      "benchmark": "Benchmark"
+    },
+    "indices": {
+      "maturity": {
+        "name": "Índice de Madurez de IA",
+        "desc": "Madurez general en todos los dominios"
+      },
+      "risk": {
+        "name": "Índice de Riesgo de IA",
+        "desc": "Exposición derivada de los dominios de riesgo y seguridad — mayor significa más riesgo"
+      },
+      "genai_readiness": {
+        "name": "Preparación para GenAI",
+        "desc": "Preparación para adoptar IA generativa"
+      },
+      "agent_readiness": {
+        "name": "Preparación para Agentes",
+        "desc": "Preparación para agentes de IA autónomos"
+      }
+    },
+    "benchmark": {
+      "title": "Benchmark de mercado",
+      "desc": "Compare sus puntuaciones con perfiles típicos de organizaciones.",
+      "selectProfile": "Seleccione un perfil",
+      "you": "Usted",
+      "market": "Benchmark",
+      "delta": "Delta",
+      "pillar": "Por pilar",
+      "domain": "Por dominio",
+      "above": "Por encima del benchmark",
+      "below": "Por debajo del benchmark"
     }
   }
 }

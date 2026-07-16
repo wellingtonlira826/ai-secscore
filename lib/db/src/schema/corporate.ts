@@ -83,6 +83,30 @@ export const insertCorpAnswerSchema = createInsertSchema(corpAnswersTable).omit(
 export type InsertCorpAnswer = z.infer<typeof insertCorpAnswerSchema>;
 export type CorpAnswer = typeof corpAnswersTable.$inferSelect;
 
+// ── Benchmark reference data (curated market data, editable seed) ─────────────
+export const corpBenchmarkProfilesTable = pgTable("corp_benchmark_profiles", {
+  id: serial("id").primaryKey(),
+  slug: text("slug").notNull().unique(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  order: integer("order").notNull().default(0),
+});
+
+export const insertCorpBenchmarkProfileSchema = createInsertSchema(corpBenchmarkProfilesTable).omit({ id: true });
+export type InsertCorpBenchmarkProfile = z.infer<typeof insertCorpBenchmarkProfileSchema>;
+export type CorpBenchmarkProfile = typeof corpBenchmarkProfilesTable.$inferSelect;
+
+export const corpBenchmarkScoresTable = pgTable("corp_benchmark_scores", {
+  id: serial("id").primaryKey(),
+  profileSlug: text("profile_slug").notNull(),
+  domainSlug: text("domain_slug").notNull(),
+  score: real("score").notNull(),
+});
+
+export const insertCorpBenchmarkScoreSchema = createInsertSchema(corpBenchmarkScoresTable).omit({ id: true });
+export type InsertCorpBenchmarkScore = z.infer<typeof insertCorpBenchmarkScoreSchema>;
+export type CorpBenchmarkScore = typeof corpBenchmarkScoresTable.$inferSelect;
+
 // ── Maturity model (5 levels) reference data ──────────────────────────────────
 export const maturityLevelsTable = pgTable("maturity_levels", {
   id: serial("id").primaryKey(),

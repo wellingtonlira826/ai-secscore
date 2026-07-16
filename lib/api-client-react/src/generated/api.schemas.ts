@@ -298,6 +298,130 @@ export interface CorpAnswerInput {
   notes?: string | null;
 }
 
+export interface CorpQuestionFlag {
+  questionId: number;
+  domainId: number;
+  domainName: string;
+  text: string;
+}
+
+export interface CorpDomainScore {
+  domainId: number;
+  slug: string;
+  name: string;
+  pillar: string;
+  weight: number;
+  order: number;
+  /** @nullable */
+  score: number | null;
+  /** @nullable */
+  maturityLevel: number | null;
+  cappedByEliminatory: boolean;
+  answeredCount: number;
+  totalCount: number;
+  requiredMissingCount: number;
+}
+
+export interface CorpPillarScore {
+  pillar: string;
+  /** @nullable */
+  score: number | null;
+  /** @nullable */
+  maturityLevel: number | null;
+  domainCount: number;
+}
+
+export type CorpIndexScoreKey = typeof CorpIndexScoreKey[keyof typeof CorpIndexScoreKey];
+
+
+export const CorpIndexScoreKey = {
+  maturity: 'maturity',
+  risk: 'risk',
+  genai_readiness: 'genai_readiness',
+  agent_readiness: 'agent_readiness',
+} as const;
+
+export interface CorpIndexScore {
+  key: CorpIndexScoreKey;
+  /** @nullable */
+  score: number | null;
+  /** @nullable */
+  maturityLevel: number | null;
+  domainSlugs: string[];
+}
+
+export interface CorporateScore {
+  assessmentId: number;
+  /** @nullable */
+  overallScore: number | null;
+  /** @nullable */
+  maturityLevel: number | null;
+  answeredCount: number;
+  totalCount: number;
+  completionPct: number;
+  canComplete: boolean;
+  missingRequired: CorpQuestionFlag[];
+  eliminatoryFailures: CorpQuestionFlag[];
+  pillars: CorpPillarScore[];
+  domains: CorpDomainScore[];
+  indices: CorpIndexScore[];
+}
+
+export interface CorpBenchmarkProfile {
+  id: number;
+  slug: string;
+  name: string;
+  description: string;
+  order: number;
+}
+
+export interface CorpBenchmarkDomainRow {
+  domainId: number;
+  slug: string;
+  name: string;
+  pillar: string;
+  /** @nullable */
+  clientScore: number | null;
+  benchmarkScore: number;
+  /** @nullable */
+  delta: number | null;
+}
+
+export interface CorpBenchmarkPillarRow {
+  pillar: string;
+  /** @nullable */
+  clientScore: number | null;
+  benchmarkScore: number;
+  /** @nullable */
+  delta: number | null;
+}
+
+export interface CorporateBenchmark {
+  profileSlug: string;
+  profileName: string;
+  profileDescription: string;
+  /** @nullable */
+  overallClient: number | null;
+  overallBenchmark: number;
+  /** @nullable */
+  overallDelta: number | null;
+  pillars: CorpBenchmarkPillarRow[];
+  domains: CorpBenchmarkDomainRow[];
+}
+
+export type CompletionBlockedCode = typeof CompletionBlockedCode[keyof typeof CompletionBlockedCode];
+
+
+export const CompletionBlockedCode = {
+  required_questions_missing: 'required_questions_missing',
+} as const;
+
+export interface CompletionBlocked {
+  error: string;
+  code: CompletionBlockedCode;
+  missingRequired: CorpQuestionFlag[];
+}
+
 export interface Evidence {
   id: number;
   assessmentId: number;
@@ -701,6 +825,10 @@ frameworkId?: number;
 
 export type ListCorpQuestionsParams = {
 domainId?: number;
+};
+
+export type GetCorporateBenchmarkParams = {
+profile: string;
 };
 
 export type GetAssessmentSummaryParams = {

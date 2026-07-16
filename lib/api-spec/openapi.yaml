@@ -332,6 +332,96 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorEnvelope"
 
+  # ── Corporate scoring & benchmark ────────────────────────────────────────────
+
+  /corporate/benchmark-profiles:
+    get:
+      tags: [Corporate]
+      operationId: listCorpBenchmarkProfiles
+      summary: List the curated benchmark organization profiles
+      responses:
+        "200":
+          description: Benchmark profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CorpBenchmarkProfile"
+
+  /assessments/{assessmentId}/corporate-score:
+    get:
+      tags: [Corporate]
+      operationId: getCorporateScore
+      summary: Compute the corporate maturity score, indices and completion state
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Corporate score result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorporateScore"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Assessment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  /assessments/{assessmentId}/corporate-benchmark:
+    get:
+      tags: [Corporate]
+      operationId: getCorporateBenchmark
+      summary: Compare an assessment's domain scores against a benchmark profile
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: profile
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Benchmark comparison
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorporateBenchmark"
+        "400":
+          description: Unknown profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Assessment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
   # ── Assessments ──────────────────────────────────────────────────────────────
 
   /assessments:
@@ -449,6 +539,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorEnvelope"
+        "409":
+          description: Completion blocked — required questions unanswered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompletionBlocked"
     delete:
       tags: [Assessments]
       operationId: deleteAssessment
@@ -1685,6 +1781,203 @@ components:
           maximum: 100
         notes:
           type: ["string", "null"]
+
+    # ── Corporate scoring & benchmark schemas ────────────────────────────────
+    CorpQuestionFlag:
+      type: object
+      required: [questionId, domainId, domainName, text]
+      properties:
+        questionId:
+          type: integer
+        domainId:
+          type: integer
+        domainName:
+          type: string
+        text:
+          type: string
+
+    CorpDomainScore:
+      type: object
+      required: [domainId, slug, name, pillar, weight, order, score, maturityLevel, cappedByEliminatory, answeredCount, totalCount, requiredMissingCount]
+      properties:
+        domainId:
+          type: integer
+        slug:
+          type: string
+        name:
+          type: string
+        pillar:
+          type: string
+        weight:
+          type: number
+        order:
+          type: integer
+        score:
+          type: ["number", "null"]
+        maturityLevel:
+          type: ["integer", "null"]
+        cappedByEliminatory:
+          type: boolean
+        answeredCount:
+          type: integer
+        totalCount:
+          type: integer
+        requiredMissingCount:
+          type: integer
+
+    CorpPillarScore:
+      type: object
+      required: [pillar, score, maturityLevel, domainCount]
+      properties:
+        pillar:
+          type: string
+        score:
+          type: ["number", "null"]
+        maturityLevel:
+          type: ["integer", "null"]
+        domainCount:
+          type: integer
+
+    CorpIndexScore:
+      type: object
+      required: [key, score, maturityLevel, domainSlugs]
+      properties:
+        key:
+          type: string
+          enum: [maturity, risk, genai_readiness, agent_readiness]
+        score:
+          type: ["number", "null"]
+        maturityLevel:
+          type: ["integer", "null"]
+        domainSlugs:
+          type: array
+          items:
+            type: string
+
+    CorporateScore:
+      type: object
+      required: [assessmentId, overallScore, maturityLevel, answeredCount, totalCount, completionPct, canComplete, missingRequired, eliminatoryFailures, pillars, domains, indices]
+      properties:
+        assessmentId:
+          type: integer
+        overallScore:
+          type: ["number", "null"]
+        maturityLevel:
+          type: ["integer", "null"]
+        answeredCount:
+          type: integer
+        totalCount:
+          type: integer
+        completionPct:
+          type: number
+        canComplete:
+          type: boolean
+        missingRequired:
+          type: array
+          items:
+            $ref: "#/components/schemas/CorpQuestionFlag"
+        eliminatoryFailures:
+          type: array
+          items:
+            $ref: "#/components/schemas/CorpQuestionFlag"
+        pillars:
+          type: array
+          items:
+            $ref: "#/components/schemas/CorpPillarScore"
+        domains:
+          type: array
+          items:
+            $ref: "#/components/schemas/CorpDomainScore"
+        indices:
+          type: array
+          items:
+            $ref: "#/components/schemas/CorpIndexScore"
+
+    CorpBenchmarkProfile:
+      type: object
+      required: [id, slug, name, description, order]
+      properties:
+        id:
+          type: integer
+        slug:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        order:
+          type: integer
+
+    CorpBenchmarkDomainRow:
+      type: object
+      required: [domainId, slug, name, pillar, clientScore, benchmarkScore, delta]
+      properties:
+        domainId:
+          type: integer
+        slug:
+          type: string
+        name:
+          type: string
+        pillar:
+          type: string
+        clientScore:
+          type: ["number", "null"]
+        benchmarkScore:
+          type: number
+        delta:
+          type: ["number", "null"]
+
+    CorpBenchmarkPillarRow:
+      type: object
+      required: [pillar, clientScore, benchmarkScore, delta]
+      properties:
+        pillar:
+          type: string
+        clientScore:
+          type: ["number", "null"]
+        benchmarkScore:
+          type: number
+        delta:
+          type: ["number", "null"]
+
+    CorporateBenchmark:
+      type: object
+      required: [profileSlug, profileName, profileDescription, overallClient, overallBenchmark, overallDelta, pillars, domains]
+      properties:
+        profileSlug:
+          type: string
+        profileName:
+          type: string
+        profileDescription:
+          type: string
+        overallClient:
+          type: ["number", "null"]
+        overallBenchmark:
+          type: number
+        overallDelta:
+          type: ["number", "null"]
+        pillars:
+          type: array
+          items:
+            $ref: "#/components/schemas/CorpBenchmarkPillarRow"
+        domains:
+          type: array
+          items:
+            $ref: "#/components/schemas/CorpBenchmarkDomainRow"
+
+    CompletionBlocked:
+      type: object
+      required: [error, code, missingRequired]
+      properties:
+        error:
+          type: string
+        code:
+          type: string
+          enum: [required_questions_missing]
+        missingRequired:
+          type: array
+          items:
+            $ref: "#/components/schemas/CorpQuestionFlag"
 
     # ── Evidence schemas ──────────────────────────────────────────────────────
     Evidence:

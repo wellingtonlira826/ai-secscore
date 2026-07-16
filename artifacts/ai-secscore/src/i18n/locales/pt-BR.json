@@ -528,6 +528,61 @@
       "3": "3 — Definido",
       "4": "4 — Gerenciado",
       "5": "5 — Otimizado"
+    },
+    "completeBlockedTitle": "Não é possível concluir a avaliação",
+    "completeBlocked_one": "{{count}} pergunta obrigatória ainda não foi respondida.",
+    "completeBlocked_other": "{{count}} perguntas obrigatórias ainda não foram respondidas."
+  },
+  "corpResults": {
+    "title": "Resultados",
+    "overallScore": "Pontuação geral",
+    "level": "Nível {{level}}",
+    "answeredOf": "{{answered}} de {{total}} respondidas",
+    "completion": "Progresso",
+    "noAnswers": "Responda às perguntas para ver suas pontuações.",
+    "missingRequiredTitle": "Perguntas obrigatórias pendentes",
+    "missingRequired_one": "{{count}} pergunta obrigatória sem resposta. A avaliação não pode ser concluída até que todas as perguntas obrigatórias sejam respondidas.",
+    "missingRequired_other": "{{count}} perguntas obrigatórias sem resposta. A avaliação não pode ser concluída até que todas as perguntas obrigatórias sejam respondidas.",
+    "eliminatoryTitle": "Controles eliminatórios reprovados",
+    "eliminatoryDesc": "Reprovar em uma pergunta eliminatória limita a maturidade do domínio ao nível 2.",
+    "capped": "Limitado por pergunta eliminatória",
+    "radarTitle": "Maturidade por pilar",
+    "radarDesc": "Pontuação média por pilar (0–100)",
+    "heatmapTitle": "Mapa de calor dos domínios",
+    "heatmapDesc": "Todos os domínios coloridos por nível de maturidade",
+    "tabs": {
+      "overview": "Visão geral",
+      "benchmark": "Benchmark"
+    },
+    "indices": {
+      "maturity": {
+        "name": "Índice de Maturidade em IA",
+        "desc": "Maturidade geral em todos os domínios"
+      },
+      "risk": {
+        "name": "Índice de Risco de IA",
+        "desc": "Exposição derivada dos domínios de risco e segurança — quanto maior, mais arriscado"
+      },
+      "genai_readiness": {
+        "name": "Prontidão para GenAI",
+        "desc": "Prontidão para adotar IA generativa"
+      },
+      "agent_readiness": {
+        "name": "Prontidão para Agentes",
+        "desc": "Prontidão para agentes de IA autônomos"
+      }
+    },
+    "benchmark": {
+      "title": "Benchmark de mercado",
+      "desc": "Compare suas pontuações com perfis típicos de organizações.",
+      "selectProfile": "Selecione um perfil",
+      "you": "Você",
+      "market": "Benchmark",
+      "delta": "Delta",
+      "pillar": "Por pilar",
+      "domain": "Por domínio",
+      "above": "Acima do benchmark",
+      "below": "Abaixo do benchmark"
     }
   }
 }

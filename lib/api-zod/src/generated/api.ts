@@ -273,6 +273,111 @@ export const UpsertCorpAnswerResponse = zod.object({
 
 
 /**
+ * @summary List the curated benchmark organization profiles
+ */
+export const ListCorpBenchmarkProfilesResponseItem = zod.object({
+  "id": zod.number(),
+  "slug": zod.string(),
+  "name": zod.string(),
+  "description": zod.string(),
+  "order": zod.number()
+})
+export const ListCorpBenchmarkProfilesResponse = zod.array(ListCorpBenchmarkProfilesResponseItem)
+
+
+/**
+ * @summary Compute the corporate maturity score, indices and completion state
+ */
+export const GetCorporateScoreParams = zod.object({
+  "assessmentId": zod.coerce.number()
+})
+
+export const GetCorporateScoreResponse = zod.object({
+  "assessmentId": zod.number(),
+  "overallScore": zod.number().nullable(),
+  "maturityLevel": zod.number().nullable(),
+  "answeredCount": zod.number(),
+  "totalCount": zod.number(),
+  "completionPct": zod.number(),
+  "canComplete": zod.boolean(),
+  "missingRequired": zod.array(zod.object({
+  "questionId": zod.number(),
+  "domainId": zod.number(),
+  "domainName": zod.string(),
+  "text": zod.string()
+})),
+  "eliminatoryFailures": zod.array(zod.object({
+  "questionId": zod.number(),
+  "domainId": zod.number(),
+  "domainName": zod.string(),
+  "text": zod.string()
+})),
+  "pillars": zod.array(zod.object({
+  "pillar": zod.string(),
+  "score": zod.number().nullable(),
+  "maturityLevel": zod.number().nullable(),
+  "domainCount": zod.number()
+})),
+  "domains": zod.array(zod.object({
+  "domainId": zod.number(),
+  "slug": zod.string(),
+  "name": zod.string(),
+  "pillar": zod.string(),
+  "weight": zod.number(),
+  "order": zod.number(),
+  "score": zod.number().nullable(),
+  "maturityLevel": zod.number().nullable(),
+  "cappedByEliminatory": zod.boolean(),
+  "answeredCount": zod.number(),
+  "totalCount": zod.number(),
+  "requiredMissingCount": zod.number()
+})),
+  "indices": zod.array(zod.object({
+  "key": zod.enum(['maturity', 'risk', 'genai_readiness', 'agent_readiness']),
+  "score": zod.number().nullable(),
+  "maturityLevel": zod.number().nullable(),
+  "domainSlugs": zod.array(zod.string())
+}))
+})
+
+
+/**
+ * @summary Compare an assessment's domain scores against a benchmark profile
+ */
+export const GetCorporateBenchmarkParams = zod.object({
+  "assessmentId": zod.coerce.number()
+})
+
+export const GetCorporateBenchmarkQueryParams = zod.object({
+  "profile": zod.coerce.string()
+})
+
+export const GetCorporateBenchmarkResponse = zod.object({
+  "profileSlug": zod.string(),
+  "profileName": zod.string(),
+  "profileDescription": zod.string(),
+  "overallClient": zod.number().nullable(),
+  "overallBenchmark": zod.number(),
+  "overallDelta": zod.number().nullable(),
+  "pillars": zod.array(zod.object({
+  "pillar": zod.string(),
+  "clientScore": zod.number().nullable(),
+  "benchmarkScore": zod.number(),
+  "delta": zod.number().nullable()
+})),
+  "domains": zod.array(zod.object({
+  "domainId": zod.number(),
+  "slug": zod.string(),
+  "name": zod.string(),
+  "pillar": zod.string(),
+  "clientScore": zod.number().nullable(),
+  "benchmarkScore": zod.number(),
+  "delta": zod.number().nullable()
+}))
+})
+
+
+/**
  * @summary List all assessments for the authenticated user
  */
 export const ListAssessmentsResponseItem = zod.object({

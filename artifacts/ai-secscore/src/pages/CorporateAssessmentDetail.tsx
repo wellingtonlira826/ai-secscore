@@ -24,7 +24,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { CheckCircle2, Check, Loader2, Layers, Info } from "lucide-react";
+import { CheckCircle2, Check, Loader2, Layers, Info, BarChart3 } from "lucide-react";
+import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
@@ -411,8 +412,17 @@ export default function CorporateAssessmentDetail({ assessment }: { assessment: 
           queryClient.invalidateQueries({ queryKey: getGetAssessmentQueryKey(id) });
           toast({ title: t('assessment.markComplete') });
         },
-        onError: () => {
-          toast({ variant: "destructive", title: t('common.error') });
+        onError: (error: unknown) => {
+          const err = error as { status?: number; data?: { code?: string; missingRequired?: unknown[] } | null };
+          if (err.status === 409 && err.data?.code === "required_questions_missing") {
+            toast({
+              variant: "destructive",
+              title: t('corporate.completeBlockedTitle'),
+              description: t('corporate.completeBlocked', { count: err.data.missingRequired?.length ?? 0 }),
+            });
+          } else {
+            toast({ variant: "destructive", title: t('common.error') });
+          }
         },
       },
     );
@@ -466,6 +476,12 @@ export default function CorporateAssessmentDetail({ assessment }: { assessment: 
         </div>
 
         <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <Link href={`/assessments/${id}/corporate-results`}>
+            <Button variant="outline" size="sm" className="gap-1.5" data-testid="button-corporate-results">
+              <BarChart3 className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">{t('corpResults.title')}</span>
+            </Button>
+          </Link>
           <MaturityModelDialog />
           {isOwner && <ShareDialog assessmentId={id} />}
           {canEdit && assessment.status !== 'completed' && (

@@ -258,6 +258,61 @@
       "3": "3 — Defined",
       "4": "4 — Managed",
       "5": "5 — Optimized"
+    },
+    "completeBlockedTitle": "Cannot complete assessment",
+    "completeBlocked_one": "{{count}} required question is still unanswered.",
+    "completeBlocked_other": "{{count}} required questions are still unanswered."
+  },
+  "corpResults": {
+    "title": "Results",
+    "overallScore": "Overall score",
+    "level": "Level {{level}}",
+    "answeredOf": "{{answered}} of {{total}} answered",
+    "completion": "Completion",
+    "noAnswers": "Answer questions to see your scores.",
+    "missingRequiredTitle": "Required questions pending",
+    "missingRequired_one": "{{count}} required question is unanswered. The assessment cannot be completed until all required questions are answered.",
+    "missingRequired_other": "{{count}} required questions are unanswered. The assessment cannot be completed until all required questions are answered.",
+    "eliminatoryTitle": "Eliminatory controls failed",
+    "eliminatoryDesc": "Failing an eliminatory question caps the domain's maturity at level 2.",
+    "capped": "Capped by eliminatory question",
+    "radarTitle": "Maturity by pillar",
+    "radarDesc": "Average score per pillar (0–100)",
+    "heatmapTitle": "Domain heatmap",
+    "heatmapDesc": "All domains colored by maturity level",
+    "tabs": {
+      "overview": "Overview",
+      "benchmark": "Benchmark"
+    },
+    "indices": {
+      "maturity": {
+        "name": "AI Maturity Index",
+        "desc": "Overall maturity across all domains"
+      },
+      "risk": {
+        "name": "AI Risk Index",
+        "desc": "Exposure from risk and security domains — higher means riskier"
+      },
+      "genai_readiness": {
+        "name": "GenAI Readiness",
+        "desc": "Readiness to adopt generative AI"
+      },
+      "agent_readiness": {
+        "name": "Agent Readiness",
+        "desc": "Readiness for autonomous AI agents"
+      }
+    },
+    "benchmark": {
+      "title": "Market benchmark",
+      "desc": "Compare your scores against typical organization profiles.",
+      "selectProfile": "Select a profile",
+      "you": "You",
+      "market": "Benchmark",
+      "delta": "Delta",
+      "pillar": "By pillar",
+      "domain": "By domain",
+      "above": "Above benchmark",
+      "below": "Below benchmark"
     }
   }
 }

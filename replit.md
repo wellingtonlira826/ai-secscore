@@ -27,6 +27,7 @@ AI SecScore is an AI security assessment platform: authenticated users evaluate 
 - `lib/db/` — Drizzle schema (source of truth for DB): `src/schema/{auth,assessments,evidence}.ts`.
 - `lib/api-spec/` — OpenAPI spec (source of truth for API contracts). `lib/api-zod/` and `lib/api-client-react/` are generated from it.
 - Scoring logic lives in `artifacts/api-server/src/routes/assessments.ts` (`loadScoringContext` + `scoreFromAnswers`).
+- Corporate scoring engine is a pure module in `artifacts/api-server/src/lib/corporateScoring.ts` (unit-tested); DB loading in `src/lib/corporateScoringContext.ts`; routes (score + benchmark) in `src/routes/corporate.ts`; benchmark seed data in `src/lib/corporateSeedData/benchmarks.ts` (8 profiles, seeded on server start).
 
 ## Architecture decisions
 
@@ -43,6 +44,7 @@ AI SecScore is an AI security assessment platform: authenticated users evaluate 
 - Upload and view evidence files attached to assessments.
 - View scored results with grades, risk posture, framework breakdown, gap/remediation priorities, and an executive summary.
 - Compare two assessments and track each system's score history over time (with CSV export).
+- Corporate AI maturity assessments: 34 domains across 7 pillars scored 0–100 with maturity levels 1–5, eliminatory questions capping domain maturity at level 2, required questions blocking completion, 4 derived indices (maturity, risk, GenAI readiness, agent readiness), and market benchmark comparison against 8 organization profiles (results at `/assessments/:id/corporate-results`).
 - Full UI localization in English, Spanish, and Brazilian Portuguese.
 
 ## User preferences
