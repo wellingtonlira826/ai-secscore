@@ -1,5 +1,5 @@
-import { Sidebar } from "./Sidebar";
-import { useAuth } from "@workspace/replit-auth-web";
+﻿import { Sidebar } from "./Sidebar";
+import { useAuth } from "@workspace/auth-web";
 import Login from "@/pages/Login";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {

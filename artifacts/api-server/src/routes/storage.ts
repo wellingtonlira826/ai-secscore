@@ -1,5 +1,7 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import { Readable } from "stream";
+import fs from "fs/promises";
+import path from "path";
 import {
   RequestUploadUrlBody,
   RequestUploadUrlResponse,
@@ -134,6 +136,44 @@ router.get("/storage/objects/*path", async (req: Request, res: Response) => {
     }
     req.log.error({ err: error }, "Error serving object");
     res.status(500).json({ error: "Failed to serve object" });
+  }
+});
+
+/**
+ * PUT /storage/raw-upload/*
+ *
+ * Receive a file upload directly from the client (S3-compatible PUT).
+ * Saves the raw body to the local STORAGE_DIR.
+ */
+router.put("/storage/raw-upload/*path", async (req: Request, res: Response) => {
+  if (!req.isAuthenticated()) {
+    res.status(401).end();
+    return;
+  }
+
+  try {
+    const raw = req.params.path;
+    const relativePath = Array.isArray(raw) ? raw.join("/") : raw;
+    const storageDir = path.resolve(process.env.STORAGE_DIR ?? "./storage");
+    const absPath = path.join(storageDir, relativePath);
+
+    if (!absPath.startsWith(storageDir)) {
+      res.status(400).json({ error: "Invalid path" });
+      return;
+    }
+
+    await fs.mkdir(path.dirname(absPath), { recursive: true });
+
+    const chunks: Buffer[] = [];
+    for await (const chunk of req) {
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    }
+    await fs.writeFile(absPath, Buffer.concat(chunks));
+
+    res.status(200).end();
+  } catch (error) {
+    req.log.error({ err: error }, "Error receiving file upload");
+    res.status(500).json({ error: "Failed to save file" });
   }
 });
 

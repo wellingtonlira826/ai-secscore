@@ -1,39 +1,44 @@
 # ai-secscore
 
-Plataforma de avaliação de segurança para sistemas de IA/LLM. Usuários respondem questionários de maturidade mapeados a frameworks de segurança, fazem upload de evidências e recebem relatórios com pontuação, análise de gaps e histórico de evolução.
+Plataforma de avaliacao de seguranca para sistemas de IA e LLMs. Avalie o nivel de maturidade de seguranca dos seus sistemas atraves de questionarios mapeados a frameworks reconhecidos (OWASP LLM Top 10, NIST AI RMF, ISO 42001 e outros), faca upload de evidencias, gere relatorios com pontuacao, gaps e plano de remediacao.
 
 ## Funcionalidades
 
-- Criação e gestão de assessments para sistemas de IA/LLM
-- Questionários de maturidade mapeados a múltiplos frameworks (com pesos configuráveis por framework)
-- Upload e visualização de evidências anexadas aos assessments
-- Resultados com nota, postura de risco, breakdown por framework e prioridades de remediação
-- Comparação entre assessments e histórico de pontuação ao longo do tempo (export CSV)
-- Interface localizada em Português (BR), Inglês e Espanhol
+- Questionarios de maturidade mapeados a multiplos frameworks de seguranca de IA
+- Pesos configurados por framework para pontuacao personalizada
+- Upload e gestao de evidencias por questao
+- Dashboard com nota geral, postura de risco e breakdown por framework
+- Plano de remediacao com prioridades e quick wins
+- Comparacao de assessments ao longo do tempo (historico + export CSV)
+- Assessments corporativos com dominios, indice de maturidade e benchmarks de setor
+- Interface disponivel em Portugues (BR), Ingles e Espanhol
 
 ## Stack
 
-- pnpm workspaces · Node.js 24 · TypeScript 5.9
-- API: Express 5
-- Frontend: React + Vite
-- Banco: PostgreSQL + Drizzle ORM
-- Validação: Zod + `drizzle-zod`
-- Contratos de API: OpenAPI spec com codegen (Orval) para schemas Zod e hooks React Query
+- **Monorepo** pnpm workspaces
+- **API**: Node.js 24 + Express 5 + TypeScript
+- **Frontend**: React 19 + Vite + Tailwind CSS v4
+- **Banco**: PostgreSQL + Drizzle ORM
+- **Validacao**: Zod + drizzle-zod
+- **Contratos**: OpenAPI spec com codegen (Orval) para Zod schemas e React Query hooks
 
-## Estrutura do projeto
+## Estrutura
 
 ```
-artifacts/ai-secscore/   → frontend React + Vite
-artifacts/api-server/    → API Express 5 (src/app.ts, rotas em src/routes/)
-lib/db/                  → schema Drizzle (fonte da verdade do banco)
-lib/api-spec/            → spec OpenAPI (fonte da verdade dos contratos)
+artifacts/ai-secscore/   frontend React + Vite
+artifacts/api-server/    API Express 5
+lib/db/                  schema Drizzle (PostgreSQL)
+lib/api-spec/            spec OpenAPI
+lib/api-zod/             tipos e schemas gerados
+lib/api-client-react/    client React Query gerado
+lib/auth-web/            hook de autenticacao
 ```
 
 ## Rodando localmente
 
-Pré-requisitos: **Node.js 24**, **pnpm**, **Docker Desktop**.
+**Pre-requisitos**: Node.js 24, pnpm, PostgreSQL (ou Docker).
 
-### 1. Subir o banco PostgreSQL via Docker
+### 1. Banco de dados via Docker
 
 ```bash
 docker run -d \
@@ -45,40 +50,35 @@ docker run -d \
   postgres:16
 ```
 
-### 2. Configurar variáveis de ambiente
-
-Copie o exemplo e ajuste se necessário:
+### 2. Variaveis de ambiente
 
 ```bash
 cp .env.example .env
 ```
 
-Conteúdo do `.env`:
+Edite o `.env`:
 
 ```
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/ai_secscore
 NODE_ENV=development
+AUTH_USERNAME=admin
+AUTH_PASSWORD=admin
 ```
 
-### 3. Instalar dependências
+### 3. Instalar dependencias
 
 ```bash
-pnpm install --ignore-scripts
+pnpm install
 ```
 
-> `--ignore-scripts` ignora o pre-install check de agente do pnpm (desnecessário localmente).
-
-### 4. Aplicar schema no banco
+### 4. Aplicar schema
 
 ```bash
-# Linux/macOS
+# Git Bash / Linux / macOS
 export DATABASE_URL=postgres://postgres:postgres@localhost:5432/ai_secscore
 pnpm --filter @workspace/db run push
 
-# Windows (Git Bash)
-DATABASE_URL=postgres://postgres:postgres@localhost:5432/ai_secscore pnpm --filter @workspace/db run push
-
-# Windows (PowerShell)
+# Windows PowerShell
 $env:DATABASE_URL="postgres://postgres:postgres@localhost:5432/ai_secscore"
 pnpm --filter @workspace/db run push
 ```
@@ -89,37 +89,33 @@ pnpm --filter @workspace/db run push
 # Git Bash
 export DATABASE_URL=postgres://postgres:postgres@localhost:5432/ai_secscore
 export NODE_ENV=development
+export PORT=5000
 cd artifacts/api-server && pnpm run build && pnpm run start
-
-# PowerShell
-$env:DATABASE_URL="postgres://postgres:postgres@localhost:5432/ai_secscore"
-$env:NODE_ENV="development"
-Set-Location artifacts/api-server; pnpm run build; pnpm run start
 ```
 
-### 6. Rodar o frontend (porta 5173) — em outro terminal
+### 6. Rodar o frontend (porta 3000) — outro terminal
 
 ```bash
 pnpm --filter @workspace/ai-secscore run dev
 ```
 
-Acesse: **http://localhost:5173**
+Acesse: **http://localhost:3000**
 
-### Outros comandos
+Login padrao: `admin` / `admin` (altere via `AUTH_USERNAME` e `AUTH_PASSWORD` no `.env`).
+
+## Outros comandos
 
 ```bash
 pnpm run typecheck   # typecheck em todos os pacotes
 pnpm run build       # typecheck + build completo
 ```
 
-> **Nota sobre autenticação:** o login usa Replit OIDC. Em ambiente local, a API e o banco funcionam para desenvolvimento, mas o fluxo de autenticação completo exige deploy no Replit (ou substituição por outro provedor OIDC).
-
-## Parar e remover o banco
+## Parar o banco
 
 ```bash
 docker stop ai-secscore-db && docker rm ai-secscore-db
 ```
 
-## Licença
+## Licenca
 
 MIT

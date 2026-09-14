@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "@workspace/replit-auth-web";
+import { useAuth } from "@workspace/auth-web";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Shield, Sun, Moon, Eye, EyeOff } from "lucide-react";
@@ -30,19 +30,17 @@ export default function Login() {
     const result = await login(username, password);
     setIsLoading(false);
     if (!result.ok) {
-      setError(result.error ?? "Credenciais inválidas");
+      setError(result.error ?? "Credenciais invalidas");
     }
   }
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-background relative overflow-hidden">
-      {/* Background decoration */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-chart-5/10 rounded-full blur-[120px]" />
       </div>
 
-      {/* Top-right controls */}
       <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
         <div className="flex items-center gap-1 bg-card/60 backdrop-blur border border-border rounded-lg px-2 py-1">
           {LANGUAGES.map((lang) => (
@@ -77,13 +75,13 @@ export default function Login() {
 
         <h1 className="text-3xl font-bold tracking-tight mb-1">AI SecScore</h1>
         <p className="text-muted-foreground text-center mb-8 text-sm">
-          Plataforma de Avaliação de Segurança de IA
+          Plataforma de Avaliacao de Seguranca de IA
         </p>
 
         <form onSubmit={handleSubmit} className="w-full space-y-4">
           <div className="space-y-1">
             <label className="text-sm font-medium text-foreground" htmlFor="username">
-              Usuário
+              Usuario
             </label>
             <input
               id="username"

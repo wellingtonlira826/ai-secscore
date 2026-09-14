@@ -10,17 +10,12 @@ import { authMiddleware } from "./middlewares/authMiddleware";
 
 const app: Express = express();
 
-// Behind Replit's reverse proxy — trust a single hop so req.ip reflects the
-// real client (needed for correct rate-limit keying).
 app.set("trust proxy", 1);
 
-// Allowed browser origins are the app's own published domains. Non-browser
-// clients (curl, mobile) send no Origin header and are allowed through.
-const allowedOrigins = (process.env.REPLIT_DOMAINS ?? "")
+const allowedOrigins = (process.env.ALLOWED_ORIGINS ?? "")
   .split(",")
   .map((d) => d.trim())
-  .filter(Boolean)
-  .map((d) => `https://${d}`);
+  .filter(Boolean);
 
 app.use(
   pinoHttp({
@@ -48,8 +43,6 @@ app.use(
   cors({
     credentials: true,
     origin(origin, callback) {
-      // Allow same-origin / non-browser requests (no Origin header). When no
-      // domains are configured (local dev), fall back to permissive.
       if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {

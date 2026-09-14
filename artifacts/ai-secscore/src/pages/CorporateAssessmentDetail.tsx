@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+﻿import { useState, useRef, useEffect, useMemo } from "react";
 import {
   useListCorpDomains,
   useListCorpQuestions,
@@ -13,7 +13,7 @@ import {
   type CorpQuestion,
   type CorpAnswer,
 } from "@workspace/api-client-react";
-import { useAuth } from "@workspace/replit-auth-web";
+import { useAuth } from "@workspace/auth-web";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -166,7 +166,7 @@ function CorpQuestionItem({
 
           {question.answerType === "yes_no" && (
             <div className="flex gap-1.5 p-1 bg-muted/50 rounded-lg border border-border/50">
-              {[{ v: true, label: "Sim" }, { v: false, label: "Não" }].map((opt) => (
+              {[{ v: true, label: "Sim" }, { v: false, label: "NÃ£o" }].map((opt) => (
                 <button
                   key={String(opt.v)}
                   disabled={!canEdit}
@@ -488,7 +488,7 @@ export default function CorporateAssessmentDetail({ assessment }: { assessment: 
             <Button onClick={handleComplete} size="sm" className="gap-1.5">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">{t('assessment.markComplete')}</span>
-              <span className="sm:hidden">✓</span>
+              <span className="sm:hidden">âœ“</span>
             </Button>
           )}
         </div>
@@ -498,7 +498,7 @@ export default function CorporateAssessmentDetail({ assessment }: { assessment: 
       <div className="bg-card p-4 rounded-xl border border-border">
         <div className="flex justify-between text-sm font-medium mb-2">
           <span>{t('corporate.overallProgress')}</span>
-          <span>{answeredTotal} / {questions.length} · {Math.round(totalPct)}%</span>
+          <span>{answeredTotal} / {questions.length} Â· {Math.round(totalPct)}%</span>
         </div>
         <Progress value={totalPct} className="h-2" />
       </div>
