@@ -1,61 +1,125 @@
-# AI SecScore
+# ai-secscore
 
-AI SecScore is an AI security assessment platform: users evaluate their AI/LLM systems against security frameworks, answer maturity questionnaires, upload evidence, and get scored reports with gap analysis and history tracking.
+Plataforma de avaliação de segurança para sistemas de IA/LLM. Usuários respondem questionários de maturidade mapeados a frameworks de segurança, fazem upload de evidências e recebem relatórios com pontuação, análise de gaps e histórico de evolução.
 
-🔗 **Live app:** [https://secure-asset-analyzer--WellingtonLira.replit.app](https://secure-asset-analyzer--WellingtonLira.replit.app)
+## Funcionalidades
 
-## Features
-
-- Create and manage security assessments for AI/LLM systems
-- Maturity questionnaires mapped to multiple security frameworks with configurable per-framework weights
-- Upload and view evidence files attached to assessments
-- Scored results with grades, risk posture, framework breakdown, and gap/remediation priorities
-- Compare assessments and track score history over time (with CSV export)
-- Full UI localization in English, Spanish, and Brazilian Portuguese
+- Criação e gestão de assessments para sistemas de IA/LLM
+- Questionários de maturidade mapeados a múltiplos frameworks (com pesos configuráveis por framework)
+- Upload e visualização de evidências anexadas aos assessments
+- Resultados com nota, postura de risco, breakdown por framework e prioridades de remediação
+- Comparação entre assessments e histórico de pontuação ao longo do tempo (export CSV)
+- Interface localizada em Português (BR), Inglês e Espanhol
 
 ## Stack
 
-- pnpm workspaces, Node.js 24, TypeScript 5.9
+- pnpm workspaces · Node.js 24 · TypeScript 5.9
 - API: Express 5
 - Frontend: React + Vite
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod, `drizzle-zod`
-- API contracts: OpenAPI spec with codegen (Orval) for Zod schemas and React Query hooks
+- Banco: PostgreSQL + Drizzle ORM
+- Validação: Zod + `drizzle-zod`
+- Contratos de API: OpenAPI spec com codegen (Orval) para schemas Zod e hooks React Query
 
-## Project structure
+## Estrutura do projeto
 
-- `artifacts/ai-secscore/` — React + Vite frontend
-- `artifacts/api-server/` — Express 5 API (entry `src/app.ts`, routes in `src/routes/`)
-- `lib/db/` — Drizzle schema (source of truth for the DB)
-- `lib/api-spec/` — OpenAPI spec (source of truth for API contracts)
+```
+artifacts/ai-secscore/   → frontend React + Vite
+artifacts/api-server/    → API Express 5 (src/app.ts, rotas em src/routes/)
+lib/db/                  → schema Drizzle (fonte da verdade do banco)
+lib/api-spec/            → spec OpenAPI (fonte da verdade dos contratos)
+```
 
-## Running locally
+## Rodando localmente
 
-This project uses **pnpm workspaces** and needs a PostgreSQL database.
+Pré-requisitos: **Node.js 24**, **pnpm**, **Docker Desktop**.
+
+### 1. Subir o banco PostgreSQL via Docker
 
 ```bash
-# 1. Install dependencies
-pnpm install
+docker run -d \
+  --name ai-secscore-db \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=ai_secscore \
+  -p 5432:5432 \
+  postgres:16
+```
 
-# 2. Set the required environment variable
-export DATABASE_URL="postgres://user:password@localhost:5432/ai_secscore"
+### 2. Configurar variáveis de ambiente
 
-# 3. Push the DB schema
+Copie o exemplo e ajuste se necessário:
+
+```bash
+cp .env.example .env
+```
+
+Conteúdo do `.env`:
+
+```
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/ai_secscore
+NODE_ENV=development
+```
+
+### 3. Instalar dependências
+
+```bash
+pnpm install --ignore-scripts
+```
+
+> `--ignore-scripts` ignora o pre-install check de agente do pnpm (desnecessário localmente).
+
+### 4. Aplicar schema no banco
+
+```bash
+# Linux/macOS
+export DATABASE_URL=postgres://postgres:postgres@localhost:5432/ai_secscore
 pnpm --filter @workspace/db run push
 
-# 4. Run the API server (port 5000)
-pnpm --filter @workspace/api-server run dev
+# Windows (Git Bash)
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/ai_secscore pnpm --filter @workspace/db run push
+
+# Windows (PowerShell)
+$env:DATABASE_URL="postgres://postgres:postgres@localhost:5432/ai_secscore"
+pnpm --filter @workspace/db run push
 ```
 
-Other useful commands:
+### 5. Rodar a API (porta 5000)
 
 ```bash
-pnpm run typecheck   # typecheck across all packages
-pnpm run build       # typecheck + build all packages
+# Git Bash
+export DATABASE_URL=postgres://postgres:postgres@localhost:5432/ai_secscore
+export NODE_ENV=development
+cd artifacts/api-server && pnpm run build && pnpm run start
+
+# PowerShell
+$env:DATABASE_URL="postgres://postgres:postgres@localhost:5432/ai_secscore"
+$env:NODE_ENV="development"
+Set-Location artifacts/api-server; pnpm run build; pnpm run start
 ```
 
-> **Note:** authentication is built on Replit OIDC with server-side sessions, so the login flow is tied to the Replit environment. Running the API/DB locally works for development, but full end-to-end auth currently requires deploying on Replit (or swapping in your own OIDC provider).
+### 6. Rodar o frontend (porta 5173) — em outro terminal
 
-## License
+```bash
+pnpm --filter @workspace/ai-secscore run dev
+```
+
+Acesse: **http://localhost:5173**
+
+### Outros comandos
+
+```bash
+pnpm run typecheck   # typecheck em todos os pacotes
+pnpm run build       # typecheck + build completo
+```
+
+> **Nota sobre autenticação:** o login usa Replit OIDC. Em ambiente local, a API e o banco funcionam para desenvolvimento, mas o fluxo de autenticação completo exige deploy no Replit (ou substituição por outro provedor OIDC).
+
+## Parar e remover o banco
+
+```bash
+docker stop ai-secscore-db && docker rm ai-secscore-db
+```
+
+## Licença
 
 MIT
