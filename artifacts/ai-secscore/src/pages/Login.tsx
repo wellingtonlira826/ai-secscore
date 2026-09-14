@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { useAuth } from "@workspace/replit-auth-web";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { Shield, Sun, Moon } from "lucide-react";
+import { Shield, Sun, Moon, Eye, EyeOff } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { cn } from "@/lib/utils";
 
@@ -12,9 +13,26 @@ const LANGUAGES = [
 ];
 
 export default function Login() {
-  const { login, isLoading } = useAuth();
-  const { t, i18n } = useTranslation();
+  const { login } = useAuth();
+  const { i18n } = useTranslation();
   const { theme, toggleTheme } = useTheme();
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
+    const result = await login(username, password);
+    setIsLoading(false);
+    if (!result.ok) {
+      setError(result.error ?? "Credenciais inválidas");
+    }
+  }
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-background relative overflow-hidden">
@@ -57,18 +75,66 @@ export default function Login() {
           <Shield className="w-8 h-8 text-primary" />
         </div>
 
-        <h1 className="text-3xl font-bold tracking-tight mb-2">{t("login.title")}</h1>
-        <p className="text-muted-foreground text-center mb-8">
-          {t("login.subtitle")}
+        <h1 className="text-3xl font-bold tracking-tight mb-1">AI SecScore</h1>
+        <p className="text-muted-foreground text-center mb-8 text-sm">
+          Plataforma de Avaliação de Segurança de IA
         </p>
 
-        <Button
-          className="w-full h-12 text-base font-semibold tracking-wide shadow-[0_0_20px_-5px_rgba(var(--primary),0.5)]"
-          onClick={login}
-          disabled={isLoading}
-        >
-          {isLoading ? t("common.loading") : t("login.loginButton")}
-        </Button>
+        <form onSubmit={handleSubmit} className="w-full space-y-4">
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-foreground" htmlFor="username">
+              Usuário
+            </label>
+            <input
+              id="username"
+              type="text"
+              autoComplete="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="w-full h-10 px-3 rounded-md border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+              placeholder="admin"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-foreground" htmlFor="password">
+              Senha
+            </label>
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full h-10 px-3 pr-10 rounded-md border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
+          {error && (
+            <p className="text-sm text-destructive text-center">{error}</p>
+          )}
+
+          <Button
+            type="submit"
+            className="w-full h-11 text-base font-semibold tracking-wide shadow-[0_0_20px_-5px_rgba(var(--primary),0.5)]"
+            disabled={isLoading}
+          >
+            {isLoading ? "Entrando..." : "Entrar"}
+          </Button>
+        </form>
       </div>
     </div>
   );

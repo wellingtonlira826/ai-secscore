@@ -7,7 +7,7 @@ interface AuthState {
   user: AuthUser | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: () => void;
+  login: (username: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
 }
 
@@ -41,18 +41,33 @@ export function useAuth(): AuthState {
     };
   }, []);
 
-  const login = useCallback(() => {
-    const base = import.meta.env.BASE_URL.replace(/\/+$/, "") || "/";
-    window.location.href = `/api/login?returnTo=${encodeURIComponent(base)}`;
+  const login = useCallback(async (username: string, password: string) => {
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        return { ok: false, error: data.error ?? "Credenciais inválidas" };
+      }
+
+      setUser(data.user);
+      window.location.reload();
+      return { ok: true };
+    } catch {
+      return { ok: false, error: "Erro de conexão" };
+    }
   }, []);
 
   const logout = useCallback(() => {
     fetch("/api/logout", { method: "POST", credentials: "include" })
-      .then((res) => res.json())
-      .then((data: { redirect?: string }) => {
-        window.location.href = data.redirect ?? "/";
-      })
-      .catch(() => {
+      .finally(() => {
+        setUser(null);
         window.location.href = "/";
       });
   }, []);
